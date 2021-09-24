@@ -1,0 +1,31 @@
+Alpha token :
+def
+import
+int
+float
+str
+bool
+if
+else
+while
+for
+return
+switch
+case
+true
+false
+
+Symbol token :
++
+-
+*
+/
+#
+(
+)
+{
+}
+"
+,
+:
+=

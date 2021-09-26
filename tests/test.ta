@@ -14,3 +14,7 @@ string c = "hello world"
 
 print(add(a, b))
 print(divide(a, b))
+
+if a >= b {
+    print("a is larger")
+}

@@ -31,3 +31,4 @@ Symbol token :
 =
 <
 >
+.

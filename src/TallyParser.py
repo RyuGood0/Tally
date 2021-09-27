@@ -1,4 +1,4 @@
-from TallyTokenizer import get_next_token
+from TallyTokenizer import get_next_token, alphas, symbols
 
 text = ""
 line_num = 0
@@ -15,6 +15,7 @@ class AST:
 	
 	def rebranch(self, sub_ast, parent_node):
 		for node in sub_ast.nodes:
+			parent_node.children.append(node)
 			node.parent = parent_node
 	
 class Node:
@@ -57,19 +58,61 @@ def skip_comment(token):
 	return token
 
 def parse_token(ast, token):
+	global text
+	global line_num
 	token = skip_comment(token)
 	if token.type == "def":
-		ast = parse_function(ast, token)	
+		parse_function(ast, token)	
 	elif token.type == "id":
-		ast = parse_id(ast, token)
+		parse_id(ast, token, None)
+		token, text, line_num = get_next_token(text, line_num)
+	elif token.type == "int" or token.type == "float" or token.type == "str" or token.type == "bool":
+		modifier = token
+		token, text, line_num = get_next_token(text, line_num)
+		parse_id(ast, token, modifier)
+		token, text, line_num = get_next_token(text, line_num)
+	elif token.type in alphas:
+		parse_alphas(ast, token)
+		token, text, line_num = get_next_token(text, line_num)
+	else:
+		raise ValueError(f"Unexpected token : {token}")
+
+	return token
+
+def parse_id(ast, token, modifier):
+	global text
+	global line_num
+	id_token = token
+	id_node = Node(None, id_token)
+	if modifier != None:
+		id_node.modifiers.append(modifier)
+	token, text, line_num = get_next_token(text, line_num)
+	if token.type == "=":
+		pass
+	elif token.type == "(":
+		pass
+	elif token.type == ".":
+		pass
+	elif token.type in ["+", "-", "/", "*"]:
+		parse_equation(ast, id_token, token)
+	else:
+		raise ValueError(f"Unexpected token : {token}")
+
+	ast.nodes.append(id_node)
+
+def parse_equation(ast, id_token, token):
+	global text
+	global line_num
+	equation_tokens = [id_token, token]
+	while token.type != "lnend":
+		token, text, line_num = get_next_token(text, line_num)
+		equation_tokens.append(token)
 	
-	return ast
+	print(equation_tokens)
 
-def parse_id(ast, token):
-	return ast
-
-def parse_equation(ast, token):
-	return ast
+def parse_alphas(ast, token):
+	alphas_node = Node(None, token)
+	ast.nodes.append(alphas_node)
 
 def parse_function(ast, token):
 	global text
@@ -88,6 +131,7 @@ def parse_function(ast, token):
 		token, text, line_num = get_next_token(text, line_num)
 	else:
 		print(f"unexpected token {token.value} after def")
+		exit(1)
 
 	token = eat_token(["("])
 	arg_type = None
@@ -114,12 +158,10 @@ def parse_function(ast, token):
 
 	while token.type != "}":
 		sub_ast = AST()
-		sub_ast = parse_token(sub_ast, token)
+		token = parse_token(sub_ast, token)
 		ast.rebranch(sub_ast, def_node)
-		break
 
 	ast.nodes.append(def_node)
-	return ast
 
 def build_ast(content):
 	global text
@@ -127,8 +169,8 @@ def build_ast(content):
 	text = content
 	line_num = 1
 	ast = AST()
+	token, text, line_num = get_next_token(text, line_num)
 	while text != "":
-		token, text, line_num = get_next_token(text, line_num)
-		ast = parse_token(ast, token)
+		token = parse_token(ast, token)
 			
 	return ast

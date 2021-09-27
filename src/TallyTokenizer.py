@@ -9,7 +9,9 @@ class Token():
 	def __repr__(self):
 		return f"Token type : {self.type} of value {self.value}"
 
-metadatas = open("metadata.txt", "r")
+from os import path
+meta_path = path.realpath(__file__).rsplit('\\', 1)[0].replace('\\', '/') + "/metadata.txt"
+metadatas = open(meta_path, "r")
 
 alphas = []
 in_alphas = False
@@ -50,7 +52,7 @@ def make_token(value):
 	return Token(value, value)
 
 def skip_spaces(text, index):
-	while text[index].isspace() and text[index] != "\n":
+	while index < len(text) and text[index].isspace() and text[index] != "\n":
 		if index == len(text)-1:
 			break
 		index += 1
@@ -60,11 +62,13 @@ def get_next_token(text, line_num):
 	i = 0
 	buffer = ""
 	i = skip_spaces(text, i)
+	if not (i < len(text)):
+		return Token("lnend", "\\n"), text[i:], line_num
 	if text[i] == "\n":
 		line_num += 1
 		i += 1
-		return Token("lnend", "\\n"), text[i:], line_num
-	if text[i].isalpha() or text[i] == "_":
+		return Token("lnend", "\\n"), text[i:], line_num	
+	elif text[i].isalpha() or text[i] == "_":
 		while i < len(text) and (text[i].isalnum() or text[i] == "_"):
 			buffer += text[i]
 			i += 1

@@ -1,176 +1,79 @@
-from TallyTokenizer import get_next_token, alphas, symbols
-
-text = ""
-line_num = 0
+from test import lexer
 
 class AST:
 	def __init__(self):
-		self.nodes = []
+		self.main = Node("main")
 
-	def __repr__(self):
-		buffer = ""
-		for node in self.nodes:
-			buffer += f"Parent node {node}\n"
-		return buffer
-	
-	def rebranch(self, sub_ast, parent_node):
-		for node in sub_ast.nodes:
-			parent_node.children.append(node)
-			node.parent = parent_node
-	
+	def __repr__(self) -> str:
+		return self.main.__repr__()
+
 class Node:
-	def __init__(self, parent, token):
-		self.parent = parent
-		self.token = token
+	def __init__(self, type):
+		self.type = type
 		self.children = []
-		self.modifiers = []
-	
+
 	def __repr__(self):
-		buffer = f"Token [{self.token.type}]"
-		if len(self.modifiers) != 0:
-			buffer += f" with modifier {self.modifiers}"
-		if len(self.children) != 0:
-			buffer += f" and children {self.children}"
-		return buffer
-
-def token_error(token, expected_type):
-	global line_num
-	print(f"line {line_num} : got token {token.type}, expected {expected_type}")
-	exit(1)
-
-def eat_token(expected_types):
-	global text
-	global line_num
-	token, text, line_num = get_next_token(text, line_num)
-	if token.type in expected_types:
-		token, text, line_num = get_next_token(text, line_num)
-		return token
-	else:
-		token_error(token, expected_types)
-
-def skip_comment(token):
-	global text
-	global line_num
-	if token.type == "#" or token.type == "lnend":
-		while token.type != "lnend":
-			token, text, line_num = get_next_token(text, line_num)
-		token, text, line_num = get_next_token(text, line_num)
-	return token
-
-def parse_token(ast, token):
-	global text
-	global line_num
-	token = skip_comment(token)
-	if token.type == "def":
-		parse_function(ast, token)	
-	elif token.type == "id":
-		parse_id(ast, token, None)
-		token, text, line_num = get_next_token(text, line_num)
-	elif token.type == "int" or token.type == "float" or token.type == "str" or token.type == "bool":
-		modifier = token
-		token, text, line_num = get_next_token(text, line_num)
-		parse_id(ast, token, modifier)
-		token, text, line_num = get_next_token(text, line_num)
-	elif token.type in alphas:
-		parse_alphas(ast, token)
-		token, text, line_num = get_next_token(text, line_num)
-	else:
-		raise ValueError(f"Unexpected token : {token}")
-
-	return token
-
-def parse_id(ast, token, modifier):
-	global text
-	global line_num
-	id_token = token
-	id_node = Node(None, id_token)
-	if modifier != None:
-		id_node.modifiers.append(modifier)
-	token, text, line_num = get_next_token(text, line_num)
-	if token.type == "=":
-		pass
-	elif token.type == "(":
-		pass
-	elif token.type == ".":
-		pass
-	elif token.type in ["+", "-", "/", "*"]:
-		parse_equation(ast, id_token, token)
-	else:
-		raise ValueError(f"Unexpected token : {token}")
-
-	ast.nodes.append(id_node)
-
-def parse_equation(ast, id_token, token):
-	global text
-	global line_num
-	equation_tokens = [id_token, token]
-	while token.type != "lnend":
-		token, text, line_num = get_next_token(text, line_num)
-		equation_tokens.append(token)
-	
-	print(equation_tokens)
-
-def parse_alphas(ast, token):
-	alphas_node = Node(None, token)
-	ast.nodes.append(alphas_node)
-
-def parse_function(ast, token):
-	global text
-	global line_num
-	def_node = Node(None, token)
-	token, text, line_num = get_next_token(text, line_num)
-	if token.type == "int" or token.type == "str" or token.type == "float" or token.type == "bool":
-		def_node.modifiers.append(["type", Node(def_node, token)])
-		token, text, line_num = get_next_token(text, line_num)
-		if token.type == "id":
-			def_node.modifiers.append(["name", Node(def_node, token)])
+		if len(self.children) == 0:
+			return '<{}>'.format(self.type)
 		else:
-			token_error(token, "id")
-	elif token.type == "id":
-		def_node.modifiers.append(["name", Node(def_node, token)])
-		token, text, line_num = get_next_token(text, line_num)
-	else:
-		print(f"unexpected token {token.value} after def")
-		exit(1)
+			s = ''.join(c.__repr__() + ", " for c in self.children)
+			return f'<{self.type}> with children: ' + s[:-2]
 
-	token = eat_token(["("])
-	arg_type = None
-	while True:
-		if token.type == "id":
-			if arg_type != None:
-				node = Node(def_node, token)
-				node.modifiers.append(Node(node, arg_type))
-				def_node.modifiers.append(["arg", node])
-				arg_type = None
-			else:
-				def_node.modifiers.append(["arg", Node(def_node, token)])
-			token = eat_token([",", ")"])
-		elif token.type == "int" or token.type == "float" or token.type == "str" or token.type == "bool":
-			arg_type = token
-			token, text, line_num = get_next_token(text, line_num)
-		else:
-			break
+class BinOp(Node):
+	"""
+	Can represent any form of expression with a left and right child such as mathimatical expressions, variable assignments, etc.
+	"""
+	def __init__(self, left, op, right):
+		super().__init__('BinOp')
+		self.left = left
+		self.op = op
+		self.right = right
+
+	def __repr__(self):
+		return f'self.type: {self.left} ({self.op}) {self.right}'
+
+class FonctionCall(Node):
+	def __init__(self, name, args):
+		super().__init__('FonctionCall')
+		self.name = name
+		self.args = args
+
+def parse_expr(tokens):
+	if tokens[0].type == "NUMBER" or tokens[0].type == "ID" or tokens[0].type == "LPAREN" or tokens[0].type == "FLOAT":
+		return BinOp(tokens[0].value, tokens[1].value, tokens[2].value)
+	else:
+		raise Exception(f"Invalid token {tokens[0].value} on line {tokens[0].lineno}")
+
+def parse_id(tokens):
+	if tokens[0].type == 'ID':
+		if not (tokens[1].type == 'ASSIGN' or tokens[1].type == 'PLUS' or tokens[1].type == 'MINUS'):
+			raise Exception(f"Invalid token {tokens[1].value} on line {tokens[1].lineno}")
+		if len(tokens) == 3 and tokens[1].type == "ASSIGN":
+			return BinOp(tokens[0].value, "ASSIGN", tokens[2].value)
+		return BinOp(tokens[0].value, 'ASSIGN', parse_expr(tokens[2:]))
+	else:
+		raise Exception('Expected ID')
+
+data = open("test.ta", "r").read()
+
+lexer.input(data)
+
+ast = AST()
+tok = lexer.token()
+while True:
+	if tok.type == "ID":
+		line_tokens = [tok]
+		while True:
+			tok = lexer.token()
+			if not tok or tok.lineno != line_tokens[0].lineno:
+				break
+			line_tokens.append(tok)
+		ast.main.children.append(parse_id(line_tokens))
 	
-	if token.type != "{":
-		token = eat_token(token, "{")
-	else:
-		token, text, line_num = get_next_token(text, line_num)
+	elif tok.type == "IF":
+		pass
 
-	while token.type != "}":
-		sub_ast = AST()
-		token = parse_token(sub_ast, token)
-		ast.rebranch(sub_ast, def_node)
+	if not tok: 
+		break
 
-	ast.nodes.append(def_node)
-
-def build_ast(content):
-	global text
-	global line_num
-	text = content
-	line_num = 1
-	ast = AST()
-	token, text, line_num = get_next_token(text, line_num)
-	while text != "":
-		token = parse_token(ast, token)
-			
-	return ast
+print(ast)

@@ -104,3 +104,4 @@ Token type : " of value "
 Token type : ) of value )
 Token type : lnend of value \n
 Token type : } of value }
+Token type : EOF of value EOF

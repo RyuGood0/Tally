@@ -1,4 +1,4 @@
-from test import lexer
+from TallyTokenizer import lexer
 
 class AST:
 	def __init__(self):
@@ -30,7 +30,7 @@ class BinOp(Node):
 		self.right = right
 
 	def __repr__(self):
-		return f'self.type: {self.left} ({self.op}) {self.right}'
+		return f'{self.type}: {self.left} ({self.op}) {self.right}'
 
 class FonctionCall(Node):
 	def __init__(self, name, args):
@@ -54,7 +54,7 @@ def parse_id(tokens):
 	else:
 		raise Exception('Expected ID')
 
-data = open("test.ta", "r").read()
+data = open("tests/math.ta", "r").read()
 
 lexer.input(data)
 

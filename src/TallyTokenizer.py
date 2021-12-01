@@ -17,8 +17,8 @@ tokens = [
 	'SUB',
 	'PLUS',
 	'MINUS',
-	'TIMES',
-	'DIVIDE',
+	'MULT',
+	'DIV',
 	'LPAREN',
 	'RPAREN',
 	'LBRACE',
@@ -32,12 +32,12 @@ tokens = [
 	'ASSIGN'
 ] + list(reserved.values())
 
-t_ADD = r'\++'
+t_ADD = r'\+\+'
 t_SUB = r'--'
 t_PLUS    = r'\+'
 t_MINUS   = r'-'
-t_TIMES   = r'\*'
-t_DIVIDE  = r'/'
+t_MULT  = r'\*'
+t_DIV  = r'/'
 t_LPAREN  = r'\('
 t_RPAREN  = r'\)'
 t_ASSIGN = r'='

@@ -43,7 +43,33 @@ def parse_math(tokens):
 		if len(tokens) == 3:
 			return BinOp(tokens[0].value, tokens[1].value, tokens[2].value)
 		else:
-			print([token.value for token in tokens])
+			"""
+			Find last operation in math expression:
+			1 + 2 * 3 => BinOp(1, '+', BinOp(2, '*', 3))
+			3 *5/2 +1 => BinOp(BinOp(BinOp(3, '*', 5), '/', 2), "+", 1)
+			"""
+
+			# Find last operation in order of PEMDAS
+
+			if any(tokens[i].type == "PLUS" or tokens[i].type == "MINUS" for i in range(len(tokens))):
+				# Find last operation of type PLUS or MINUS
+				for i in range(len(tokens)):
+					if tokens[i].type == "PLUS" or tokens[i].type == "MINUS":
+						return BinOp(parse_math(tokens[:i]), tokens[i].value, parse_math(tokens[i+1:]))
+			elif any(tokens[i].type == "MULT" or tokens[i].type == "DIV" for i in range(len(tokens))):
+				# Find last operation of type MULT or DIV
+				for i in range(len(tokens)):
+					if tokens[i].type == "MULT" or tokens[i].type == "DIV":
+						return BinOp(parse_math(tokens[:i]), tokens[i].value, parse_math(tokens[i+1:]))
+			elif any(tokens[i].type == "POWER" for i in range(len(tokens))):
+				for i in range(len(tokens)):
+					if tokens[i].type == "POWER":
+						return BinOp(parse_math(tokens[:i]), tokens[i].value, parse_math(tokens[i+1:]))
+			elif any(tokens[i].type == "LPAREN" for i in range(len(tokens))):
+				# Find last LPAREN
+				return parse_math(tokens[tokens.index("LPAREN")+1:tokens.index("RPAREN")])
+			else:
+				return tokens[0].value
 	else:
 		raise Exception(f"Invalid token {tokens[0].value} on line {tokens[0].lineno}")
 

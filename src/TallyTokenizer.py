@@ -13,6 +13,8 @@ reserved = {
 tokens = [
 	'NUMBER',
 	'FLOAT',
+	'ADD',
+	'SUB',
 	'PLUS',
 	'MINUS',
 	'TIMES',
@@ -30,6 +32,8 @@ tokens = [
 	'ASSIGN'
 ] + list(reserved.values())
 
+t_ADD = r'\++'
+t_SUB = r'--'
 t_PLUS    = r'\+'
 t_MINUS   = r'-'
 t_TIMES   = r'\*'

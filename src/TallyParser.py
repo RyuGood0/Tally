@@ -38,19 +38,25 @@ class FonctionCall(Node):
 		self.name = name
 		self.args = args
 
-def parse_expr(tokens):
+def parse_math(tokens):
 	if tokens[0].type == "NUMBER" or tokens[0].type == "ID" or tokens[0].type == "LPAREN" or tokens[0].type == "FLOAT":
-		return BinOp(tokens[0].value, tokens[1].value, tokens[2].value)
+		if len(tokens) == 3:
+			return BinOp(tokens[0].value, tokens[1].value, tokens[2].value)
+		else:
+			print([token.value for token in tokens])
 	else:
 		raise Exception(f"Invalid token {tokens[0].value} on line {tokens[0].lineno}")
 
 def parse_id(tokens):
 	if tokens[0].type == 'ID':
-		if not (tokens[1].type == 'ASSIGN' or tokens[1].type == 'PLUS' or tokens[1].type == 'MINUS'):
+		if not (tokens[1].type == 'ASSIGN' or tokens[1].type == 'ADD' or tokens[1].type == 'SUB'):
 			raise Exception(f"Invalid token {tokens[1].value} on line {tokens[1].lineno}")
 		if len(tokens) == 3 and tokens[1].type == "ASSIGN":
 			return BinOp(tokens[0].value, "ASSIGN", tokens[2].value)
-		return BinOp(tokens[0].value, 'ASSIGN', parse_expr(tokens[2:]))
+		elif len(tokens) == 2 and (tokens[1].type == "ADD" or tokens[1].type == "SUB"):
+			add_bin = BinOp(tokens[0].value, "+", 1 if tokens[1].type == "ADD" else -1)
+			return BinOp(tokens[0].value, "ASSIGN", add_bin)
+		return BinOp(tokens[0].value, 'ASSIGN', parse_math(tokens[2:]))
 	else:
 		raise Exception('Expected ID')
 

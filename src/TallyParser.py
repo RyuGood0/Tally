@@ -52,24 +52,46 @@ def parse_math(tokens):
 			# Find last operation in order of PEMDAS
 
 			if any(tokens[i].type == "PLUS" or tokens[i].type == "MINUS" for i in range(len(tokens))):
-				# Find last operation of type PLUS or MINUS
-				for i in range(len(tokens)):
-					if tokens[i].type == "PLUS" or tokens[i].type == "MINUS":
+				# Find last operation of type PLUS or MINUS outside of parentheses
+				in_paren = False
+				for i in range(len(tokens)-1, 0, -1):
+					if tokens[i].type == "RPAREN":
+						in_paren = True
+					elif tokens[i].type == "LPAREN":
+						in_paren = False
+					if (tokens[i].type == "PLUS" or tokens[i].type == "MINUS") and not in_paren:
 						return BinOp(parse_math(tokens[:i]), tokens[i].value, parse_math(tokens[i+1:]))
-			elif any(tokens[i].type == "MULT" or tokens[i].type == "DIV" for i in range(len(tokens))):
-				# Find last operation of type MULT or DIV
-				for i in range(len(tokens)):
-					if tokens[i].type == "MULT" or tokens[i].type == "DIV":
+			if any(tokens[i].type == "MULT" or tokens[i].type == "DIV" for i in range(len(tokens))):
+				# Find last operation of type MULT or DIV outside of parentheses
+
+				in_paren = False
+				for i in range(len(tokens)-1, 0, -1):
+					if tokens[i].type == "RPAREN":
+						in_paren = True
+					elif tokens[i].type == "LPAREN":
+						in_paren = False
+					if (tokens[i].type == "MULT" or tokens[i].type == "DIV") and not in_paren:
 						return BinOp(parse_math(tokens[:i]), tokens[i].value, parse_math(tokens[i+1:]))
-			elif any(tokens[i].type == "POWER" for i in range(len(tokens))):
-				for i in range(len(tokens)):
-					if tokens[i].type == "POWER":
+			if any(tokens[i].type == "POWER" for i in range(len(tokens))):
+				in_paren = False
+				for i in range(len(tokens)-1, 0, -1):
+					if tokens[i].type == "RPAREN":
+						in_paren = True
+					elif tokens[i].type == "LPAREN":
+						in_paren = False
+					if tokens[i].type == "POWER" and not in_paren:
 						return BinOp(parse_math(tokens[:i]), tokens[i].value, parse_math(tokens[i+1:]))
-			elif any(tokens[i].type == "LPAREN" for i in range(len(tokens))):
-				# Find last LPAREN
-				return parse_math(tokens[tokens.index("LPAREN")+1:tokens.index("RPAREN")])
-			else:
-				return tokens[0].value
+			if any(tokens[i].type == "LPAREN" for i in range(len(tokens))):				
+				# Find last parenthesis
+				l_ind = None
+				r_ind = None
+				for i in range(len(tokens)-1, -1, -1):
+					if tokens[i].type == "RPAREN":
+						r_ind = i
+					if tokens[i].type == "LPAREN":
+						l_ind = i
+						return parse_math(tokens[l_ind+1:r_ind])
+			return tokens[0].value
 	else:
 		raise Exception(f"Invalid token {tokens[0].value} on line {tokens[0].lineno}")
 
@@ -86,6 +108,7 @@ def parse_id(tokens):
 	else:
 		raise Exception('Expected ID')
 
+# ===================== TESTING =====================
 data = open("tests/math.ta", "r").read()
 
 lexer.input(data)
@@ -109,3 +132,34 @@ while True:
 		break
 
 print(ast)
+
+from treelib import Tree
+
+def add_BinOps(tree, id, binop, depth):
+	left = binop.left
+	right = binop.right
+
+	if isinstance(left, BinOp):
+		tree.create_node(str(left), id + "l"* depth, parent=id)
+		add_BinOps(tree, id + "l"* depth, left, depth+1)
+	else:
+		tree.create_node(str(left), id + "l"* depth, parent=id)
+
+	if isinstance(right, BinOp):
+		tree.create_node(str(right), id + "r"* depth, parent=id)
+		add_BinOps(tree, id + "r"* depth, right, depth+1)
+	else:
+		tree.create_node(str(right), id + "r"* depth, parent=id)
+
+def display_AST(ast):
+	tree = Tree()
+
+	tree.create_node("MAIN", "main")
+	for i, child in enumerate(ast.main.children):
+		tree.create_node(str(child), str(i), parent="main")
+		if isinstance(child, BinOp):
+			add_BinOps(tree, str(i), child, 1)
+
+	tree.show()
+
+display_AST(ast)

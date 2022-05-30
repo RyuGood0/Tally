@@ -1,0 +1,32 @@
+{
+    "AST" : {
+        "NodeTypes" : [
+            "BinOp",
+            "VarStatement",
+            "CallStatement",
+            "IfStatement",
+            "ForStatement",
+            "WhileStatement",
+            "FunctionDeclaration"
+        ],
+        "NodesCoverage" : {
+            "BinOp" : [
+                "ADD",
+                "SUB",
+                "MUL",
+                "DIV",
+                "MOD",
+                "POW",
+                "EQ",
+                "NEQ",
+                "GT",
+                "LT",
+                "RETURN"                   
+            ]
+        }
+    },
+
+    "Implementation" : {
+
+    }
+}

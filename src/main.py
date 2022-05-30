@@ -12,7 +12,6 @@ else:
     content = file.read()
 
     ast = TallyParser.build_ast(content)
-    print(ast)
     
     if "-t" in sys.argv:
         with open(f"{file_name[:-3]}_tokens.tat", "w") as f:

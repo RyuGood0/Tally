@@ -5,14 +5,27 @@ reserved = {
 	'else' : 'ELSE',
 	'while' : 'WHILE',
 	'for' : 'FOR',
+
 	'return' : 'RETURN',
 	'break' : 'BREAK',
 	'continue' : 'CONTINUE',
+	
+	'import' : 'IMPORT',
+	'importc' : 'IMPORTC',
+
+	'string' : 'STRINGattr',
+	'int' : 'INTattr',
+	'float' : 'FLOATattr',
+	'bool' : 'BOOLattr',
+	'null' : 'NULLattr',
+
+	'def' : 'DEF'
 }
 
 tokens = [
 	'NUMBER',
 	'FLOAT',
+	'STRING',
 	'ADD',
 	'SUB',
 	'PLUS',
@@ -29,7 +42,9 @@ tokens = [
 	'GEQUAL',
 	'LEQUAL',
 	'ID',
-	'ASSIGN'
+	'ASSIGN',
+	'LNEND',
+	'COMMA'
 ] + list(reserved.values())
 
 t_ADD = r'\+\+'
@@ -48,6 +63,7 @@ t_GEQUAL = r'>='
 t_LEQUAL = r'<='
 t_LBRACE = r'\{'
 t_RBRACE = r'\}'
+t_COMMA = r','
 
 def t_NUMBER(t):
 	r'(?<![\d.])[0-9]+(?![\d.])'
@@ -59,6 +75,11 @@ def t_FLOAT(t):
 	t.value = float(t.value)
 	return t
 
+def t_STRING(t):
+	r'\"[^\"]*\"'
+	t.value = t.value[1:-1]
+	return t
+
 def t_ID(t):
 	r'[a-zA-Z_][a-zA-Z_0-9]*'
 	t.type = reserved.get(t.value,'ID')
@@ -68,9 +89,10 @@ def t_COMMENT(t):
 	r'\#.*'
 	pass
 
-def t_newline(t):
+def t_LNEND(t):
 	r'\n+'
 	t.lexer.lineno += len(t.value)
+	return t
 
 t_ignore  = ' \t'
 
@@ -78,4 +100,15 @@ def t_error(t):
 	print("Illegal character '%s'" % t.value[0])
 	t.lexer.skip(1)
 
-lexer = lex.lex()
+def get_lexer():
+	return lex.lex()
+
+def export_tokens(lexer, output):
+	token = lexer.token()
+	tokens = []
+	while token:
+		tokens.append(token)
+		token = lexer.token()
+	with open(output, "w") as f:
+		for token in tokens:
+			f.write(f"{token}\n")

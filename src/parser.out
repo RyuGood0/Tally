@@ -1,0 +1,2291 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    ADD
+    BOOL
+    BREAK
+    CLASS
+    CONST
+    CONTINUE
+    GEQUAL
+    GREATER
+    IMPORT
+    LBRACKET
+    LEQUAL
+    LESS
+    LNEND
+    RBRACKET
+    SUB
+    WHILE
+
+Grammar
+
+Rule 0     S' -> program
+Rule 1     program -> statement_list
+Rule 2     statement_list -> statement
+Rule 3     statement_list -> statement_list statement
+Rule 4     statement -> assignment
+Rule 5     statement -> function_declaration
+Rule 6     statement -> return_statement
+Rule 7     statement -> function_call
+Rule 8     statement -> if_statement
+Rule 9     statement -> for_statement
+Rule 10    function_call -> ID LPAREN RPAREN
+Rule 11    function_call -> ID LPAREN parameters RPAREN
+Rule 12    if_statement -> IF expression LBRACE statement_body RBRACE
+Rule 13    if_statement -> IF expression LBRACE statement_body RBRACE ELSE LBRACE statement_body RBRACE
+Rule 14    for_statement -> FOR expression LBRACE statement_body RBRACE
+Rule 15    assignment -> ID ASSIGN expression
+Rule 16    assignment -> FLOATattr ID ASSIGN expression
+Rule 17    assignment -> STRINGattr ID ASSIGN expression
+Rule 18    assignment -> INTattr ID ASSIGN expression
+Rule 19    assignment -> BOOLattr ID ASSIGN expression
+Rule 20    expression -> expression PLUS expression
+Rule 21    expression -> expression MINUS expression
+Rule 22    expression -> expression MULT expression
+Rule 23    expression -> expression DIV expression
+Rule 24    expression -> expression EXP expression
+Rule 25    expression -> expression EQUALS expression
+Rule 26    expression -> NUMBER
+Rule 27    expression -> STRING
+Rule 28    expression -> FLOAT
+Rule 29    expression -> ID
+Rule 30    expression -> function_call
+Rule 31    expression -> MINUS expression
+Rule 32    return_statement -> RETURN expression
+Rule 33    return_type -> INTattr
+Rule 34    return_type -> FLOATattr
+Rule 35    return_type -> STRINGattr
+Rule 36    return_type -> BOOLattr
+Rule 37    return_type -> NULL
+Rule 38    function_declaration -> DEF ID LPAREN RPAREN LBRACE statement_body RBRACE
+Rule 39    function_declaration -> DEF ID LPAREN parameters RPAREN LBRACE statement_body RBRACE
+Rule 40    function_declaration -> DEF return_type ID LPAREN RPAREN LBRACE statement_body RBRACE
+Rule 41    function_declaration -> DEF return_type ID LPAREN parameters RPAREN LBRACE statement_body RBRACE
+Rule 42    statement_body -> statement_list
+Rule 43    statement_body -> return_statement
+Rule 44    parameters -> ID
+Rule 45    parameters -> ID COMMA parameters
+
+Terminals, with rules where they appear
+
+ADD                  : 
+ASSIGN               : 15 16 17 18 19
+BOOL                 : 
+BOOLattr             : 19 36
+BREAK                : 
+CLASS                : 
+COMMA                : 45
+CONST                : 
+CONTINUE             : 
+DEF                  : 38 39 40 41
+DIV                  : 23
+ELSE                 : 13
+EQUALS               : 25
+EXP                  : 24
+FLOAT                : 28
+FLOATattr            : 16 34
+FOR                  : 14
+GEQUAL               : 
+GREATER              : 
+ID                   : 10 11 15 16 17 18 19 29 38 39 40 41 44 45
+IF                   : 12 13
+IMPORT               : 
+INTattr              : 18 33
+LBRACE               : 12 13 13 14 38 39 40 41
+LBRACKET             : 
+LEQUAL               : 
+LESS                 : 
+LNEND                : 
+LPAREN               : 10 11 38 39 40 41
+MINUS                : 21 31
+MULT                 : 22
+NULL                 : 37
+NUMBER               : 26
+PLUS                 : 20
+RBRACE               : 12 13 13 14 38 39 40 41
+RBRACKET             : 
+RETURN               : 32
+RPAREN               : 10 11 38 39 40 41
+STRING               : 27
+STRINGattr           : 17 35
+SUB                  : 
+WHILE                : 
+error                : 
+
+Nonterminals, with rules where they appear
+
+assignment           : 4
+expression           : 12 13 14 15 16 17 18 19 20 20 21 21 22 22 23 23 24 24 25 25 31 32
+for_statement        : 9
+function_call        : 7 30
+function_declaration : 5
+if_statement         : 8
+parameters           : 11 39 41 45
+program              : 0
+return_statement     : 6 43
+return_type          : 40 41
+statement            : 2 3
+statement_body       : 12 13 13 14 38 39 40 41
+statement_list       : 1 3 42
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . program
+    (1) program -> . statement_list
+    (2) statement_list -> . statement
+    (3) statement_list -> . statement_list statement
+    (4) statement -> . assignment
+    (5) statement -> . function_declaration
+    (6) statement -> . return_statement
+    (7) statement -> . function_call
+    (8) statement -> . if_statement
+    (9) statement -> . for_statement
+    (15) assignment -> . ID ASSIGN expression
+    (16) assignment -> . FLOATattr ID ASSIGN expression
+    (17) assignment -> . STRINGattr ID ASSIGN expression
+    (18) assignment -> . INTattr ID ASSIGN expression
+    (19) assignment -> . BOOLattr ID ASSIGN expression
+    (38) function_declaration -> . DEF ID LPAREN RPAREN LBRACE statement_body RBRACE
+    (39) function_declaration -> . DEF ID LPAREN parameters RPAREN LBRACE statement_body RBRACE
+    (40) function_declaration -> . DEF return_type ID LPAREN RPAREN LBRACE statement_body RBRACE
+    (41) function_declaration -> . DEF return_type ID LPAREN parameters RPAREN LBRACE statement_body RBRACE
+    (32) return_statement -> . RETURN expression
+    (10) function_call -> . ID LPAREN RPAREN
+    (11) function_call -> . ID LPAREN parameters RPAREN
+    (12) if_statement -> . IF expression LBRACE statement_body RBRACE
+    (13) if_statement -> . IF expression LBRACE statement_body RBRACE ELSE LBRACE statement_body RBRACE
+    (14) for_statement -> . FOR expression LBRACE statement_body RBRACE
+
+    ID              shift and go to state 10
+    FLOATattr       shift and go to state 11
+    STRINGattr      shift and go to state 12
+    INTattr         shift and go to state 13
+    BOOLattr        shift and go to state 14
+    DEF             shift and go to state 15
+    RETURN          shift and go to state 16
+    IF              shift and go to state 17
+    FOR             shift and go to state 18
+
+    program                        shift and go to state 1
+    statement_list                 shift and go to state 2
+    statement                      shift and go to state 3
+    assignment                     shift and go to state 4
+    function_declaration           shift and go to state 5
+    return_statement               shift and go to state 6
+    function_call                  shift and go to state 7
+    if_statement                   shift and go to state 8
+    for_statement                  shift and go to state 9
+
+state 1
+
+    (0) S' -> program .
+
+
+
+state 2
+
+    (1) program -> statement_list .
+    (3) statement_list -> statement_list . statement
+    (4) statement -> . assignment
+    (5) statement -> . function_declaration
+    (6) statement -> . return_statement
+    (7) statement -> . function_call
+    (8) statement -> . if_statement
+    (9) statement -> . for_statement
+    (15) assignment -> . ID ASSIGN expression
+    (16) assignment -> . FLOATattr ID ASSIGN expression
+    (17) assignment -> . STRINGattr ID ASSIGN expression
+    (18) assignment -> . INTattr ID ASSIGN expression
+    (19) assignment -> . BOOLattr ID ASSIGN expression
+    (38) function_declaration -> . DEF ID LPAREN RPAREN LBRACE statement_body RBRACE
+    (39) function_declaration -> . DEF ID LPAREN parameters RPAREN LBRACE statement_body RBRACE
+    (40) function_declaration -> . DEF return_type ID LPAREN RPAREN LBRACE statement_body RBRACE
+    (41) function_declaration -> . DEF return_type ID LPAREN parameters RPAREN LBRACE statement_body RBRACE
+    (32) return_statement -> . RETURN expression
+    (10) function_call -> . ID LPAREN RPAREN
+    (11) function_call -> . ID LPAREN parameters RPAREN
+    (12) if_statement -> . IF expression LBRACE statement_body RBRACE
+    (13) if_statement -> . IF expression LBRACE statement_body RBRACE ELSE LBRACE statement_body RBRACE
+    (14) for_statement -> . FOR expression LBRACE statement_body RBRACE
+
+    $end            reduce using rule 1 (program -> statement_list .)
+    ID              shift and go to state 10
+    FLOATattr       shift and go to state 11
+    STRINGattr      shift and go to state 12
+    INTattr         shift and go to state 13
+    BOOLattr        shift and go to state 14
+    DEF             shift and go to state 15
+    RETURN          shift and go to state 16
+    IF              shift and go to state 17
+    FOR             shift and go to state 18
+
+    statement                      shift and go to state 19
+    assignment                     shift and go to state 4
+    function_declaration           shift and go to state 5
+    return_statement               shift and go to state 6
+    function_call                  shift and go to state 7
+    if_statement                   shift and go to state 8
+    for_statement                  shift and go to state 9
+
+state 3
+
+    (2) statement_list -> statement .
+
+    ID              reduce using rule 2 (statement_list -> statement .)
+    FLOATattr       reduce using rule 2 (statement_list -> statement .)
+    STRINGattr      reduce using rule 2 (statement_list -> statement .)
+    INTattr         reduce using rule 2 (statement_list -> statement .)
+    BOOLattr        reduce using rule 2 (statement_list -> statement .)
+    DEF             reduce using rule 2 (statement_list -> statement .)
+    RETURN          reduce using rule 2 (statement_list -> statement .)
+    IF              reduce using rule 2 (statement_list -> statement .)
+    FOR             reduce using rule 2 (statement_list -> statement .)
+    $end            reduce using rule 2 (statement_list -> statement .)
+    RBRACE          reduce using rule 2 (statement_list -> statement .)
+
+
+state 4
+
+    (4) statement -> assignment .
+
+    ID              reduce using rule 4 (statement -> assignment .)
+    FLOATattr       reduce using rule 4 (statement -> assignment .)
+    STRINGattr      reduce using rule 4 (statement -> assignment .)
+    INTattr         reduce using rule 4 (statement -> assignment .)
+    BOOLattr        reduce using rule 4 (statement -> assignment .)
+    DEF             reduce using rule 4 (statement -> assignment .)
+    RETURN          reduce using rule 4 (statement -> assignment .)
+    IF              reduce using rule 4 (statement -> assignment .)
+    FOR             reduce using rule 4 (statement -> assignment .)
+    $end            reduce using rule 4 (statement -> assignment .)
+    RBRACE          reduce using rule 4 (statement -> assignment .)
+
+
+state 5
+
+    (5) statement -> function_declaration .
+
+    ID              reduce using rule 5 (statement -> function_declaration .)
+    FLOATattr       reduce using rule 5 (statement -> function_declaration .)
+    STRINGattr      reduce using rule 5 (statement -> function_declaration .)
+    INTattr         reduce using rule 5 (statement -> function_declaration .)
+    BOOLattr        reduce using rule 5 (statement -> function_declaration .)
+    DEF             reduce using rule 5 (statement -> function_declaration .)
+    RETURN          reduce using rule 5 (statement -> function_declaration .)
+    IF              reduce using rule 5 (statement -> function_declaration .)
+    FOR             reduce using rule 5 (statement -> function_declaration .)
+    $end            reduce using rule 5 (statement -> function_declaration .)
+    RBRACE          reduce using rule 5 (statement -> function_declaration .)
+
+
+state 6
+
+    (6) statement -> return_statement .
+
+    ID              reduce using rule 6 (statement -> return_statement .)
+    FLOATattr       reduce using rule 6 (statement -> return_statement .)
+    STRINGattr      reduce using rule 6 (statement -> return_statement .)
+    INTattr         reduce using rule 6 (statement -> return_statement .)
+    BOOLattr        reduce using rule 6 (statement -> return_statement .)
+    DEF             reduce using rule 6 (statement -> return_statement .)
+    RETURN          reduce using rule 6 (statement -> return_statement .)
+    IF              reduce using rule 6 (statement -> return_statement .)
+    FOR             reduce using rule 6 (statement -> return_statement .)
+    $end            reduce using rule 6 (statement -> return_statement .)
+    RBRACE          reduce using rule 6 (statement -> return_statement .)
+
+
+state 7
+
+    (7) statement -> function_call .
+
+    ID              reduce using rule 7 (statement -> function_call .)
+    FLOATattr       reduce using rule 7 (statement -> function_call .)
+    STRINGattr      reduce using rule 7 (statement -> function_call .)
+    INTattr         reduce using rule 7 (statement -> function_call .)
+    BOOLattr        reduce using rule 7 (statement -> function_call .)
+    DEF             reduce using rule 7 (statement -> function_call .)
+    RETURN          reduce using rule 7 (statement -> function_call .)
+    IF              reduce using rule 7 (statement -> function_call .)
+    FOR             reduce using rule 7 (statement -> function_call .)
+    $end            reduce using rule 7 (statement -> function_call .)
+    RBRACE          reduce using rule 7 (statement -> function_call .)
+
+
+state 8
+
+    (8) statement -> if_statement .
+
+    ID              reduce using rule 8 (statement -> if_statement .)
+    FLOATattr       reduce using rule 8 (statement -> if_statement .)
+    STRINGattr      reduce using rule 8 (statement -> if_statement .)
+    INTattr         reduce using rule 8 (statement -> if_statement .)
+    BOOLattr        reduce using rule 8 (statement -> if_statement .)
+    DEF             reduce using rule 8 (statement -> if_statement .)
+    RETURN          reduce using rule 8 (statement -> if_statement .)
+    IF              reduce using rule 8 (statement -> if_statement .)
+    FOR             reduce using rule 8 (statement -> if_statement .)
+    $end            reduce using rule 8 (statement -> if_statement .)
+    RBRACE          reduce using rule 8 (statement -> if_statement .)
+
+
+state 9
+
+    (9) statement -> for_statement .
+
+    ID              reduce using rule 9 (statement -> for_statement .)
+    FLOATattr       reduce using rule 9 (statement -> for_statement .)
+    STRINGattr      reduce using rule 9 (statement -> for_statement .)
+    INTattr         reduce using rule 9 (statement -> for_statement .)
+    BOOLattr        reduce using rule 9 (statement -> for_statement .)
+    DEF             reduce using rule 9 (statement -> for_statement .)
+    RETURN          reduce using rule 9 (statement -> for_statement .)
+    IF              reduce using rule 9 (statement -> for_statement .)
+    FOR             reduce using rule 9 (statement -> for_statement .)
+    $end            reduce using rule 9 (statement -> for_statement .)
+    RBRACE          reduce using rule 9 (statement -> for_statement .)
+
+
+state 10
+
+    (15) assignment -> ID . ASSIGN expression
+    (10) function_call -> ID . LPAREN RPAREN
+    (11) function_call -> ID . LPAREN parameters RPAREN
+
+    ASSIGN          shift and go to state 20
+    LPAREN          shift and go to state 21
+
+
+state 11
+
+    (16) assignment -> FLOATattr . ID ASSIGN expression
+
+    ID              shift and go to state 22
+
+
+state 12
+
+    (17) assignment -> STRINGattr . ID ASSIGN expression
+
+    ID              shift and go to state 23
+
+
+state 13
+
+    (18) assignment -> INTattr . ID ASSIGN expression
+
+    ID              shift and go to state 24
+
+
+state 14
+
+    (19) assignment -> BOOLattr . ID ASSIGN expression
+
+    ID              shift and go to state 25
+
+
+state 15
+
+    (38) function_declaration -> DEF . ID LPAREN RPAREN LBRACE statement_body RBRACE
+    (39) function_declaration -> DEF . ID LPAREN parameters RPAREN LBRACE statement_body RBRACE
+    (40) function_declaration -> DEF . return_type ID LPAREN RPAREN LBRACE statement_body RBRACE
+    (41) function_declaration -> DEF . return_type ID LPAREN parameters RPAREN LBRACE statement_body RBRACE
+    (33) return_type -> . INTattr
+    (34) return_type -> . FLOATattr
+    (35) return_type -> . STRINGattr
+    (36) return_type -> . BOOLattr
+    (37) return_type -> . NULL
+
+    ID              shift and go to state 26
+    INTattr         shift and go to state 28
+    FLOATattr       shift and go to state 29
+    STRINGattr      shift and go to state 30
+    BOOLattr        shift and go to state 31
+    NULL            shift and go to state 32
+
+    return_type                    shift and go to state 27
+
+state 16
+
+    (32) return_statement -> RETURN . expression
+    (20) expression -> . expression PLUS expression
+    (21) expression -> . expression MINUS expression
+    (22) expression -> . expression MULT expression
+    (23) expression -> . expression DIV expression
+    (24) expression -> . expression EXP expression
+    (25) expression -> . expression EQUALS expression
+    (26) expression -> . NUMBER
+    (27) expression -> . STRING
+    (28) expression -> . FLOAT
+    (29) expression -> . ID
+    (30) expression -> . function_call
+    (31) expression -> . MINUS expression
+    (10) function_call -> . ID LPAREN RPAREN
+    (11) function_call -> . ID LPAREN parameters RPAREN
+
+    NUMBER          shift and go to state 35
+    STRING          shift and go to state 36
+    FLOAT           shift and go to state 37
+    ID              shift and go to state 38
+    MINUS           shift and go to state 34
+
+    expression                     shift and go to state 33
+    function_call                  shift and go to state 39
+
+state 17
+
+    (12) if_statement -> IF . expression LBRACE statement_body RBRACE
+    (13) if_statement -> IF . expression LBRACE statement_body RBRACE ELSE LBRACE statement_body RBRACE
+    (20) expression -> . expression PLUS expression
+    (21) expression -> . expression MINUS expression
+    (22) expression -> . expression MULT expression
+    (23) expression -> . expression DIV expression
+    (24) expression -> . expression EXP expression
+    (25) expression -> . expression EQUALS expression
+    (26) expression -> . NUMBER
+    (27) expression -> . STRING
+    (28) expression -> . FLOAT
+    (29) expression -> . ID
+    (30) expression -> . function_call
+    (31) expression -> . MINUS expression
+    (10) function_call -> . ID LPAREN RPAREN
+    (11) function_call -> . ID LPAREN parameters RPAREN
+
+    NUMBER          shift and go to state 35
+    STRING          shift and go to state 36
+    FLOAT           shift and go to state 37
+    ID              shift and go to state 38
+    MINUS           shift and go to state 34
+
+    expression                     shift and go to state 40
+    function_call                  shift and go to state 39
+
+state 18
+
+    (14) for_statement -> FOR . expression LBRACE statement_body RBRACE
+    (20) expression -> . expression PLUS expression
+    (21) expression -> . expression MINUS expression
+    (22) expression -> . expression MULT expression
+    (23) expression -> . expression DIV expression
+    (24) expression -> . expression EXP expression
+    (25) expression -> . expression EQUALS expression
+    (26) expression -> . NUMBER
+    (27) expression -> . STRING
+    (28) expression -> . FLOAT
+    (29) expression -> . ID
+    (30) expression -> . function_call
+    (31) expression -> . MINUS expression
+    (10) function_call -> . ID LPAREN RPAREN
+    (11) function_call -> . ID LPAREN parameters RPAREN
+
+    NUMBER          shift and go to state 35
+    STRING          shift and go to state 36
+    FLOAT           shift and go to state 37
+    ID              shift and go to state 38
+    MINUS           shift and go to state 34
+
+    expression                     shift and go to state 41
+    function_call                  shift and go to state 39
+
+state 19
+
+    (3) statement_list -> statement_list statement .
+
+    ID              reduce using rule 3 (statement_list -> statement_list statement .)
+    FLOATattr       reduce using rule 3 (statement_list -> statement_list statement .)
+    STRINGattr      reduce using rule 3 (statement_list -> statement_list statement .)
+    INTattr         reduce using rule 3 (statement_list -> statement_list statement .)
+    BOOLattr        reduce using rule 3 (statement_list -> statement_list statement .)
+    DEF             reduce using rule 3 (statement_list -> statement_list statement .)
+    RETURN          reduce using rule 3 (statement_list -> statement_list statement .)
+    IF              reduce using rule 3 (statement_list -> statement_list statement .)
+    FOR             reduce using rule 3 (statement_list -> statement_list statement .)
+    $end            reduce using rule 3 (statement_list -> statement_list statement .)
+    RBRACE          reduce using rule 3 (statement_list -> statement_list statement .)
+
+
+state 20
+
+    (15) assignment -> ID ASSIGN . expression
+    (20) expression -> . expression PLUS expression
+    (21) expression -> . expression MINUS expression
+    (22) expression -> . expression MULT expression
+    (23) expression -> . expression DIV expression
+    (24) expression -> . expression EXP expression
+    (25) expression -> . expression EQUALS expression
+    (26) expression -> . NUMBER
+    (27) expression -> . STRING
+    (28) expression -> . FLOAT
+    (29) expression -> . ID
+    (30) expression -> . function_call
+    (31) expression -> . MINUS expression
+    (10) function_call -> . ID LPAREN RPAREN
+    (11) function_call -> . ID LPAREN parameters RPAREN
+
+    NUMBER          shift and go to state 35
+    STRING          shift and go to state 36
+    FLOAT           shift and go to state 37
+    ID              shift and go to state 38
+    MINUS           shift and go to state 34
+
+    expression                     shift and go to state 42
+    function_call                  shift and go to state 39
+
+state 21
+
+    (10) function_call -> ID LPAREN . RPAREN
+    (11) function_call -> ID LPAREN . parameters RPAREN
+    (44) parameters -> . ID
+    (45) parameters -> . ID COMMA parameters
+
+    RPAREN          shift and go to state 44
+    ID              shift and go to state 43
+
+    parameters                     shift and go to state 45
+
+state 22
+
+    (16) assignment -> FLOATattr ID . ASSIGN expression
+
+    ASSIGN          shift and go to state 46
+
+
+state 23
+
+    (17) assignment -> STRINGattr ID . ASSIGN expression
+
+    ASSIGN          shift and go to state 47
+
+
+state 24
+
+    (18) assignment -> INTattr ID . ASSIGN expression
+
+    ASSIGN          shift and go to state 48
+
+
+state 25
+
+    (19) assignment -> BOOLattr ID . ASSIGN expression
+
+    ASSIGN          shift and go to state 49
+
+
+state 26
+
+    (38) function_declaration -> DEF ID . LPAREN RPAREN LBRACE statement_body RBRACE
+    (39) function_declaration -> DEF ID . LPAREN parameters RPAREN LBRACE statement_body RBRACE
+
+    LPAREN          shift and go to state 50
+
+
+state 27
+
+    (40) function_declaration -> DEF return_type . ID LPAREN RPAREN LBRACE statement_body RBRACE
+    (41) function_declaration -> DEF return_type . ID LPAREN parameters RPAREN LBRACE statement_body RBRACE
+
+    ID              shift and go to state 51
+
+
+state 28
+
+    (33) return_type -> INTattr .
+
+    ID              reduce using rule 33 (return_type -> INTattr .)
+
+
+state 29
+
+    (34) return_type -> FLOATattr .
+
+    ID              reduce using rule 34 (return_type -> FLOATattr .)
+
+
+state 30
+
+    (35) return_type -> STRINGattr .
+
+    ID              reduce using rule 35 (return_type -> STRINGattr .)
+
+
+state 31
+
+    (36) return_type -> BOOLattr .
+
+    ID              reduce using rule 36 (return_type -> BOOLattr .)
+
+
+state 32
+
+    (37) return_type -> NULL .
+
+    ID              reduce using rule 37 (return_type -> NULL .)
+
+
+state 33
+
+    (32) return_statement -> RETURN expression .
+    (20) expression -> expression . PLUS expression
+    (21) expression -> expression . MINUS expression
+    (22) expression -> expression . MULT expression
+    (23) expression -> expression . DIV expression
+    (24) expression -> expression . EXP expression
+    (25) expression -> expression . EQUALS expression
+
+    ID              reduce using rule 32 (return_statement -> RETURN expression .)
+    FLOATattr       reduce using rule 32 (return_statement -> RETURN expression .)
+    STRINGattr      reduce using rule 32 (return_statement -> RETURN expression .)
+    INTattr         reduce using rule 32 (return_statement -> RETURN expression .)
+    BOOLattr        reduce using rule 32 (return_statement -> RETURN expression .)
+    DEF             reduce using rule 32 (return_statement -> RETURN expression .)
+    RETURN          reduce using rule 32 (return_statement -> RETURN expression .)
+    IF              reduce using rule 32 (return_statement -> RETURN expression .)
+    FOR             reduce using rule 32 (return_statement -> RETURN expression .)
+    $end            reduce using rule 32 (return_statement -> RETURN expression .)
+    RBRACE          reduce using rule 32 (return_statement -> RETURN expression .)
+    PLUS            shift and go to state 52
+    MINUS           shift and go to state 53
+    MULT            shift and go to state 54
+    DIV             shift and go to state 55
+    EXP             shift and go to state 56
+    EQUALS          shift and go to state 57
+
+
+state 34
+
+    (31) expression -> MINUS . expression
+    (20) expression -> . expression PLUS expression
+    (21) expression -> . expression MINUS expression
+    (22) expression -> . expression MULT expression
+    (23) expression -> . expression DIV expression
+    (24) expression -> . expression EXP expression
+    (25) expression -> . expression EQUALS expression
+    (26) expression -> . NUMBER
+    (27) expression -> . STRING
+    (28) expression -> . FLOAT
+    (29) expression -> . ID
+    (30) expression -> . function_call
+    (31) expression -> . MINUS expression
+    (10) function_call -> . ID LPAREN RPAREN
+    (11) function_call -> . ID LPAREN parameters RPAREN
+
+    NUMBER          shift and go to state 35
+    STRING          shift and go to state 36
+    FLOAT           shift and go to state 37
+    ID              shift and go to state 38
+    MINUS           shift and go to state 34
+
+    expression                     shift and go to state 58
+    function_call                  shift and go to state 39
+
+state 35
+
+    (26) expression -> NUMBER .
+
+    PLUS            reduce using rule 26 (expression -> NUMBER .)
+    MINUS           reduce using rule 26 (expression -> NUMBER .)
+    MULT            reduce using rule 26 (expression -> NUMBER .)
+    DIV             reduce using rule 26 (expression -> NUMBER .)
+    EXP             reduce using rule 26 (expression -> NUMBER .)
+    EQUALS          reduce using rule 26 (expression -> NUMBER .)
+    ID              reduce using rule 26 (expression -> NUMBER .)
+    FLOATattr       reduce using rule 26 (expression -> NUMBER .)
+    STRINGattr      reduce using rule 26 (expression -> NUMBER .)
+    INTattr         reduce using rule 26 (expression -> NUMBER .)
+    BOOLattr        reduce using rule 26 (expression -> NUMBER .)
+    DEF             reduce using rule 26 (expression -> NUMBER .)
+    RETURN          reduce using rule 26 (expression -> NUMBER .)
+    IF              reduce using rule 26 (expression -> NUMBER .)
+    FOR             reduce using rule 26 (expression -> NUMBER .)
+    $end            reduce using rule 26 (expression -> NUMBER .)
+    RBRACE          reduce using rule 26 (expression -> NUMBER .)
+    LBRACE          reduce using rule 26 (expression -> NUMBER .)
+
+
+state 36
+
+    (27) expression -> STRING .
+
+    PLUS            reduce using rule 27 (expression -> STRING .)
+    MINUS           reduce using rule 27 (expression -> STRING .)
+    MULT            reduce using rule 27 (expression -> STRING .)
+    DIV             reduce using rule 27 (expression -> STRING .)
+    EXP             reduce using rule 27 (expression -> STRING .)
+    EQUALS          reduce using rule 27 (expression -> STRING .)
+    ID              reduce using rule 27 (expression -> STRING .)
+    FLOATattr       reduce using rule 27 (expression -> STRING .)
+    STRINGattr      reduce using rule 27 (expression -> STRING .)
+    INTattr         reduce using rule 27 (expression -> STRING .)
+    BOOLattr        reduce using rule 27 (expression -> STRING .)
+    DEF             reduce using rule 27 (expression -> STRING .)
+    RETURN          reduce using rule 27 (expression -> STRING .)
+    IF              reduce using rule 27 (expression -> STRING .)
+    FOR             reduce using rule 27 (expression -> STRING .)
+    $end            reduce using rule 27 (expression -> STRING .)
+    RBRACE          reduce using rule 27 (expression -> STRING .)
+    LBRACE          reduce using rule 27 (expression -> STRING .)
+
+
+state 37
+
+    (28) expression -> FLOAT .
+
+    PLUS            reduce using rule 28 (expression -> FLOAT .)
+    MINUS           reduce using rule 28 (expression -> FLOAT .)
+    MULT            reduce using rule 28 (expression -> FLOAT .)
+    DIV             reduce using rule 28 (expression -> FLOAT .)
+    EXP             reduce using rule 28 (expression -> FLOAT .)
+    EQUALS          reduce using rule 28 (expression -> FLOAT .)
+    ID              reduce using rule 28 (expression -> FLOAT .)
+    FLOATattr       reduce using rule 28 (expression -> FLOAT .)
+    STRINGattr      reduce using rule 28 (expression -> FLOAT .)
+    INTattr         reduce using rule 28 (expression -> FLOAT .)
+    BOOLattr        reduce using rule 28 (expression -> FLOAT .)
+    DEF             reduce using rule 28 (expression -> FLOAT .)
+    RETURN          reduce using rule 28 (expression -> FLOAT .)
+    IF              reduce using rule 28 (expression -> FLOAT .)
+    FOR             reduce using rule 28 (expression -> FLOAT .)
+    $end            reduce using rule 28 (expression -> FLOAT .)
+    RBRACE          reduce using rule 28 (expression -> FLOAT .)
+    LBRACE          reduce using rule 28 (expression -> FLOAT .)
+
+
+state 38
+
+    (29) expression -> ID .
+    (10) function_call -> ID . LPAREN RPAREN
+    (11) function_call -> ID . LPAREN parameters RPAREN
+
+    PLUS            reduce using rule 29 (expression -> ID .)
+    MINUS           reduce using rule 29 (expression -> ID .)
+    MULT            reduce using rule 29 (expression -> ID .)
+    DIV             reduce using rule 29 (expression -> ID .)
+    EXP             reduce using rule 29 (expression -> ID .)
+    EQUALS          reduce using rule 29 (expression -> ID .)
+    ID              reduce using rule 29 (expression -> ID .)
+    FLOATattr       reduce using rule 29 (expression -> ID .)
+    STRINGattr      reduce using rule 29 (expression -> ID .)
+    INTattr         reduce using rule 29 (expression -> ID .)
+    BOOLattr        reduce using rule 29 (expression -> ID .)
+    DEF             reduce using rule 29 (expression -> ID .)
+    RETURN          reduce using rule 29 (expression -> ID .)
+    IF              reduce using rule 29 (expression -> ID .)
+    FOR             reduce using rule 29 (expression -> ID .)
+    $end            reduce using rule 29 (expression -> ID .)
+    RBRACE          reduce using rule 29 (expression -> ID .)
+    LBRACE          reduce using rule 29 (expression -> ID .)
+    LPAREN          shift and go to state 21
+
+
+state 39
+
+    (30) expression -> function_call .
+
+    PLUS            reduce using rule 30 (expression -> function_call .)
+    MINUS           reduce using rule 30 (expression -> function_call .)
+    MULT            reduce using rule 30 (expression -> function_call .)
+    DIV             reduce using rule 30 (expression -> function_call .)
+    EXP             reduce using rule 30 (expression -> function_call .)
+    EQUALS          reduce using rule 30 (expression -> function_call .)
+    ID              reduce using rule 30 (expression -> function_call .)
+    FLOATattr       reduce using rule 30 (expression -> function_call .)
+    STRINGattr      reduce using rule 30 (expression -> function_call .)
+    INTattr         reduce using rule 30 (expression -> function_call .)
+    BOOLattr        reduce using rule 30 (expression -> function_call .)
+    DEF             reduce using rule 30 (expression -> function_call .)
+    RETURN          reduce using rule 30 (expression -> function_call .)
+    IF              reduce using rule 30 (expression -> function_call .)
+    FOR             reduce using rule 30 (expression -> function_call .)
+    $end            reduce using rule 30 (expression -> function_call .)
+    RBRACE          reduce using rule 30 (expression -> function_call .)
+    LBRACE          reduce using rule 30 (expression -> function_call .)
+
+
+state 40
+
+    (12) if_statement -> IF expression . LBRACE statement_body RBRACE
+    (13) if_statement -> IF expression . LBRACE statement_body RBRACE ELSE LBRACE statement_body RBRACE
+    (20) expression -> expression . PLUS expression
+    (21) expression -> expression . MINUS expression
+    (22) expression -> expression . MULT expression
+    (23) expression -> expression . DIV expression
+    (24) expression -> expression . EXP expression
+    (25) expression -> expression . EQUALS expression
+
+    LBRACE          shift and go to state 59
+    PLUS            shift and go to state 52
+    MINUS           shift and go to state 53
+    MULT            shift and go to state 54
+    DIV             shift and go to state 55
+    EXP             shift and go to state 56
+    EQUALS          shift and go to state 57
+
+
+state 41
+
+    (14) for_statement -> FOR expression . LBRACE statement_body RBRACE
+    (20) expression -> expression . PLUS expression
+    (21) expression -> expression . MINUS expression
+    (22) expression -> expression . MULT expression
+    (23) expression -> expression . DIV expression
+    (24) expression -> expression . EXP expression
+    (25) expression -> expression . EQUALS expression
+
+    LBRACE          shift and go to state 60
+    PLUS            shift and go to state 52
+    MINUS           shift and go to state 53
+    MULT            shift and go to state 54
+    DIV             shift and go to state 55
+    EXP             shift and go to state 56
+    EQUALS          shift and go to state 57
+
+
+state 42
+
+    (15) assignment -> ID ASSIGN expression .
+    (20) expression -> expression . PLUS expression
+    (21) expression -> expression . MINUS expression
+    (22) expression -> expression . MULT expression
+    (23) expression -> expression . DIV expression
+    (24) expression -> expression . EXP expression
+    (25) expression -> expression . EQUALS expression
+
+    ID              reduce using rule 15 (assignment -> ID ASSIGN expression .)
+    FLOATattr       reduce using rule 15 (assignment -> ID ASSIGN expression .)
+    STRINGattr      reduce using rule 15 (assignment -> ID ASSIGN expression .)
+    INTattr         reduce using rule 15 (assignment -> ID ASSIGN expression .)
+    BOOLattr        reduce using rule 15 (assignment -> ID ASSIGN expression .)
+    DEF             reduce using rule 15 (assignment -> ID ASSIGN expression .)
+    RETURN          reduce using rule 15 (assignment -> ID ASSIGN expression .)
+    IF              reduce using rule 15 (assignment -> ID ASSIGN expression .)
+    FOR             reduce using rule 15 (assignment -> ID ASSIGN expression .)
+    $end            reduce using rule 15 (assignment -> ID ASSIGN expression .)
+    RBRACE          reduce using rule 15 (assignment -> ID ASSIGN expression .)
+    PLUS            shift and go to state 52
+    MINUS           shift and go to state 53
+    MULT            shift and go to state 54
+    DIV             shift and go to state 55
+    EXP             shift and go to state 56
+    EQUALS          shift and go to state 57
+
+
+state 43
+
+    (44) parameters -> ID .
+    (45) parameters -> ID . COMMA parameters
+
+    RPAREN          reduce using rule 44 (parameters -> ID .)
+    COMMA           shift and go to state 61
+
+
+state 44
+
+    (10) function_call -> ID LPAREN RPAREN .
+
+    ID              reduce using rule 10 (function_call -> ID LPAREN RPAREN .)
+    FLOATattr       reduce using rule 10 (function_call -> ID LPAREN RPAREN .)
+    STRINGattr      reduce using rule 10 (function_call -> ID LPAREN RPAREN .)
+    INTattr         reduce using rule 10 (function_call -> ID LPAREN RPAREN .)
+    BOOLattr        reduce using rule 10 (function_call -> ID LPAREN RPAREN .)
+    DEF             reduce using rule 10 (function_call -> ID LPAREN RPAREN .)
+    RETURN          reduce using rule 10 (function_call -> ID LPAREN RPAREN .)
+    IF              reduce using rule 10 (function_call -> ID LPAREN RPAREN .)
+    FOR             reduce using rule 10 (function_call -> ID LPAREN RPAREN .)
+    $end            reduce using rule 10 (function_call -> ID LPAREN RPAREN .)
+    PLUS            reduce using rule 10 (function_call -> ID LPAREN RPAREN .)
+    MINUS           reduce using rule 10 (function_call -> ID LPAREN RPAREN .)
+    MULT            reduce using rule 10 (function_call -> ID LPAREN RPAREN .)
+    DIV             reduce using rule 10 (function_call -> ID LPAREN RPAREN .)
+    EXP             reduce using rule 10 (function_call -> ID LPAREN RPAREN .)
+    EQUALS          reduce using rule 10 (function_call -> ID LPAREN RPAREN .)
+    RBRACE          reduce using rule 10 (function_call -> ID LPAREN RPAREN .)
+    LBRACE          reduce using rule 10 (function_call -> ID LPAREN RPAREN .)
+
+
+state 45
+
+    (11) function_call -> ID LPAREN parameters . RPAREN
+
+    RPAREN          shift and go to state 62
+
+
+state 46
+
+    (16) assignment -> FLOATattr ID ASSIGN . expression
+    (20) expression -> . expression PLUS expression
+    (21) expression -> . expression MINUS expression
+    (22) expression -> . expression MULT expression
+    (23) expression -> . expression DIV expression
+    (24) expression -> . expression EXP expression
+    (25) expression -> . expression EQUALS expression
+    (26) expression -> . NUMBER
+    (27) expression -> . STRING
+    (28) expression -> . FLOAT
+    (29) expression -> . ID
+    (30) expression -> . function_call
+    (31) expression -> . MINUS expression
+    (10) function_call -> . ID LPAREN RPAREN
+    (11) function_call -> . ID LPAREN parameters RPAREN
+
+    NUMBER          shift and go to state 35
+    STRING          shift and go to state 36
+    FLOAT           shift and go to state 37
+    ID              shift and go to state 38
+    MINUS           shift and go to state 34
+
+    expression                     shift and go to state 63
+    function_call                  shift and go to state 39
+
+state 47
+
+    (17) assignment -> STRINGattr ID ASSIGN . expression
+    (20) expression -> . expression PLUS expression
+    (21) expression -> . expression MINUS expression
+    (22) expression -> . expression MULT expression
+    (23) expression -> . expression DIV expression
+    (24) expression -> . expression EXP expression
+    (25) expression -> . expression EQUALS expression
+    (26) expression -> . NUMBER
+    (27) expression -> . STRING
+    (28) expression -> . FLOAT
+    (29) expression -> . ID
+    (30) expression -> . function_call
+    (31) expression -> . MINUS expression
+    (10) function_call -> . ID LPAREN RPAREN
+    (11) function_call -> . ID LPAREN parameters RPAREN
+
+    NUMBER          shift and go to state 35
+    STRING          shift and go to state 36
+    FLOAT           shift and go to state 37
+    ID              shift and go to state 38
+    MINUS           shift and go to state 34
+
+    expression                     shift and go to state 64
+    function_call                  shift and go to state 39
+
+state 48
+
+    (18) assignment -> INTattr ID ASSIGN . expression
+    (20) expression -> . expression PLUS expression
+    (21) expression -> . expression MINUS expression
+    (22) expression -> . expression MULT expression
+    (23) expression -> . expression DIV expression
+    (24) expression -> . expression EXP expression
+    (25) expression -> . expression EQUALS expression
+    (26) expression -> . NUMBER
+    (27) expression -> . STRING
+    (28) expression -> . FLOAT
+    (29) expression -> . ID
+    (30) expression -> . function_call
+    (31) expression -> . MINUS expression
+    (10) function_call -> . ID LPAREN RPAREN
+    (11) function_call -> . ID LPAREN parameters RPAREN
+
+    NUMBER          shift and go to state 35
+    STRING          shift and go to state 36
+    FLOAT           shift and go to state 37
+    ID              shift and go to state 38
+    MINUS           shift and go to state 34
+
+    expression                     shift and go to state 65
+    function_call                  shift and go to state 39
+
+state 49
+
+    (19) assignment -> BOOLattr ID ASSIGN . expression
+    (20) expression -> . expression PLUS expression
+    (21) expression -> . expression MINUS expression
+    (22) expression -> . expression MULT expression
+    (23) expression -> . expression DIV expression
+    (24) expression -> . expression EXP expression
+    (25) expression -> . expression EQUALS expression
+    (26) expression -> . NUMBER
+    (27) expression -> . STRING
+    (28) expression -> . FLOAT
+    (29) expression -> . ID
+    (30) expression -> . function_call
+    (31) expression -> . MINUS expression
+    (10) function_call -> . ID LPAREN RPAREN
+    (11) function_call -> . ID LPAREN parameters RPAREN
+
+    NUMBER          shift and go to state 35
+    STRING          shift and go to state 36
+    FLOAT           shift and go to state 37
+    ID              shift and go to state 38
+    MINUS           shift and go to state 34
+
+    expression                     shift and go to state 66
+    function_call                  shift and go to state 39
+
+state 50
+
+    (38) function_declaration -> DEF ID LPAREN . RPAREN LBRACE statement_body RBRACE
+    (39) function_declaration -> DEF ID LPAREN . parameters RPAREN LBRACE statement_body RBRACE
+    (44) parameters -> . ID
+    (45) parameters -> . ID COMMA parameters
+
+    RPAREN          shift and go to state 67
+    ID              shift and go to state 43
+
+    parameters                     shift and go to state 68
+
+state 51
+
+    (40) function_declaration -> DEF return_type ID . LPAREN RPAREN LBRACE statement_body RBRACE
+    (41) function_declaration -> DEF return_type ID . LPAREN parameters RPAREN LBRACE statement_body RBRACE
+
+    LPAREN          shift and go to state 69
+
+
+state 52
+
+    (20) expression -> expression PLUS . expression
+    (20) expression -> . expression PLUS expression
+    (21) expression -> . expression MINUS expression
+    (22) expression -> . expression MULT expression
+    (23) expression -> . expression DIV expression
+    (24) expression -> . expression EXP expression
+    (25) expression -> . expression EQUALS expression
+    (26) expression -> . NUMBER
+    (27) expression -> . STRING
+    (28) expression -> . FLOAT
+    (29) expression -> . ID
+    (30) expression -> . function_call
+    (31) expression -> . MINUS expression
+    (10) function_call -> . ID LPAREN RPAREN
+    (11) function_call -> . ID LPAREN parameters RPAREN
+
+    NUMBER          shift and go to state 35
+    STRING          shift and go to state 36
+    FLOAT           shift and go to state 37
+    ID              shift and go to state 38
+    MINUS           shift and go to state 34
+
+    expression                     shift and go to state 70
+    function_call                  shift and go to state 39
+
+state 53
+
+    (21) expression -> expression MINUS . expression
+    (20) expression -> . expression PLUS expression
+    (21) expression -> . expression MINUS expression
+    (22) expression -> . expression MULT expression
+    (23) expression -> . expression DIV expression
+    (24) expression -> . expression EXP expression
+    (25) expression -> . expression EQUALS expression
+    (26) expression -> . NUMBER
+    (27) expression -> . STRING
+    (28) expression -> . FLOAT
+    (29) expression -> . ID
+    (30) expression -> . function_call
+    (31) expression -> . MINUS expression
+    (10) function_call -> . ID LPAREN RPAREN
+    (11) function_call -> . ID LPAREN parameters RPAREN
+
+    NUMBER          shift and go to state 35
+    STRING          shift and go to state 36
+    FLOAT           shift and go to state 37
+    ID              shift and go to state 38
+    MINUS           shift and go to state 34
+
+    expression                     shift and go to state 71
+    function_call                  shift and go to state 39
+
+state 54
+
+    (22) expression -> expression MULT . expression
+    (20) expression -> . expression PLUS expression
+    (21) expression -> . expression MINUS expression
+    (22) expression -> . expression MULT expression
+    (23) expression -> . expression DIV expression
+    (24) expression -> . expression EXP expression
+    (25) expression -> . expression EQUALS expression
+    (26) expression -> . NUMBER
+    (27) expression -> . STRING
+    (28) expression -> . FLOAT
+    (29) expression -> . ID
+    (30) expression -> . function_call
+    (31) expression -> . MINUS expression
+    (10) function_call -> . ID LPAREN RPAREN
+    (11) function_call -> . ID LPAREN parameters RPAREN
+
+    NUMBER          shift and go to state 35
+    STRING          shift and go to state 36
+    FLOAT           shift and go to state 37
+    ID              shift and go to state 38
+    MINUS           shift and go to state 34
+
+    expression                     shift and go to state 72
+    function_call                  shift and go to state 39
+
+state 55
+
+    (23) expression -> expression DIV . expression
+    (20) expression -> . expression PLUS expression
+    (21) expression -> . expression MINUS expression
+    (22) expression -> . expression MULT expression
+    (23) expression -> . expression DIV expression
+    (24) expression -> . expression EXP expression
+    (25) expression -> . expression EQUALS expression
+    (26) expression -> . NUMBER
+    (27) expression -> . STRING
+    (28) expression -> . FLOAT
+    (29) expression -> . ID
+    (30) expression -> . function_call
+    (31) expression -> . MINUS expression
+    (10) function_call -> . ID LPAREN RPAREN
+    (11) function_call -> . ID LPAREN parameters RPAREN
+
+    NUMBER          shift and go to state 35
+    STRING          shift and go to state 36
+    FLOAT           shift and go to state 37
+    ID              shift and go to state 38
+    MINUS           shift and go to state 34
+
+    expression                     shift and go to state 73
+    function_call                  shift and go to state 39
+
+state 56
+
+    (24) expression -> expression EXP . expression
+    (20) expression -> . expression PLUS expression
+    (21) expression -> . expression MINUS expression
+    (22) expression -> . expression MULT expression
+    (23) expression -> . expression DIV expression
+    (24) expression -> . expression EXP expression
+    (25) expression -> . expression EQUALS expression
+    (26) expression -> . NUMBER
+    (27) expression -> . STRING
+    (28) expression -> . FLOAT
+    (29) expression -> . ID
+    (30) expression -> . function_call
+    (31) expression -> . MINUS expression
+    (10) function_call -> . ID LPAREN RPAREN
+    (11) function_call -> . ID LPAREN parameters RPAREN
+
+    NUMBER          shift and go to state 35
+    STRING          shift and go to state 36
+    FLOAT           shift and go to state 37
+    ID              shift and go to state 38
+    MINUS           shift and go to state 34
+
+    expression                     shift and go to state 74
+    function_call                  shift and go to state 39
+
+state 57
+
+    (25) expression -> expression EQUALS . expression
+    (20) expression -> . expression PLUS expression
+    (21) expression -> . expression MINUS expression
+    (22) expression -> . expression MULT expression
+    (23) expression -> . expression DIV expression
+    (24) expression -> . expression EXP expression
+    (25) expression -> . expression EQUALS expression
+    (26) expression -> . NUMBER
+    (27) expression -> . STRING
+    (28) expression -> . FLOAT
+    (29) expression -> . ID
+    (30) expression -> . function_call
+    (31) expression -> . MINUS expression
+    (10) function_call -> . ID LPAREN RPAREN
+    (11) function_call -> . ID LPAREN parameters RPAREN
+
+    NUMBER          shift and go to state 35
+    STRING          shift and go to state 36
+    FLOAT           shift and go to state 37
+    ID              shift and go to state 38
+    MINUS           shift and go to state 34
+
+    expression                     shift and go to state 75
+    function_call                  shift and go to state 39
+
+state 58
+
+    (31) expression -> MINUS expression .
+    (20) expression -> expression . PLUS expression
+    (21) expression -> expression . MINUS expression
+    (22) expression -> expression . MULT expression
+    (23) expression -> expression . DIV expression
+    (24) expression -> expression . EXP expression
+    (25) expression -> expression . EQUALS expression
+
+    PLUS            reduce using rule 31 (expression -> MINUS expression .)
+    MINUS           reduce using rule 31 (expression -> MINUS expression .)
+    MULT            reduce using rule 31 (expression -> MINUS expression .)
+    DIV             reduce using rule 31 (expression -> MINUS expression .)
+    EXP             reduce using rule 31 (expression -> MINUS expression .)
+    EQUALS          reduce using rule 31 (expression -> MINUS expression .)
+    ID              reduce using rule 31 (expression -> MINUS expression .)
+    FLOATattr       reduce using rule 31 (expression -> MINUS expression .)
+    STRINGattr      reduce using rule 31 (expression -> MINUS expression .)
+    INTattr         reduce using rule 31 (expression -> MINUS expression .)
+    BOOLattr        reduce using rule 31 (expression -> MINUS expression .)
+    DEF             reduce using rule 31 (expression -> MINUS expression .)
+    RETURN          reduce using rule 31 (expression -> MINUS expression .)
+    IF              reduce using rule 31 (expression -> MINUS expression .)
+    FOR             reduce using rule 31 (expression -> MINUS expression .)
+    $end            reduce using rule 31 (expression -> MINUS expression .)
+    RBRACE          reduce using rule 31 (expression -> MINUS expression .)
+    LBRACE          reduce using rule 31 (expression -> MINUS expression .)
+
+  ! PLUS            [ shift and go to state 52 ]
+  ! MINUS           [ shift and go to state 53 ]
+  ! MULT            [ shift and go to state 54 ]
+  ! DIV             [ shift and go to state 55 ]
+  ! EXP             [ shift and go to state 56 ]
+  ! EQUALS          [ shift and go to state 57 ]
+
+
+state 59
+
+    (12) if_statement -> IF expression LBRACE . statement_body RBRACE
+    (13) if_statement -> IF expression LBRACE . statement_body RBRACE ELSE LBRACE statement_body RBRACE
+    (42) statement_body -> . statement_list
+    (43) statement_body -> . return_statement
+    (2) statement_list -> . statement
+    (3) statement_list -> . statement_list statement
+    (32) return_statement -> . RETURN expression
+    (4) statement -> . assignment
+    (5) statement -> . function_declaration
+    (6) statement -> . return_statement
+    (7) statement -> . function_call
+    (8) statement -> . if_statement
+    (9) statement -> . for_statement
+    (15) assignment -> . ID ASSIGN expression
+    (16) assignment -> . FLOATattr ID ASSIGN expression
+    (17) assignment -> . STRINGattr ID ASSIGN expression
+    (18) assignment -> . INTattr ID ASSIGN expression
+    (19) assignment -> . BOOLattr ID ASSIGN expression
+    (38) function_declaration -> . DEF ID LPAREN RPAREN LBRACE statement_body RBRACE
+    (39) function_declaration -> . DEF ID LPAREN parameters RPAREN LBRACE statement_body RBRACE
+    (40) function_declaration -> . DEF return_type ID LPAREN RPAREN LBRACE statement_body RBRACE
+    (41) function_declaration -> . DEF return_type ID LPAREN parameters RPAREN LBRACE statement_body RBRACE
+    (10) function_call -> . ID LPAREN RPAREN
+    (11) function_call -> . ID LPAREN parameters RPAREN
+    (12) if_statement -> . IF expression LBRACE statement_body RBRACE
+    (13) if_statement -> . IF expression LBRACE statement_body RBRACE ELSE LBRACE statement_body RBRACE
+    (14) for_statement -> . FOR expression LBRACE statement_body RBRACE
+
+    RETURN          shift and go to state 16
+    ID              shift and go to state 10
+    FLOATattr       shift and go to state 11
+    STRINGattr      shift and go to state 12
+    INTattr         shift and go to state 13
+    BOOLattr        shift and go to state 14
+    DEF             shift and go to state 15
+    IF              shift and go to state 17
+    FOR             shift and go to state 18
+
+    statement_body                 shift and go to state 76
+    statement_list                 shift and go to state 77
+    return_statement               shift and go to state 78
+    statement                      shift and go to state 3
+    assignment                     shift and go to state 4
+    function_declaration           shift and go to state 5
+    function_call                  shift and go to state 7
+    if_statement                   shift and go to state 8
+    for_statement                  shift and go to state 9
+
+state 60
+
+    (14) for_statement -> FOR expression LBRACE . statement_body RBRACE
+    (42) statement_body -> . statement_list
+    (43) statement_body -> . return_statement
+    (2) statement_list -> . statement
+    (3) statement_list -> . statement_list statement
+    (32) return_statement -> . RETURN expression
+    (4) statement -> . assignment
+    (5) statement -> . function_declaration
+    (6) statement -> . return_statement
+    (7) statement -> . function_call
+    (8) statement -> . if_statement
+    (9) statement -> . for_statement
+    (15) assignment -> . ID ASSIGN expression
+    (16) assignment -> . FLOATattr ID ASSIGN expression
+    (17) assignment -> . STRINGattr ID ASSIGN expression
+    (18) assignment -> . INTattr ID ASSIGN expression
+    (19) assignment -> . BOOLattr ID ASSIGN expression
+    (38) function_declaration -> . DEF ID LPAREN RPAREN LBRACE statement_body RBRACE
+    (39) function_declaration -> . DEF ID LPAREN parameters RPAREN LBRACE statement_body RBRACE
+    (40) function_declaration -> . DEF return_type ID LPAREN RPAREN LBRACE statement_body RBRACE
+    (41) function_declaration -> . DEF return_type ID LPAREN parameters RPAREN LBRACE statement_body RBRACE
+    (10) function_call -> . ID LPAREN RPAREN
+    (11) function_call -> . ID LPAREN parameters RPAREN
+    (12) if_statement -> . IF expression LBRACE statement_body RBRACE
+    (13) if_statement -> . IF expression LBRACE statement_body RBRACE ELSE LBRACE statement_body RBRACE
+    (14) for_statement -> . FOR expression LBRACE statement_body RBRACE
+
+    RETURN          shift and go to state 16
+    ID              shift and go to state 10
+    FLOATattr       shift and go to state 11
+    STRINGattr      shift and go to state 12
+    INTattr         shift and go to state 13
+    BOOLattr        shift and go to state 14
+    DEF             shift and go to state 15
+    IF              shift and go to state 17
+    FOR             shift and go to state 18
+
+    statement_body                 shift and go to state 79
+    statement_list                 shift and go to state 77
+    return_statement               shift and go to state 78
+    statement                      shift and go to state 3
+    assignment                     shift and go to state 4
+    function_declaration           shift and go to state 5
+    function_call                  shift and go to state 7
+    if_statement                   shift and go to state 8
+    for_statement                  shift and go to state 9
+
+state 61
+
+    (45) parameters -> ID COMMA . parameters
+    (44) parameters -> . ID
+    (45) parameters -> . ID COMMA parameters
+
+    ID              shift and go to state 43
+
+    parameters                     shift and go to state 80
+
+state 62
+
+    (11) function_call -> ID LPAREN parameters RPAREN .
+
+    ID              reduce using rule 11 (function_call -> ID LPAREN parameters RPAREN .)
+    FLOATattr       reduce using rule 11 (function_call -> ID LPAREN parameters RPAREN .)
+    STRINGattr      reduce using rule 11 (function_call -> ID LPAREN parameters RPAREN .)
+    INTattr         reduce using rule 11 (function_call -> ID LPAREN parameters RPAREN .)
+    BOOLattr        reduce using rule 11 (function_call -> ID LPAREN parameters RPAREN .)
+    DEF             reduce using rule 11 (function_call -> ID LPAREN parameters RPAREN .)
+    RETURN          reduce using rule 11 (function_call -> ID LPAREN parameters RPAREN .)
+    IF              reduce using rule 11 (function_call -> ID LPAREN parameters RPAREN .)
+    FOR             reduce using rule 11 (function_call -> ID LPAREN parameters RPAREN .)
+    $end            reduce using rule 11 (function_call -> ID LPAREN parameters RPAREN .)
+    PLUS            reduce using rule 11 (function_call -> ID LPAREN parameters RPAREN .)
+    MINUS           reduce using rule 11 (function_call -> ID LPAREN parameters RPAREN .)
+    MULT            reduce using rule 11 (function_call -> ID LPAREN parameters RPAREN .)
+    DIV             reduce using rule 11 (function_call -> ID LPAREN parameters RPAREN .)
+    EXP             reduce using rule 11 (function_call -> ID LPAREN parameters RPAREN .)
+    EQUALS          reduce using rule 11 (function_call -> ID LPAREN parameters RPAREN .)
+    RBRACE          reduce using rule 11 (function_call -> ID LPAREN parameters RPAREN .)
+    LBRACE          reduce using rule 11 (function_call -> ID LPAREN parameters RPAREN .)
+
+
+state 63
+
+    (16) assignment -> FLOATattr ID ASSIGN expression .
+    (20) expression -> expression . PLUS expression
+    (21) expression -> expression . MINUS expression
+    (22) expression -> expression . MULT expression
+    (23) expression -> expression . DIV expression
+    (24) expression -> expression . EXP expression
+    (25) expression -> expression . EQUALS expression
+
+    ID              reduce using rule 16 (assignment -> FLOATattr ID ASSIGN expression .)
+    FLOATattr       reduce using rule 16 (assignment -> FLOATattr ID ASSIGN expression .)
+    STRINGattr      reduce using rule 16 (assignment -> FLOATattr ID ASSIGN expression .)
+    INTattr         reduce using rule 16 (assignment -> FLOATattr ID ASSIGN expression .)
+    BOOLattr        reduce using rule 16 (assignment -> FLOATattr ID ASSIGN expression .)
+    DEF             reduce using rule 16 (assignment -> FLOATattr ID ASSIGN expression .)
+    RETURN          reduce using rule 16 (assignment -> FLOATattr ID ASSIGN expression .)
+    IF              reduce using rule 16 (assignment -> FLOATattr ID ASSIGN expression .)
+    FOR             reduce using rule 16 (assignment -> FLOATattr ID ASSIGN expression .)
+    $end            reduce using rule 16 (assignment -> FLOATattr ID ASSIGN expression .)
+    RBRACE          reduce using rule 16 (assignment -> FLOATattr ID ASSIGN expression .)
+    PLUS            shift and go to state 52
+    MINUS           shift and go to state 53
+    MULT            shift and go to state 54
+    DIV             shift and go to state 55
+    EXP             shift and go to state 56
+    EQUALS          shift and go to state 57
+
+
+state 64
+
+    (17) assignment -> STRINGattr ID ASSIGN expression .
+    (20) expression -> expression . PLUS expression
+    (21) expression -> expression . MINUS expression
+    (22) expression -> expression . MULT expression
+    (23) expression -> expression . DIV expression
+    (24) expression -> expression . EXP expression
+    (25) expression -> expression . EQUALS expression
+
+    ID              reduce using rule 17 (assignment -> STRINGattr ID ASSIGN expression .)
+    FLOATattr       reduce using rule 17 (assignment -> STRINGattr ID ASSIGN expression .)
+    STRINGattr      reduce using rule 17 (assignment -> STRINGattr ID ASSIGN expression .)
+    INTattr         reduce using rule 17 (assignment -> STRINGattr ID ASSIGN expression .)
+    BOOLattr        reduce using rule 17 (assignment -> STRINGattr ID ASSIGN expression .)
+    DEF             reduce using rule 17 (assignment -> STRINGattr ID ASSIGN expression .)
+    RETURN          reduce using rule 17 (assignment -> STRINGattr ID ASSIGN expression .)
+    IF              reduce using rule 17 (assignment -> STRINGattr ID ASSIGN expression .)
+    FOR             reduce using rule 17 (assignment -> STRINGattr ID ASSIGN expression .)
+    $end            reduce using rule 17 (assignment -> STRINGattr ID ASSIGN expression .)
+    RBRACE          reduce using rule 17 (assignment -> STRINGattr ID ASSIGN expression .)
+    PLUS            shift and go to state 52
+    MINUS           shift and go to state 53
+    MULT            shift and go to state 54
+    DIV             shift and go to state 55
+    EXP             shift and go to state 56
+    EQUALS          shift and go to state 57
+
+
+state 65
+
+    (18) assignment -> INTattr ID ASSIGN expression .
+    (20) expression -> expression . PLUS expression
+    (21) expression -> expression . MINUS expression
+    (22) expression -> expression . MULT expression
+    (23) expression -> expression . DIV expression
+    (24) expression -> expression . EXP expression
+    (25) expression -> expression . EQUALS expression
+
+    ID              reduce using rule 18 (assignment -> INTattr ID ASSIGN expression .)
+    FLOATattr       reduce using rule 18 (assignment -> INTattr ID ASSIGN expression .)
+    STRINGattr      reduce using rule 18 (assignment -> INTattr ID ASSIGN expression .)
+    INTattr         reduce using rule 18 (assignment -> INTattr ID ASSIGN expression .)
+    BOOLattr        reduce using rule 18 (assignment -> INTattr ID ASSIGN expression .)
+    DEF             reduce using rule 18 (assignment -> INTattr ID ASSIGN expression .)
+    RETURN          reduce using rule 18 (assignment -> INTattr ID ASSIGN expression .)
+    IF              reduce using rule 18 (assignment -> INTattr ID ASSIGN expression .)
+    FOR             reduce using rule 18 (assignment -> INTattr ID ASSIGN expression .)
+    $end            reduce using rule 18 (assignment -> INTattr ID ASSIGN expression .)
+    RBRACE          reduce using rule 18 (assignment -> INTattr ID ASSIGN expression .)
+    PLUS            shift and go to state 52
+    MINUS           shift and go to state 53
+    MULT            shift and go to state 54
+    DIV             shift and go to state 55
+    EXP             shift and go to state 56
+    EQUALS          shift and go to state 57
+
+
+state 66
+
+    (19) assignment -> BOOLattr ID ASSIGN expression .
+    (20) expression -> expression . PLUS expression
+    (21) expression -> expression . MINUS expression
+    (22) expression -> expression . MULT expression
+    (23) expression -> expression . DIV expression
+    (24) expression -> expression . EXP expression
+    (25) expression -> expression . EQUALS expression
+
+    ID              reduce using rule 19 (assignment -> BOOLattr ID ASSIGN expression .)
+    FLOATattr       reduce using rule 19 (assignment -> BOOLattr ID ASSIGN expression .)
+    STRINGattr      reduce using rule 19 (assignment -> BOOLattr ID ASSIGN expression .)
+    INTattr         reduce using rule 19 (assignment -> BOOLattr ID ASSIGN expression .)
+    BOOLattr        reduce using rule 19 (assignment -> BOOLattr ID ASSIGN expression .)
+    DEF             reduce using rule 19 (assignment -> BOOLattr ID ASSIGN expression .)
+    RETURN          reduce using rule 19 (assignment -> BOOLattr ID ASSIGN expression .)
+    IF              reduce using rule 19 (assignment -> BOOLattr ID ASSIGN expression .)
+    FOR             reduce using rule 19 (assignment -> BOOLattr ID ASSIGN expression .)
+    $end            reduce using rule 19 (assignment -> BOOLattr ID ASSIGN expression .)
+    RBRACE          reduce using rule 19 (assignment -> BOOLattr ID ASSIGN expression .)
+    PLUS            shift and go to state 52
+    MINUS           shift and go to state 53
+    MULT            shift and go to state 54
+    DIV             shift and go to state 55
+    EXP             shift and go to state 56
+    EQUALS          shift and go to state 57
+
+
+state 67
+
+    (38) function_declaration -> DEF ID LPAREN RPAREN . LBRACE statement_body RBRACE
+
+    LBRACE          shift and go to state 81
+
+
+state 68
+
+    (39) function_declaration -> DEF ID LPAREN parameters . RPAREN LBRACE statement_body RBRACE
+
+    RPAREN          shift and go to state 82
+
+
+state 69
+
+    (40) function_declaration -> DEF return_type ID LPAREN . RPAREN LBRACE statement_body RBRACE
+    (41) function_declaration -> DEF return_type ID LPAREN . parameters RPAREN LBRACE statement_body RBRACE
+    (44) parameters -> . ID
+    (45) parameters -> . ID COMMA parameters
+
+    RPAREN          shift and go to state 83
+    ID              shift and go to state 43
+
+    parameters                     shift and go to state 84
+
+state 70
+
+    (20) expression -> expression PLUS expression .
+    (20) expression -> expression . PLUS expression
+    (21) expression -> expression . MINUS expression
+    (22) expression -> expression . MULT expression
+    (23) expression -> expression . DIV expression
+    (24) expression -> expression . EXP expression
+    (25) expression -> expression . EQUALS expression
+
+    PLUS            reduce using rule 20 (expression -> expression PLUS expression .)
+    MINUS           reduce using rule 20 (expression -> expression PLUS expression .)
+    EXP             reduce using rule 20 (expression -> expression PLUS expression .)
+    EQUALS          reduce using rule 20 (expression -> expression PLUS expression .)
+    ID              reduce using rule 20 (expression -> expression PLUS expression .)
+    FLOATattr       reduce using rule 20 (expression -> expression PLUS expression .)
+    STRINGattr      reduce using rule 20 (expression -> expression PLUS expression .)
+    INTattr         reduce using rule 20 (expression -> expression PLUS expression .)
+    BOOLattr        reduce using rule 20 (expression -> expression PLUS expression .)
+    DEF             reduce using rule 20 (expression -> expression PLUS expression .)
+    RETURN          reduce using rule 20 (expression -> expression PLUS expression .)
+    IF              reduce using rule 20 (expression -> expression PLUS expression .)
+    FOR             reduce using rule 20 (expression -> expression PLUS expression .)
+    $end            reduce using rule 20 (expression -> expression PLUS expression .)
+    RBRACE          reduce using rule 20 (expression -> expression PLUS expression .)
+    LBRACE          reduce using rule 20 (expression -> expression PLUS expression .)
+    MULT            shift and go to state 54
+    DIV             shift and go to state 55
+
+  ! MULT            [ reduce using rule 20 (expression -> expression PLUS expression .) ]
+  ! DIV             [ reduce using rule 20 (expression -> expression PLUS expression .) ]
+  ! PLUS            [ shift and go to state 52 ]
+  ! MINUS           [ shift and go to state 53 ]
+  ! EXP             [ shift and go to state 56 ]
+  ! EQUALS          [ shift and go to state 57 ]
+
+
+state 71
+
+    (21) expression -> expression MINUS expression .
+    (20) expression -> expression . PLUS expression
+    (21) expression -> expression . MINUS expression
+    (22) expression -> expression . MULT expression
+    (23) expression -> expression . DIV expression
+    (24) expression -> expression . EXP expression
+    (25) expression -> expression . EQUALS expression
+
+    PLUS            reduce using rule 21 (expression -> expression MINUS expression .)
+    MINUS           reduce using rule 21 (expression -> expression MINUS expression .)
+    EXP             reduce using rule 21 (expression -> expression MINUS expression .)
+    EQUALS          reduce using rule 21 (expression -> expression MINUS expression .)
+    ID              reduce using rule 21 (expression -> expression MINUS expression .)
+    FLOATattr       reduce using rule 21 (expression -> expression MINUS expression .)
+    STRINGattr      reduce using rule 21 (expression -> expression MINUS expression .)
+    INTattr         reduce using rule 21 (expression -> expression MINUS expression .)
+    BOOLattr        reduce using rule 21 (expression -> expression MINUS expression .)
+    DEF             reduce using rule 21 (expression -> expression MINUS expression .)
+    RETURN          reduce using rule 21 (expression -> expression MINUS expression .)
+    IF              reduce using rule 21 (expression -> expression MINUS expression .)
+    FOR             reduce using rule 21 (expression -> expression MINUS expression .)
+    $end            reduce using rule 21 (expression -> expression MINUS expression .)
+    RBRACE          reduce using rule 21 (expression -> expression MINUS expression .)
+    LBRACE          reduce using rule 21 (expression -> expression MINUS expression .)
+    MULT            shift and go to state 54
+    DIV             shift and go to state 55
+
+  ! MULT            [ reduce using rule 21 (expression -> expression MINUS expression .) ]
+  ! DIV             [ reduce using rule 21 (expression -> expression MINUS expression .) ]
+  ! PLUS            [ shift and go to state 52 ]
+  ! MINUS           [ shift and go to state 53 ]
+  ! EXP             [ shift and go to state 56 ]
+  ! EQUALS          [ shift and go to state 57 ]
+
+
+state 72
+
+    (22) expression -> expression MULT expression .
+    (20) expression -> expression . PLUS expression
+    (21) expression -> expression . MINUS expression
+    (22) expression -> expression . MULT expression
+    (23) expression -> expression . DIV expression
+    (24) expression -> expression . EXP expression
+    (25) expression -> expression . EQUALS expression
+
+    PLUS            reduce using rule 22 (expression -> expression MULT expression .)
+    MINUS           reduce using rule 22 (expression -> expression MULT expression .)
+    MULT            reduce using rule 22 (expression -> expression MULT expression .)
+    DIV             reduce using rule 22 (expression -> expression MULT expression .)
+    EXP             reduce using rule 22 (expression -> expression MULT expression .)
+    EQUALS          reduce using rule 22 (expression -> expression MULT expression .)
+    ID              reduce using rule 22 (expression -> expression MULT expression .)
+    FLOATattr       reduce using rule 22 (expression -> expression MULT expression .)
+    STRINGattr      reduce using rule 22 (expression -> expression MULT expression .)
+    INTattr         reduce using rule 22 (expression -> expression MULT expression .)
+    BOOLattr        reduce using rule 22 (expression -> expression MULT expression .)
+    DEF             reduce using rule 22 (expression -> expression MULT expression .)
+    RETURN          reduce using rule 22 (expression -> expression MULT expression .)
+    IF              reduce using rule 22 (expression -> expression MULT expression .)
+    FOR             reduce using rule 22 (expression -> expression MULT expression .)
+    $end            reduce using rule 22 (expression -> expression MULT expression .)
+    RBRACE          reduce using rule 22 (expression -> expression MULT expression .)
+    LBRACE          reduce using rule 22 (expression -> expression MULT expression .)
+
+  ! PLUS            [ shift and go to state 52 ]
+  ! MINUS           [ shift and go to state 53 ]
+  ! MULT            [ shift and go to state 54 ]
+  ! DIV             [ shift and go to state 55 ]
+  ! EXP             [ shift and go to state 56 ]
+  ! EQUALS          [ shift and go to state 57 ]
+
+
+state 73
+
+    (23) expression -> expression DIV expression .
+    (20) expression -> expression . PLUS expression
+    (21) expression -> expression . MINUS expression
+    (22) expression -> expression . MULT expression
+    (23) expression -> expression . DIV expression
+    (24) expression -> expression . EXP expression
+    (25) expression -> expression . EQUALS expression
+
+    PLUS            reduce using rule 23 (expression -> expression DIV expression .)
+    MINUS           reduce using rule 23 (expression -> expression DIV expression .)
+    MULT            reduce using rule 23 (expression -> expression DIV expression .)
+    DIV             reduce using rule 23 (expression -> expression DIV expression .)
+    EXP             reduce using rule 23 (expression -> expression DIV expression .)
+    EQUALS          reduce using rule 23 (expression -> expression DIV expression .)
+    ID              reduce using rule 23 (expression -> expression DIV expression .)
+    FLOATattr       reduce using rule 23 (expression -> expression DIV expression .)
+    STRINGattr      reduce using rule 23 (expression -> expression DIV expression .)
+    INTattr         reduce using rule 23 (expression -> expression DIV expression .)
+    BOOLattr        reduce using rule 23 (expression -> expression DIV expression .)
+    DEF             reduce using rule 23 (expression -> expression DIV expression .)
+    RETURN          reduce using rule 23 (expression -> expression DIV expression .)
+    IF              reduce using rule 23 (expression -> expression DIV expression .)
+    FOR             reduce using rule 23 (expression -> expression DIV expression .)
+    $end            reduce using rule 23 (expression -> expression DIV expression .)
+    RBRACE          reduce using rule 23 (expression -> expression DIV expression .)
+    LBRACE          reduce using rule 23 (expression -> expression DIV expression .)
+
+  ! PLUS            [ shift and go to state 52 ]
+  ! MINUS           [ shift and go to state 53 ]
+  ! MULT            [ shift and go to state 54 ]
+  ! DIV             [ shift and go to state 55 ]
+  ! EXP             [ shift and go to state 56 ]
+  ! EQUALS          [ shift and go to state 57 ]
+
+
+state 74
+
+    (24) expression -> expression EXP expression .
+    (20) expression -> expression . PLUS expression
+    (21) expression -> expression . MINUS expression
+    (22) expression -> expression . MULT expression
+    (23) expression -> expression . DIV expression
+    (24) expression -> expression . EXP expression
+    (25) expression -> expression . EQUALS expression
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for MULT resolved as shift
+  ! shift/reduce conflict for DIV resolved as shift
+  ! shift/reduce conflict for EXP resolved as shift
+  ! shift/reduce conflict for EQUALS resolved as shift
+    ID              reduce using rule 24 (expression -> expression EXP expression .)
+    FLOATattr       reduce using rule 24 (expression -> expression EXP expression .)
+    STRINGattr      reduce using rule 24 (expression -> expression EXP expression .)
+    INTattr         reduce using rule 24 (expression -> expression EXP expression .)
+    BOOLattr        reduce using rule 24 (expression -> expression EXP expression .)
+    DEF             reduce using rule 24 (expression -> expression EXP expression .)
+    RETURN          reduce using rule 24 (expression -> expression EXP expression .)
+    IF              reduce using rule 24 (expression -> expression EXP expression .)
+    FOR             reduce using rule 24 (expression -> expression EXP expression .)
+    $end            reduce using rule 24 (expression -> expression EXP expression .)
+    RBRACE          reduce using rule 24 (expression -> expression EXP expression .)
+    LBRACE          reduce using rule 24 (expression -> expression EXP expression .)
+    PLUS            shift and go to state 52
+    MINUS           shift and go to state 53
+    MULT            shift and go to state 54
+    DIV             shift and go to state 55
+    EXP             shift and go to state 56
+    EQUALS          shift and go to state 57
+
+  ! PLUS            [ reduce using rule 24 (expression -> expression EXP expression .) ]
+  ! MINUS           [ reduce using rule 24 (expression -> expression EXP expression .) ]
+  ! MULT            [ reduce using rule 24 (expression -> expression EXP expression .) ]
+  ! DIV             [ reduce using rule 24 (expression -> expression EXP expression .) ]
+  ! EXP             [ reduce using rule 24 (expression -> expression EXP expression .) ]
+  ! EQUALS          [ reduce using rule 24 (expression -> expression EXP expression .) ]
+
+
+state 75
+
+    (25) expression -> expression EQUALS expression .
+    (20) expression -> expression . PLUS expression
+    (21) expression -> expression . MINUS expression
+    (22) expression -> expression . MULT expression
+    (23) expression -> expression . DIV expression
+    (24) expression -> expression . EXP expression
+    (25) expression -> expression . EQUALS expression
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for MULT resolved as shift
+  ! shift/reduce conflict for DIV resolved as shift
+  ! shift/reduce conflict for EXP resolved as shift
+  ! shift/reduce conflict for EQUALS resolved as shift
+    ID              reduce using rule 25 (expression -> expression EQUALS expression .)
+    FLOATattr       reduce using rule 25 (expression -> expression EQUALS expression .)
+    STRINGattr      reduce using rule 25 (expression -> expression EQUALS expression .)
+    INTattr         reduce using rule 25 (expression -> expression EQUALS expression .)
+    BOOLattr        reduce using rule 25 (expression -> expression EQUALS expression .)
+    DEF             reduce using rule 25 (expression -> expression EQUALS expression .)
+    RETURN          reduce using rule 25 (expression -> expression EQUALS expression .)
+    IF              reduce using rule 25 (expression -> expression EQUALS expression .)
+    FOR             reduce using rule 25 (expression -> expression EQUALS expression .)
+    $end            reduce using rule 25 (expression -> expression EQUALS expression .)
+    RBRACE          reduce using rule 25 (expression -> expression EQUALS expression .)
+    LBRACE          reduce using rule 25 (expression -> expression EQUALS expression .)
+    PLUS            shift and go to state 52
+    MINUS           shift and go to state 53
+    MULT            shift and go to state 54
+    DIV             shift and go to state 55
+    EXP             shift and go to state 56
+    EQUALS          shift and go to state 57
+
+  ! PLUS            [ reduce using rule 25 (expression -> expression EQUALS expression .) ]
+  ! MINUS           [ reduce using rule 25 (expression -> expression EQUALS expression .) ]
+  ! MULT            [ reduce using rule 25 (expression -> expression EQUALS expression .) ]
+  ! DIV             [ reduce using rule 25 (expression -> expression EQUALS expression .) ]
+  ! EXP             [ reduce using rule 25 (expression -> expression EQUALS expression .) ]
+  ! EQUALS          [ reduce using rule 25 (expression -> expression EQUALS expression .) ]
+
+
+state 76
+
+    (12) if_statement -> IF expression LBRACE statement_body . RBRACE
+    (13) if_statement -> IF expression LBRACE statement_body . RBRACE ELSE LBRACE statement_body RBRACE
+
+    RBRACE          shift and go to state 85
+
+
+state 77
+
+    (42) statement_body -> statement_list .
+    (3) statement_list -> statement_list . statement
+    (4) statement -> . assignment
+    (5) statement -> . function_declaration
+    (6) statement -> . return_statement
+    (7) statement -> . function_call
+    (8) statement -> . if_statement
+    (9) statement -> . for_statement
+    (15) assignment -> . ID ASSIGN expression
+    (16) assignment -> . FLOATattr ID ASSIGN expression
+    (17) assignment -> . STRINGattr ID ASSIGN expression
+    (18) assignment -> . INTattr ID ASSIGN expression
+    (19) assignment -> . BOOLattr ID ASSIGN expression
+    (38) function_declaration -> . DEF ID LPAREN RPAREN LBRACE statement_body RBRACE
+    (39) function_declaration -> . DEF ID LPAREN parameters RPAREN LBRACE statement_body RBRACE
+    (40) function_declaration -> . DEF return_type ID LPAREN RPAREN LBRACE statement_body RBRACE
+    (41) function_declaration -> . DEF return_type ID LPAREN parameters RPAREN LBRACE statement_body RBRACE
+    (32) return_statement -> . RETURN expression
+    (10) function_call -> . ID LPAREN RPAREN
+    (11) function_call -> . ID LPAREN parameters RPAREN
+    (12) if_statement -> . IF expression LBRACE statement_body RBRACE
+    (13) if_statement -> . IF expression LBRACE statement_body RBRACE ELSE LBRACE statement_body RBRACE
+    (14) for_statement -> . FOR expression LBRACE statement_body RBRACE
+
+    RBRACE          reduce using rule 42 (statement_body -> statement_list .)
+    ID              shift and go to state 10
+    FLOATattr       shift and go to state 11
+    STRINGattr      shift and go to state 12
+    INTattr         shift and go to state 13
+    BOOLattr        shift and go to state 14
+    DEF             shift and go to state 15
+    RETURN          shift and go to state 16
+    IF              shift and go to state 17
+    FOR             shift and go to state 18
+
+    statement                      shift and go to state 19
+    assignment                     shift and go to state 4
+    function_declaration           shift and go to state 5
+    return_statement               shift and go to state 6
+    function_call                  shift and go to state 7
+    if_statement                   shift and go to state 8
+    for_statement                  shift and go to state 9
+
+state 78
+
+    (43) statement_body -> return_statement .
+    (6) statement -> return_statement .
+
+  ! reduce/reduce conflict for RBRACE resolved using rule 6 (statement -> return_statement .)
+    ID              reduce using rule 6 (statement -> return_statement .)
+    FLOATattr       reduce using rule 6 (statement -> return_statement .)
+    STRINGattr      reduce using rule 6 (statement -> return_statement .)
+    INTattr         reduce using rule 6 (statement -> return_statement .)
+    BOOLattr        reduce using rule 6 (statement -> return_statement .)
+    DEF             reduce using rule 6 (statement -> return_statement .)
+    RETURN          reduce using rule 6 (statement -> return_statement .)
+    IF              reduce using rule 6 (statement -> return_statement .)
+    FOR             reduce using rule 6 (statement -> return_statement .)
+    RBRACE          reduce using rule 6 (statement -> return_statement .)
+
+  ! RBRACE          [ reduce using rule 43 (statement_body -> return_statement .) ]
+
+
+state 79
+
+    (14) for_statement -> FOR expression LBRACE statement_body . RBRACE
+
+    RBRACE          shift and go to state 86
+
+
+state 80
+
+    (45) parameters -> ID COMMA parameters .
+
+    RPAREN          reduce using rule 45 (parameters -> ID COMMA parameters .)
+
+
+state 81
+
+    (38) function_declaration -> DEF ID LPAREN RPAREN LBRACE . statement_body RBRACE
+    (42) statement_body -> . statement_list
+    (43) statement_body -> . return_statement
+    (2) statement_list -> . statement
+    (3) statement_list -> . statement_list statement
+    (32) return_statement -> . RETURN expression
+    (4) statement -> . assignment
+    (5) statement -> . function_declaration
+    (6) statement -> . return_statement
+    (7) statement -> . function_call
+    (8) statement -> . if_statement
+    (9) statement -> . for_statement
+    (15) assignment -> . ID ASSIGN expression
+    (16) assignment -> . FLOATattr ID ASSIGN expression
+    (17) assignment -> . STRINGattr ID ASSIGN expression
+    (18) assignment -> . INTattr ID ASSIGN expression
+    (19) assignment -> . BOOLattr ID ASSIGN expression
+    (38) function_declaration -> . DEF ID LPAREN RPAREN LBRACE statement_body RBRACE
+    (39) function_declaration -> . DEF ID LPAREN parameters RPAREN LBRACE statement_body RBRACE
+    (40) function_declaration -> . DEF return_type ID LPAREN RPAREN LBRACE statement_body RBRACE
+    (41) function_declaration -> . DEF return_type ID LPAREN parameters RPAREN LBRACE statement_body RBRACE
+    (10) function_call -> . ID LPAREN RPAREN
+    (11) function_call -> . ID LPAREN parameters RPAREN
+    (12) if_statement -> . IF expression LBRACE statement_body RBRACE
+    (13) if_statement -> . IF expression LBRACE statement_body RBRACE ELSE LBRACE statement_body RBRACE
+    (14) for_statement -> . FOR expression LBRACE statement_body RBRACE
+
+    RETURN          shift and go to state 16
+    ID              shift and go to state 10
+    FLOATattr       shift and go to state 11
+    STRINGattr      shift and go to state 12
+    INTattr         shift and go to state 13
+    BOOLattr        shift and go to state 14
+    DEF             shift and go to state 15
+    IF              shift and go to state 17
+    FOR             shift and go to state 18
+
+    statement_body                 shift and go to state 87
+    statement_list                 shift and go to state 77
+    return_statement               shift and go to state 78
+    statement                      shift and go to state 3
+    assignment                     shift and go to state 4
+    function_declaration           shift and go to state 5
+    function_call                  shift and go to state 7
+    if_statement                   shift and go to state 8
+    for_statement                  shift and go to state 9
+
+state 82
+
+    (39) function_declaration -> DEF ID LPAREN parameters RPAREN . LBRACE statement_body RBRACE
+
+    LBRACE          shift and go to state 88
+
+
+state 83
+
+    (40) function_declaration -> DEF return_type ID LPAREN RPAREN . LBRACE statement_body RBRACE
+
+    LBRACE          shift and go to state 89
+
+
+state 84
+
+    (41) function_declaration -> DEF return_type ID LPAREN parameters . RPAREN LBRACE statement_body RBRACE
+
+    RPAREN          shift and go to state 90
+
+
+state 85
+
+    (12) if_statement -> IF expression LBRACE statement_body RBRACE .
+    (13) if_statement -> IF expression LBRACE statement_body RBRACE . ELSE LBRACE statement_body RBRACE
+
+    ID              reduce using rule 12 (if_statement -> IF expression LBRACE statement_body RBRACE .)
+    FLOATattr       reduce using rule 12 (if_statement -> IF expression LBRACE statement_body RBRACE .)
+    STRINGattr      reduce using rule 12 (if_statement -> IF expression LBRACE statement_body RBRACE .)
+    INTattr         reduce using rule 12 (if_statement -> IF expression LBRACE statement_body RBRACE .)
+    BOOLattr        reduce using rule 12 (if_statement -> IF expression LBRACE statement_body RBRACE .)
+    DEF             reduce using rule 12 (if_statement -> IF expression LBRACE statement_body RBRACE .)
+    RETURN          reduce using rule 12 (if_statement -> IF expression LBRACE statement_body RBRACE .)
+    IF              reduce using rule 12 (if_statement -> IF expression LBRACE statement_body RBRACE .)
+    FOR             reduce using rule 12 (if_statement -> IF expression LBRACE statement_body RBRACE .)
+    $end            reduce using rule 12 (if_statement -> IF expression LBRACE statement_body RBRACE .)
+    RBRACE          reduce using rule 12 (if_statement -> IF expression LBRACE statement_body RBRACE .)
+    ELSE            shift and go to state 91
+
+
+state 86
+
+    (14) for_statement -> FOR expression LBRACE statement_body RBRACE .
+
+    ID              reduce using rule 14 (for_statement -> FOR expression LBRACE statement_body RBRACE .)
+    FLOATattr       reduce using rule 14 (for_statement -> FOR expression LBRACE statement_body RBRACE .)
+    STRINGattr      reduce using rule 14 (for_statement -> FOR expression LBRACE statement_body RBRACE .)
+    INTattr         reduce using rule 14 (for_statement -> FOR expression LBRACE statement_body RBRACE .)
+    BOOLattr        reduce using rule 14 (for_statement -> FOR expression LBRACE statement_body RBRACE .)
+    DEF             reduce using rule 14 (for_statement -> FOR expression LBRACE statement_body RBRACE .)
+    RETURN          reduce using rule 14 (for_statement -> FOR expression LBRACE statement_body RBRACE .)
+    IF              reduce using rule 14 (for_statement -> FOR expression LBRACE statement_body RBRACE .)
+    FOR             reduce using rule 14 (for_statement -> FOR expression LBRACE statement_body RBRACE .)
+    $end            reduce using rule 14 (for_statement -> FOR expression LBRACE statement_body RBRACE .)
+    RBRACE          reduce using rule 14 (for_statement -> FOR expression LBRACE statement_body RBRACE .)
+
+
+state 87
+
+    (38) function_declaration -> DEF ID LPAREN RPAREN LBRACE statement_body . RBRACE
+
+    RBRACE          shift and go to state 92
+
+
+state 88
+
+    (39) function_declaration -> DEF ID LPAREN parameters RPAREN LBRACE . statement_body RBRACE
+    (42) statement_body -> . statement_list
+    (43) statement_body -> . return_statement
+    (2) statement_list -> . statement
+    (3) statement_list -> . statement_list statement
+    (32) return_statement -> . RETURN expression
+    (4) statement -> . assignment
+    (5) statement -> . function_declaration
+    (6) statement -> . return_statement
+    (7) statement -> . function_call
+    (8) statement -> . if_statement
+    (9) statement -> . for_statement
+    (15) assignment -> . ID ASSIGN expression
+    (16) assignment -> . FLOATattr ID ASSIGN expression
+    (17) assignment -> . STRINGattr ID ASSIGN expression
+    (18) assignment -> . INTattr ID ASSIGN expression
+    (19) assignment -> . BOOLattr ID ASSIGN expression
+    (38) function_declaration -> . DEF ID LPAREN RPAREN LBRACE statement_body RBRACE
+    (39) function_declaration -> . DEF ID LPAREN parameters RPAREN LBRACE statement_body RBRACE
+    (40) function_declaration -> . DEF return_type ID LPAREN RPAREN LBRACE statement_body RBRACE
+    (41) function_declaration -> . DEF return_type ID LPAREN parameters RPAREN LBRACE statement_body RBRACE
+    (10) function_call -> . ID LPAREN RPAREN
+    (11) function_call -> . ID LPAREN parameters RPAREN
+    (12) if_statement -> . IF expression LBRACE statement_body RBRACE
+    (13) if_statement -> . IF expression LBRACE statement_body RBRACE ELSE LBRACE statement_body RBRACE
+    (14) for_statement -> . FOR expression LBRACE statement_body RBRACE
+
+    RETURN          shift and go to state 16
+    ID              shift and go to state 10
+    FLOATattr       shift and go to state 11
+    STRINGattr      shift and go to state 12
+    INTattr         shift and go to state 13
+    BOOLattr        shift and go to state 14
+    DEF             shift and go to state 15
+    IF              shift and go to state 17
+    FOR             shift and go to state 18
+
+    statement_body                 shift and go to state 93
+    statement_list                 shift and go to state 77
+    return_statement               shift and go to state 78
+    statement                      shift and go to state 3
+    assignment                     shift and go to state 4
+    function_declaration           shift and go to state 5
+    function_call                  shift and go to state 7
+    if_statement                   shift and go to state 8
+    for_statement                  shift and go to state 9
+
+state 89
+
+    (40) function_declaration -> DEF return_type ID LPAREN RPAREN LBRACE . statement_body RBRACE
+    (42) statement_body -> . statement_list
+    (43) statement_body -> . return_statement
+    (2) statement_list -> . statement
+    (3) statement_list -> . statement_list statement
+    (32) return_statement -> . RETURN expression
+    (4) statement -> . assignment
+    (5) statement -> . function_declaration
+    (6) statement -> . return_statement
+    (7) statement -> . function_call
+    (8) statement -> . if_statement
+    (9) statement -> . for_statement
+    (15) assignment -> . ID ASSIGN expression
+    (16) assignment -> . FLOATattr ID ASSIGN expression
+    (17) assignment -> . STRINGattr ID ASSIGN expression
+    (18) assignment -> . INTattr ID ASSIGN expression
+    (19) assignment -> . BOOLattr ID ASSIGN expression
+    (38) function_declaration -> . DEF ID LPAREN RPAREN LBRACE statement_body RBRACE
+    (39) function_declaration -> . DEF ID LPAREN parameters RPAREN LBRACE statement_body RBRACE
+    (40) function_declaration -> . DEF return_type ID LPAREN RPAREN LBRACE statement_body RBRACE
+    (41) function_declaration -> . DEF return_type ID LPAREN parameters RPAREN LBRACE statement_body RBRACE
+    (10) function_call -> . ID LPAREN RPAREN
+    (11) function_call -> . ID LPAREN parameters RPAREN
+    (12) if_statement -> . IF expression LBRACE statement_body RBRACE
+    (13) if_statement -> . IF expression LBRACE statement_body RBRACE ELSE LBRACE statement_body RBRACE
+    (14) for_statement -> . FOR expression LBRACE statement_body RBRACE
+
+    RETURN          shift and go to state 16
+    ID              shift and go to state 10
+    FLOATattr       shift and go to state 11
+    STRINGattr      shift and go to state 12
+    INTattr         shift and go to state 13
+    BOOLattr        shift and go to state 14
+    DEF             shift and go to state 15
+    IF              shift and go to state 17
+    FOR             shift and go to state 18
+
+    statement_body                 shift and go to state 94
+    statement_list                 shift and go to state 77
+    return_statement               shift and go to state 78
+    statement                      shift and go to state 3
+    assignment                     shift and go to state 4
+    function_declaration           shift and go to state 5
+    function_call                  shift and go to state 7
+    if_statement                   shift and go to state 8
+    for_statement                  shift and go to state 9
+
+state 90
+
+    (41) function_declaration -> DEF return_type ID LPAREN parameters RPAREN . LBRACE statement_body RBRACE
+
+    LBRACE          shift and go to state 95
+
+
+state 91
+
+    (13) if_statement -> IF expression LBRACE statement_body RBRACE ELSE . LBRACE statement_body RBRACE
+
+    LBRACE          shift and go to state 96
+
+
+state 92
+
+    (38) function_declaration -> DEF ID LPAREN RPAREN LBRACE statement_body RBRACE .
+
+    ID              reduce using rule 38 (function_declaration -> DEF ID LPAREN RPAREN LBRACE statement_body RBRACE .)
+    FLOATattr       reduce using rule 38 (function_declaration -> DEF ID LPAREN RPAREN LBRACE statement_body RBRACE .)
+    STRINGattr      reduce using rule 38 (function_declaration -> DEF ID LPAREN RPAREN LBRACE statement_body RBRACE .)
+    INTattr         reduce using rule 38 (function_declaration -> DEF ID LPAREN RPAREN LBRACE statement_body RBRACE .)
+    BOOLattr        reduce using rule 38 (function_declaration -> DEF ID LPAREN RPAREN LBRACE statement_body RBRACE .)
+    DEF             reduce using rule 38 (function_declaration -> DEF ID LPAREN RPAREN LBRACE statement_body RBRACE .)
+    RETURN          reduce using rule 38 (function_declaration -> DEF ID LPAREN RPAREN LBRACE statement_body RBRACE .)
+    IF              reduce using rule 38 (function_declaration -> DEF ID LPAREN RPAREN LBRACE statement_body RBRACE .)
+    FOR             reduce using rule 38 (function_declaration -> DEF ID LPAREN RPAREN LBRACE statement_body RBRACE .)
+    $end            reduce using rule 38 (function_declaration -> DEF ID LPAREN RPAREN LBRACE statement_body RBRACE .)
+    RBRACE          reduce using rule 38 (function_declaration -> DEF ID LPAREN RPAREN LBRACE statement_body RBRACE .)
+
+
+state 93
+
+    (39) function_declaration -> DEF ID LPAREN parameters RPAREN LBRACE statement_body . RBRACE
+
+    RBRACE          shift and go to state 97
+
+
+state 94
+
+    (40) function_declaration -> DEF return_type ID LPAREN RPAREN LBRACE statement_body . RBRACE
+
+    RBRACE          shift and go to state 98
+
+
+state 95
+
+    (41) function_declaration -> DEF return_type ID LPAREN parameters RPAREN LBRACE . statement_body RBRACE
+    (42) statement_body -> . statement_list
+    (43) statement_body -> . return_statement
+    (2) statement_list -> . statement
+    (3) statement_list -> . statement_list statement
+    (32) return_statement -> . RETURN expression
+    (4) statement -> . assignment
+    (5) statement -> . function_declaration
+    (6) statement -> . return_statement
+    (7) statement -> . function_call
+    (8) statement -> . if_statement
+    (9) statement -> . for_statement
+    (15) assignment -> . ID ASSIGN expression
+    (16) assignment -> . FLOATattr ID ASSIGN expression
+    (17) assignment -> . STRINGattr ID ASSIGN expression
+    (18) assignment -> . INTattr ID ASSIGN expression
+    (19) assignment -> . BOOLattr ID ASSIGN expression
+    (38) function_declaration -> . DEF ID LPAREN RPAREN LBRACE statement_body RBRACE
+    (39) function_declaration -> . DEF ID LPAREN parameters RPAREN LBRACE statement_body RBRACE
+    (40) function_declaration -> . DEF return_type ID LPAREN RPAREN LBRACE statement_body RBRACE
+    (41) function_declaration -> . DEF return_type ID LPAREN parameters RPAREN LBRACE statement_body RBRACE
+    (10) function_call -> . ID LPAREN RPAREN
+    (11) function_call -> . ID LPAREN parameters RPAREN
+    (12) if_statement -> . IF expression LBRACE statement_body RBRACE
+    (13) if_statement -> . IF expression LBRACE statement_body RBRACE ELSE LBRACE statement_body RBRACE
+    (14) for_statement -> . FOR expression LBRACE statement_body RBRACE
+
+    RETURN          shift and go to state 16
+    ID              shift and go to state 10
+    FLOATattr       shift and go to state 11
+    STRINGattr      shift and go to state 12
+    INTattr         shift and go to state 13
+    BOOLattr        shift and go to state 14
+    DEF             shift and go to state 15
+    IF              shift and go to state 17
+    FOR             shift and go to state 18
+
+    statement_body                 shift and go to state 99
+    statement_list                 shift and go to state 77
+    return_statement               shift and go to state 78
+    statement                      shift and go to state 3
+    assignment                     shift and go to state 4
+    function_declaration           shift and go to state 5
+    function_call                  shift and go to state 7
+    if_statement                   shift and go to state 8
+    for_statement                  shift and go to state 9
+
+state 96
+
+    (13) if_statement -> IF expression LBRACE statement_body RBRACE ELSE LBRACE . statement_body RBRACE
+    (42) statement_body -> . statement_list
+    (43) statement_body -> . return_statement
+    (2) statement_list -> . statement
+    (3) statement_list -> . statement_list statement
+    (32) return_statement -> . RETURN expression
+    (4) statement -> . assignment
+    (5) statement -> . function_declaration
+    (6) statement -> . return_statement
+    (7) statement -> . function_call
+    (8) statement -> . if_statement
+    (9) statement -> . for_statement
+    (15) assignment -> . ID ASSIGN expression
+    (16) assignment -> . FLOATattr ID ASSIGN expression
+    (17) assignment -> . STRINGattr ID ASSIGN expression
+    (18) assignment -> . INTattr ID ASSIGN expression
+    (19) assignment -> . BOOLattr ID ASSIGN expression
+    (38) function_declaration -> . DEF ID LPAREN RPAREN LBRACE statement_body RBRACE
+    (39) function_declaration -> . DEF ID LPAREN parameters RPAREN LBRACE statement_body RBRACE
+    (40) function_declaration -> . DEF return_type ID LPAREN RPAREN LBRACE statement_body RBRACE
+    (41) function_declaration -> . DEF return_type ID LPAREN parameters RPAREN LBRACE statement_body RBRACE
+    (10) function_call -> . ID LPAREN RPAREN
+    (11) function_call -> . ID LPAREN parameters RPAREN
+    (12) if_statement -> . IF expression LBRACE statement_body RBRACE
+    (13) if_statement -> . IF expression LBRACE statement_body RBRACE ELSE LBRACE statement_body RBRACE
+    (14) for_statement -> . FOR expression LBRACE statement_body RBRACE
+
+    RETURN          shift and go to state 16
+    ID              shift and go to state 10
+    FLOATattr       shift and go to state 11
+    STRINGattr      shift and go to state 12
+    INTattr         shift and go to state 13
+    BOOLattr        shift and go to state 14
+    DEF             shift and go to state 15
+    IF              shift and go to state 17
+    FOR             shift and go to state 18
+
+    statement_body                 shift and go to state 100
+    statement_list                 shift and go to state 77
+    return_statement               shift and go to state 78
+    statement                      shift and go to state 3
+    assignment                     shift and go to state 4
+    function_declaration           shift and go to state 5
+    function_call                  shift and go to state 7
+    if_statement                   shift and go to state 8
+    for_statement                  shift and go to state 9
+
+state 97
+
+    (39) function_declaration -> DEF ID LPAREN parameters RPAREN LBRACE statement_body RBRACE .
+
+    ID              reduce using rule 39 (function_declaration -> DEF ID LPAREN parameters RPAREN LBRACE statement_body RBRACE .)
+    FLOATattr       reduce using rule 39 (function_declaration -> DEF ID LPAREN parameters RPAREN LBRACE statement_body RBRACE .)
+    STRINGattr      reduce using rule 39 (function_declaration -> DEF ID LPAREN parameters RPAREN LBRACE statement_body RBRACE .)
+    INTattr         reduce using rule 39 (function_declaration -> DEF ID LPAREN parameters RPAREN LBRACE statement_body RBRACE .)
+    BOOLattr        reduce using rule 39 (function_declaration -> DEF ID LPAREN parameters RPAREN LBRACE statement_body RBRACE .)
+    DEF             reduce using rule 39 (function_declaration -> DEF ID LPAREN parameters RPAREN LBRACE statement_body RBRACE .)
+    RETURN          reduce using rule 39 (function_declaration -> DEF ID LPAREN parameters RPAREN LBRACE statement_body RBRACE .)
+    IF              reduce using rule 39 (function_declaration -> DEF ID LPAREN parameters RPAREN LBRACE statement_body RBRACE .)
+    FOR             reduce using rule 39 (function_declaration -> DEF ID LPAREN parameters RPAREN LBRACE statement_body RBRACE .)
+    $end            reduce using rule 39 (function_declaration -> DEF ID LPAREN parameters RPAREN LBRACE statement_body RBRACE .)
+    RBRACE          reduce using rule 39 (function_declaration -> DEF ID LPAREN parameters RPAREN LBRACE statement_body RBRACE .)
+
+
+state 98
+
+    (40) function_declaration -> DEF return_type ID LPAREN RPAREN LBRACE statement_body RBRACE .
+
+    ID              reduce using rule 40 (function_declaration -> DEF return_type ID LPAREN RPAREN LBRACE statement_body RBRACE .)
+    FLOATattr       reduce using rule 40 (function_declaration -> DEF return_type ID LPAREN RPAREN LBRACE statement_body RBRACE .)
+    STRINGattr      reduce using rule 40 (function_declaration -> DEF return_type ID LPAREN RPAREN LBRACE statement_body RBRACE .)
+    INTattr         reduce using rule 40 (function_declaration -> DEF return_type ID LPAREN RPAREN LBRACE statement_body RBRACE .)
+    BOOLattr        reduce using rule 40 (function_declaration -> DEF return_type ID LPAREN RPAREN LBRACE statement_body RBRACE .)
+    DEF             reduce using rule 40 (function_declaration -> DEF return_type ID LPAREN RPAREN LBRACE statement_body RBRACE .)
+    RETURN          reduce using rule 40 (function_declaration -> DEF return_type ID LPAREN RPAREN LBRACE statement_body RBRACE .)
+    IF              reduce using rule 40 (function_declaration -> DEF return_type ID LPAREN RPAREN LBRACE statement_body RBRACE .)
+    FOR             reduce using rule 40 (function_declaration -> DEF return_type ID LPAREN RPAREN LBRACE statement_body RBRACE .)
+    $end            reduce using rule 40 (function_declaration -> DEF return_type ID LPAREN RPAREN LBRACE statement_body RBRACE .)
+    RBRACE          reduce using rule 40 (function_declaration -> DEF return_type ID LPAREN RPAREN LBRACE statement_body RBRACE .)
+
+
+state 99
+
+    (41) function_declaration -> DEF return_type ID LPAREN parameters RPAREN LBRACE statement_body . RBRACE
+
+    RBRACE          shift and go to state 101
+
+
+state 100
+
+    (13) if_statement -> IF expression LBRACE statement_body RBRACE ELSE LBRACE statement_body . RBRACE
+
+    RBRACE          shift and go to state 102
+
+
+state 101
+
+    (41) function_declaration -> DEF return_type ID LPAREN parameters RPAREN LBRACE statement_body RBRACE .
+
+    ID              reduce using rule 41 (function_declaration -> DEF return_type ID LPAREN parameters RPAREN LBRACE statement_body RBRACE .)
+    FLOATattr       reduce using rule 41 (function_declaration -> DEF return_type ID LPAREN parameters RPAREN LBRACE statement_body RBRACE .)
+    STRINGattr      reduce using rule 41 (function_declaration -> DEF return_type ID LPAREN parameters RPAREN LBRACE statement_body RBRACE .)
+    INTattr         reduce using rule 41 (function_declaration -> DEF return_type ID LPAREN parameters RPAREN LBRACE statement_body RBRACE .)
+    BOOLattr        reduce using rule 41 (function_declaration -> DEF return_type ID LPAREN parameters RPAREN LBRACE statement_body RBRACE .)
+    DEF             reduce using rule 41 (function_declaration -> DEF return_type ID LPAREN parameters RPAREN LBRACE statement_body RBRACE .)
+    RETURN          reduce using rule 41 (function_declaration -> DEF return_type ID LPAREN parameters RPAREN LBRACE statement_body RBRACE .)
+    IF              reduce using rule 41 (function_declaration -> DEF return_type ID LPAREN parameters RPAREN LBRACE statement_body RBRACE .)
+    FOR             reduce using rule 41 (function_declaration -> DEF return_type ID LPAREN parameters RPAREN LBRACE statement_body RBRACE .)
+    $end            reduce using rule 41 (function_declaration -> DEF return_type ID LPAREN parameters RPAREN LBRACE statement_body RBRACE .)
+    RBRACE          reduce using rule 41 (function_declaration -> DEF return_type ID LPAREN parameters RPAREN LBRACE statement_body RBRACE .)
+
+
+state 102
+
+    (13) if_statement -> IF expression LBRACE statement_body RBRACE ELSE LBRACE statement_body RBRACE .
+
+    ID              reduce using rule 13 (if_statement -> IF expression LBRACE statement_body RBRACE ELSE LBRACE statement_body RBRACE .)
+    FLOATattr       reduce using rule 13 (if_statement -> IF expression LBRACE statement_body RBRACE ELSE LBRACE statement_body RBRACE .)
+    STRINGattr      reduce using rule 13 (if_statement -> IF expression LBRACE statement_body RBRACE ELSE LBRACE statement_body RBRACE .)
+    INTattr         reduce using rule 13 (if_statement -> IF expression LBRACE statement_body RBRACE ELSE LBRACE statement_body RBRACE .)
+    BOOLattr        reduce using rule 13 (if_statement -> IF expression LBRACE statement_body RBRACE ELSE LBRACE statement_body RBRACE .)
+    DEF             reduce using rule 13 (if_statement -> IF expression LBRACE statement_body RBRACE ELSE LBRACE statement_body RBRACE .)
+    RETURN          reduce using rule 13 (if_statement -> IF expression LBRACE statement_body RBRACE ELSE LBRACE statement_body RBRACE .)
+    IF              reduce using rule 13 (if_statement -> IF expression LBRACE statement_body RBRACE ELSE LBRACE statement_body RBRACE .)
+    FOR             reduce using rule 13 (if_statement -> IF expression LBRACE statement_body RBRACE ELSE LBRACE statement_body RBRACE .)
+    $end            reduce using rule 13 (if_statement -> IF expression LBRACE statement_body RBRACE ELSE LBRACE statement_body RBRACE .)
+    RBRACE          reduce using rule 13 (if_statement -> IF expression LBRACE statement_body RBRACE ELSE LBRACE statement_body RBRACE .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for PLUS in state 74 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 74 resolved as shift
+WARNING: shift/reduce conflict for MULT in state 74 resolved as shift
+WARNING: shift/reduce conflict for DIV in state 74 resolved as shift
+WARNING: shift/reduce conflict for EXP in state 74 resolved as shift
+WARNING: shift/reduce conflict for EQUALS in state 74 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 75 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 75 resolved as shift
+WARNING: shift/reduce conflict for MULT in state 75 resolved as shift
+WARNING: shift/reduce conflict for DIV in state 75 resolved as shift
+WARNING: shift/reduce conflict for EXP in state 75 resolved as shift
+WARNING: shift/reduce conflict for EQUALS in state 75 resolved as shift
+WARNING: reduce/reduce conflict in state 78 resolved using rule (statement -> return_statement)
+WARNING: rejected rule (statement_body -> return_statement) in state 78
+WARNING: Rule (statement_body -> return_statement) is never reduced

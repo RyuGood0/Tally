@@ -1,6 +1,6 @@
 import ply.lex as lex
 
-class MyLexer(object):
+class LangLexer(object):
 	reserved = {
 		'if' : 'IF',
 		'else' : 'ELSE',
@@ -19,7 +19,8 @@ class MyLexer(object):
 		'int' : 'INTattr',
 		'float' : 'FLOATattr',
 		'bool' : 'BOOLattr',
-		'null' : 'NULLattr',
+
+		'null' : 'NULL',
 
 		'def' : 'DEF',
 		'class': 'CLASS'
@@ -48,7 +49,10 @@ class MyLexer(object):
 		'ID',
 		'ASSIGN',
 		'LNEND',
-		'COMMA'
+		'COMMA',
+		'BOOL',
+		'RBRACKET',
+		'LBRACKET'
 	] + list(reserved.values())
 
 	t_ADD = r'\+\+'
@@ -69,6 +73,8 @@ class MyLexer(object):
 	t_LBRACE = r'\{'
 	t_RBRACE = r'\}'
 	t_COMMA = r','
+	t_RBRACKET = r'\]'
+	t_LBRACKET = r'\['
 
 	def t_NUMBER(self, t):
 		r'(?<![\d.])[0-9]+(?![\d.])'
@@ -87,6 +93,9 @@ class MyLexer(object):
 	
 	def t_ID(self, t):
 		r'[a-zA-Z_][a-zA-Z_0-9]*'
+
+		if t.value in self.reserved:
+			t.type = self.reserved[t.value]
 
 		return t
 	
@@ -119,19 +128,20 @@ class MyLexer(object):
 				break
 			print(tok)
 
-# Build the lexer and try it out
-m = MyLexer()
-m.build()           # Build the lexer
-m.test(
-	"""
-	a = 4 + 5
-	def add(a, b) {
-		return a + b
-	}
+if __name__ == "__main__":
+	# Build the lexer and try it out
+	m = LangLexer()
+	m.build()           # Build the lexer
+	m.test(
+		"""
+		a = 4 + 5
+		def add(a, b) {
+			return a + b
+		}
 
-	b = "Hello"
+		b = "Hello"
 
-	# Comment here
-	c = 3.14
-	"""
-)     # Test it
+		# Comment here
+		float c = 3.14
+		"""
+	)     # Test it

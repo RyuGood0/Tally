@@ -1,6 +1,6 @@
 import ply.lex as lex
 
-class LangLexer(object):
+class TallyLexer(object):
 	reserved = {
 		'if' : 'IF',
 		'else' : 'ELSE',
@@ -137,7 +137,7 @@ class LangLexer(object):
 
 if __name__ == "__main__":
 	# Build the lexer and try it out
-	m = LangLexer()
+	m = TallyLexer()
 	m.build()           # Build the lexer
 	m.test(
 		"""

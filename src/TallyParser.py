@@ -1,8 +1,8 @@
 import ply.yacc as yacc
-from TallyLexer import LangLexer
+from TallyLexer import TallyLexer
 
-class MyParser(object):
-    tokens = LangLexer().tokens
+class TallyParser(object):
+    tokens = TallyLexer().tokens
 
     precedence = (
         ('left', 'PLUS', 'MINUS'),
@@ -147,6 +147,7 @@ class MyParser(object):
                    | expression GEQUAL expression
                    | expression LEQUAL expression
                    | expression NEQUAL expression
+                   | LPAREN expression RPAREN
                    | NUMBER
                    | STRING
                    | FLOAT
@@ -158,6 +159,8 @@ class MyParser(object):
         '''
         if len(p) == 2:
             p[0] = p[1]
+        elif p[1] == '(':
+            p[0] = p[2]
         else:
             p[0] = (p[2], p[1], p[3])
 
@@ -255,20 +258,23 @@ class MyParser(object):
             print("Syntax error at EOF")
 
     def build(self, **kwargs):
-        self.lexer = LangLexer()
+        self.lexer = TallyLexer()
         self.lexer.build()
         self.parser = yacc.yacc(module=self, **kwargs)
 
-    def test(self, data):
+    def parse(self, data):
         result = self.parser.parse(data, lexer = self.lexer.lexer)
         return result
 
+if __name__ == '__main__':
+    # Build the parser and try it out
+    m = TallyParser()
+    m.build()
 
-# Build the parser and try it out
-m = MyParser()
-m.build()
+    file_path = "examples/math.ta"
+    with open(file_path, 'r') as file:
+        data = file.read()
+        parsed = m.parse(data)  # Test it
 
-file_path = "examples/test.ta"
-with open(file_path, 'r') as file:
-    data = file.read()
-    print(m.test(data))  # Test it
+    for item in parsed[1]:
+        print(item)

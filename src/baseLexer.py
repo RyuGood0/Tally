@@ -1,31 +1,29 @@
 import ply.lex as lex
 
-reserved = {
-	'if' : 'IF',
-	'else' : 'ELSE',
-	'while' : 'WHILE',
-	'for' : 'FOR',
-
-	'return' : 'RETURN',
-	'break' : 'BREAK',
-	'continue' : 'CONTINUE',
-	
-	'import' : 'IMPORT',
-
-	'const' : 'CONST',
-
-	'str' : 'STRINGattr',
-	'int' : 'INTattr',
-	'float' : 'FLOATattr',
-	'bool' : 'BOOLattr',
-	'null' : 'NULLattr',
-
-	'def' : 'DEF',
-	'class': 'CLASS'
-}
-
 class MyLexer(object):
-	reserved = reserved
+	reserved = {
+		'if' : 'IF',
+		'else' : 'ELSE',
+		'while' : 'WHILE',
+		'for' : 'FOR',
+
+		'return' : 'RETURN',
+		'break' : 'BREAK',
+		'continue' : 'CONTINUE',
+		
+		'import' : 'IMPORT',
+
+		'const' : 'CONST',
+
+		'str' : 'STRINGattr',
+		'int' : 'INTattr',
+		'float' : 'FLOATattr',
+		'bool' : 'BOOLattr',
+		'null' : 'NULLattr',
+
+		'def' : 'DEF',
+		'class': 'CLASS'
+	}
 
 	tokens = [
 		'NUMBER',
@@ -53,7 +51,6 @@ class MyLexer(object):
 		'COMMA'
 	] + list(reserved.values())
 
-	# Regular expression rules for simple tokens
 	t_ADD = r'\+\+'
 	t_SUB = r'--'
 	t_PLUS    = r'\+'
@@ -82,28 +79,30 @@ class MyLexer(object):
 		r'\d+[,.]\d+|(\d+)'
 		t.value = float(t.value)
 		return t
-
+	
 	def t_STRING(self, t):
 		r'\"[^\"]*\"'
 		t.value = t.value[1:-1]
 		return t
-
+	
 	def t_ID(self, t):
 		r'[a-zA-Z_][a-zA-Z_0-9]*'
-		t.type = reserved.get(t.value,'ID')
+
 		return t
+	
+	def t_newline(self,t):
+		r'\n+'
+		t.lexer.lineno += len(t.value)
 
 	def t_COMMENT(self, t):
 		r'\#.*'
 		pass
 
-	def t_newline(self, t):
-		r'\n+'
-		t.lexer.lineno += len(t.value)
-
+	# A string containing ignored characters (spaces and tabs)
 	t_ignore  = ' \t'
 
-	def t_error(t):
+	# Error handling rule
+	def t_error(self,t):
 		print("Illegal character '%s'" % t.value[0])
 		t.lexer.skip(1)
 
@@ -123,4 +122,16 @@ class MyLexer(object):
 # Build the lexer and try it out
 m = MyLexer()
 m.build()           # Build the lexer
-m.test("3 + 4")     # Test it
+m.test(
+	"""
+	a = 4 + 5
+	def add(a, b) {
+		return a + b
+	}
+
+	b = "Hello"
+
+	# Comment here
+	c = 3.14
+	"""
+)     # Test it

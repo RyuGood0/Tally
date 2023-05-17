@@ -6,6 +6,7 @@ class LangLexer(object):
 		'else' : 'ELSE',
 		'while' : 'WHILE',
 		'for' : 'FOR',
+		'in' : 'IN',
 
 		'return' : 'RETURN',
 		'break' : 'BREAK',
@@ -46,13 +47,16 @@ class LangLexer(object):
 		'LESS',
 		'GEQUAL',
 		'LEQUAL',
+		'NEQUAL',
 		'ID',
 		'ASSIGN',
 		'LNEND',
 		'COMMA',
 		'BOOL',
+		'LBRACKET', 
 		'RBRACKET',
-		'LBRACKET'
+		'PLUSEQUAL',
+		'MINUSEQUAL'
 	] + list(reserved.values())
 
 	t_ADD = r'\+\+'
@@ -70,11 +74,14 @@ class LangLexer(object):
 	t_LESS = r'<'
 	t_GEQUAL = r'>='
 	t_LEQUAL = r'<='
+	t_NEQUAL = r'!='
 	t_LBRACE = r'\{'
 	t_RBRACE = r'\}'
 	t_COMMA = r','
 	t_RBRACKET = r'\]'
 	t_LBRACKET = r'\['
+	t_PLUSEQUAL = r'\+='
+	t_MINUSEQUAL = r'-='
 
 	def t_NUMBER(self, t):
 		r'(?<![\d.])[0-9]+(?![\d.])'

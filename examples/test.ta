@@ -2,7 +2,6 @@ def int add(a, b) { # adds two numbers together
     return a+b
 }
 
-// divides two numbers
 def float divide(float a, b) {
     return a/b
 }
@@ -10,7 +9,7 @@ def float divide(float a, b) {
 a = 1.5
 a++
 int b = 3
-string c = "hello world"
+str c = "hello world"
 
 print(add(a, b))
 print(divide(a, b))

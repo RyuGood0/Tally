@@ -19,7 +19,7 @@ class MyParser(object):
     def p_statement_list(self, p):
         '''
         statement_list : statement
-                    | statement_list statement
+                       | statement_list statement
         '''
         if len(p) == 2:
             p[0] = [p[1]]
@@ -29,11 +29,12 @@ class MyParser(object):
     def p_statement(self, p):
         '''
         statement : assignment
+                | assignment_update
                 | function_declaration
                 | return_statement
                 | function_call
                 | if_statement
-                | for_statement
+                | for_in_statement
         '''
         p[0] = p[1]
 
@@ -47,6 +48,22 @@ class MyParser(object):
         else:
             p[0] = ('func_call', p[1], p[3])
 
+    def p_array_declaration(self, p):
+        '''
+        array_declaration : LBRACKET array_elements RBRACKET
+        '''
+        p[0] = ('array', p[2])
+
+    def p_array_elements(self, p):
+        '''
+        array_elements : expression
+                       | expression COMMA array_elements
+        '''
+        if len(p) == 2:
+            p[0] = [p[1]]
+        else:
+            p[0] = [p[1]] + p[3]
+
     def p_if_statement(self, p):
         '''
         if_statement : IF expression LBRACE statement_body RBRACE
@@ -57,24 +74,65 @@ class MyParser(object):
         else:
             p[0] = ('if_else', p[2], p[4], p[8])
 
-    def p_for_statement(self, p):
+    def p_for_in_statement(self, p):
         '''
-        for_statement : FOR expression LBRACE statement_body RBRACE
+        for_in_statement : FOR id_list IN ID LBRACE statement_body RBRACE
         '''
-        p[0] = ('for', p[2], p[4])
+        p[0] = ('for_in', p[2], p[4], p[6])
+
+    def p_id_list(self, p):
+        '''
+        id_list : ID
+                | ID COMMA id_list
+        '''
+        if len(p) == 2:
+            p[0] = [p[1]]
+        else:
+            p[0] = [p[1]] + p[3]
 
     def p_assignment(self, p):
         '''
         assignment : ID ASSIGN expression
-                   | FLOATattr ID ASSIGN expression
-                   | STRINGattr ID ASSIGN expression
-                   | INTattr ID ASSIGN expression
-                   | BOOLattr ID ASSIGN expression
+                   | type_attr ID ASSIGN expression
+                   | CONST ID ASSIGN expression
+                   | CONST type_attr ID ASSIGN expression
         '''
         if len(p) == 4:
             p[0] = ('assign', p[1], p[3])
+        elif len(p) == 5:
+            if p[1] == 'const':
+                p[0] = ('const_assign', p[2], p[4])
+            else:
+                p[0] = ('assign', p[1], p[2], p[4])
         else:
-            p[0] = ('assign', p[1], p[2], p[4])
+            p[0] = ('const_assign', p[2], p[3], p[5])
+
+    def _get_assignment_type(self, assignment_type):
+        if assignment_type == '=':
+            return 'assign'
+        elif assignment_type == '+=':
+            return 'plus_assign'
+        elif assignment_type == '-=':
+            return 'minus_assign'
+
+    def p_assignment_type(self, p):
+        '''
+        assignment_type : ASSIGN
+                  | PLUSEQUAL
+                  | MINUSEQUAL
+        '''
+        p[0] = p[1]
+
+    def p_assignment_update(self, p):
+        '''
+        assignment_update : ID assignment_type expression
+                          | ID ADD
+                          | ID SUB
+        '''
+        if len(p) == 3:
+            p[0] = (p[2], p[1])
+        else:
+            p[0] = (self._get_assignment_type(p[2]), p[1], p[3])
 
     def p_expression(self, p):
         '''
@@ -84,11 +142,19 @@ class MyParser(object):
                    | expression DIV expression
                    | expression EXP expression
                    | expression EQUALS expression
+                   | expression GREATER expression
+                   | expression LESS expression
+                   | expression GEQUAL expression
+                   | expression LEQUAL expression
+                   | expression NEQUAL expression
                    | NUMBER
                    | STRING
                    | FLOAT
+                   | BOOL
+                   | NULL
                    | ID
                    | function_call
+                   | array_declaration
         '''
         if len(p) == 2:
             p[0] = p[1]
@@ -105,9 +171,9 @@ class MyParser(object):
         '''
         p[0] = ('return', p[2])
 
-    def p_return_type(self, p):
+    def p_type_attr(self, p):
         '''
-        return_type : INTattr
+        type_attr : INTattr
                     | FLOATattr
                     | STRINGattr
                     | BOOLattr
@@ -118,9 +184,9 @@ class MyParser(object):
     def p_function_declaration(self, p):
         '''
         function_declaration : DEF ID LPAREN RPAREN LBRACE statement_body RBRACE
-                            | DEF ID LPAREN parameters RPAREN LBRACE statement_body RBRACE
-                            | DEF return_type ID LPAREN RPAREN LBRACE statement_body RBRACE
-                            | DEF return_type ID LPAREN parameters RPAREN LBRACE statement_body RBRACE
+                            | DEF ID LPAREN func_parameters RPAREN LBRACE statement_body RBRACE
+                            | DEF type_attr ID LPAREN RPAREN LBRACE statement_body RBRACE
+                            | DEF type_attr ID LPAREN func_parameters RPAREN LBRACE statement_body RBRACE
         '''
         if len(p) == 8:
             p[0] = ('func_decl', p[2], [], p[6])
@@ -135,22 +201,52 @@ class MyParser(object):
     def p_statement_body(self, p):
         '''
         statement_body : statement_list
-                    | return_statement
+                       | return_statement
         '''
         if isinstance(p[1], list):
             p[0] = p[1]
         else:
             p[0] = [p[1]]
 
+    def p_value(self, p):
+        '''
+        value : NUMBER
+              | STRING
+              | FLOAT
+              | ID
+              | function_call
+              | NULL
+              | BOOL
+        '''
+        p[0] = p[1]
+
     def p_parameters(self, p):
         '''
         parameters : ID
                    | ID COMMA parameters
+                   | value
+                   | value COMMA parameters
         '''
         if len(p) == 2:
             p[0] = [p[1]]
         else:
             p[0] = [p[1]] + p[3]
+
+    def p_func_parameters(self, p):
+        '''
+        func_parameters : ID
+                   | ID COMMA func_parameters
+                   | type_attr ID
+                   | type_attr ID COMMA func_parameters
+        '''
+        if len(p) == 2:
+            p[0] = ('param', p[1])
+        elif len(p) == 3:
+            p[0] = ('typed_param', p[1], p[2])
+        elif len(p) == 4:
+            p[0] = ('param', p[1]) + p[3]
+        else:
+            p[0] = ('typed_param', p[1], p[2]) + p[4]
 
     def p_error(self, p):
         if p:
@@ -171,18 +267,8 @@ class MyParser(object):
 # Build the parser and try it out
 m = MyParser()
 m.build()
-print(m.test(
-    """
-    a = 4 + 5
-    if a == 9 {
-        print(a)
-    } else {
-        print("a is not 9")
-    }
 
-    b = [1, 2, 3, 4, 5]
-    for i in b {
-        print(i)
-    }
-    """
-))  # Test it
+file_path = "examples/test.ta"
+with open(file_path, 'r') as file:
+    data = file.read()
+    print(m.test(data))  # Test it

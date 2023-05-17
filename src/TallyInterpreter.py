@@ -14,18 +14,14 @@ class TallyInterpreter(object):
             self.execute(statement)
 
     def execute(self, statement):
-        print(statement)
         if isinstance(statement, int):
             return statement
-        elif isinstance(statement, str):
-            if statement in self.vars:
-                return self.vars[statement]
-            elif statement == 'true':
-                return True
-            elif statement == 'false':
-                return False
-            else:
-                raise ValueError(f'Unrecognized identifier: {statement}')
+        elif isinstance(statement, float):
+            return statement
+        elif statement[0] == 'id':
+            return self.vars[statement[1]]
+        elif statement[0] == '++':
+            self.vars[statement[1]] += 1
         elif statement[0] == 'assign':
             if len(statement) == 3:
                 self.vars[statement[1]] = self.execute(statement[2])
@@ -49,7 +45,13 @@ class TallyInterpreter(object):
                 return left == right
         elif statement[0] == 'func_call':
             if statement[1] == 'print':
-                print(self.execute(statement[2]))
+                buffer = ""
+                for arg in statement[2]:
+                    buffer += str(self.execute(arg)) + ", "
+                print(buffer[:-2])
+
+        elif isinstance(statement, str):
+            return statement
 
 if __name__ == '__main__':
     file_path = "examples/math.ta"

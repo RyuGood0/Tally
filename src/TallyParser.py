@@ -38,16 +38,6 @@ class TallyParser(object):
         '''
         p[0] = p[1]
 
-    def p_function_call(self, p):
-        '''
-        function_call : ID LPAREN RPAREN
-                      | ID LPAREN parameters RPAREN
-        '''
-        if len(p) == 4:
-            p[0] = ('func_call', p[1], [])
-        else:
-            p[0] = ('func_call', p[1], p[3])
-
     def p_array_declaration(self, p):
         '''
         array_declaration : LBRACKET array_elements RBRACKET
@@ -66,8 +56,8 @@ class TallyParser(object):
 
     def p_if_statement(self, p):
         '''
-        if_statement : IF expression LBRACE statement_body RBRACE
-                    | IF expression LBRACE statement_body RBRACE ELSE LBRACE statement_body RBRACE
+        if_statement : IF expression LBRACE statement_list RBRACE
+                    | IF expression LBRACE statement_list RBRACE ELSE LBRACE statement_list RBRACE
         '''
         if len(p) == 6:
             p[0] = ('if', p[2], p[4])
@@ -76,7 +66,7 @@ class TallyParser(object):
 
     def p_for_in_statement(self, p):
         '''
-        for_in_statement : FOR id_list IN ID LBRACE statement_body RBRACE
+        for_in_statement : FOR id_list IN ID LBRACE statement_list RBRACE
         '''
         p[0] = ('for_in', p[2], p[4], p[6])
 
@@ -86,9 +76,9 @@ class TallyParser(object):
                 | ID COMMA id_list
         '''
         if len(p) == 2:
-            p[0] = [p[1]]
+            p[0] = ('id', p[1])
         else:
-            p[0] = [p[1]] + p[3]
+            p[0] = ('id', p[1]) + p[3]
 
     def p_assignment(self, p):
         '''
@@ -153,7 +143,7 @@ class TallyParser(object):
                    | FLOAT
                    | BOOL
                    | NULL
-                   | ID
+                   | id
                    | function_call
                    | array_declaration
         '''
@@ -186,10 +176,10 @@ class TallyParser(object):
 
     def p_function_declaration(self, p):
         '''
-        function_declaration : DEF ID LPAREN RPAREN LBRACE statement_body RBRACE
-                            | DEF ID LPAREN func_parameters RPAREN LBRACE statement_body RBRACE
-                            | DEF type_attr ID LPAREN RPAREN LBRACE statement_body RBRACE
-                            | DEF type_attr ID LPAREN func_parameters RPAREN LBRACE statement_body RBRACE
+        function_declaration : DEF ID LPAREN RPAREN LBRACE statement_list RBRACE
+                            | DEF ID LPAREN func_parameters RPAREN LBRACE statement_list RBRACE
+                            | DEF type_attr ID LPAREN RPAREN LBRACE statement_list RBRACE
+                            | DEF type_attr ID LPAREN func_parameters RPAREN LBRACE statement_list RBRACE
         '''
         if len(p) == 8:
             p[0] = ('func_decl', p[2], [], p[6])
@@ -201,34 +191,27 @@ class TallyParser(object):
         else:
             p[0] = ('func_decl', p[2], p[3], p[5], p[8])
 
-    def p_statement_body(self, p):
+    def p_function_call(self, p):
         '''
-        statement_body : statement_list
-                       | return_statement
-        '''
-        if isinstance(p[1], list):
-            p[0] = p[1]
-        else:
-            p[0] = [p[1]]
+        function_call : ID LPAREN RPAREN
+                      | ID LPAREN parameters RPAREN
 
-    def p_value(self, p):
         '''
-        value : NUMBER
-              | STRING
-              | FLOAT
-              | ID
-              | function_call
-              | NULL
-              | BOOL
+        if len(p) == 4:
+            p[0] = ('func_call', p[1], [])
+        else:
+            p[0] = ('func_call', p[1], p[3])
+
+    def p_id(self, p):
         '''
-        p[0] = p[1]
+        id : ID
+        '''
+        p[0] = ('id', p[1])
 
     def p_parameters(self, p):
         '''
-        parameters : ID
-                   | ID COMMA parameters
-                   | value
-                   | value COMMA parameters
+        parameters : expression
+                   | expression COMMA parameters
         '''
         if len(p) == 2:
             p[0] = [p[1]]
@@ -238,9 +221,9 @@ class TallyParser(object):
     def p_func_parameters(self, p):
         '''
         func_parameters : ID
-                   | ID COMMA func_parameters
-                   | type_attr ID
-                   | type_attr ID COMMA func_parameters
+                        | ID COMMA func_parameters
+                        | type_attr ID
+                        | type_attr ID COMMA func_parameters
         '''
         if len(p) == 2:
             p[0] = ('param', p[1])

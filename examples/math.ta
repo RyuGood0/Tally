@@ -8,4 +8,6 @@ a++
 c = a+b
 e = (2**(2+3))
 
-print(e)
+print(e, c, 5, "a")
+print("e")
+print(4+5)

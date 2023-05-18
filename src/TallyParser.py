@@ -66,7 +66,7 @@ class TallyParser(object):
 
     def p_for_in_statement(self, p):
         '''
-        for_in_statement : FOR id_list IN ID LBRACE statement_list RBRACE
+        for_in_statement : FOR id_list IN id LBRACE statement_list RBRACE
         '''
         p[0] = ('for_in', p[2], p[4], p[6])
 

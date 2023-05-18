@@ -1,16 +1,16 @@
 from TallyParser import TallyParser
 
-class TallyInterpreter(object):
-    parser = TallyParser()
-    parser.build()
+def raise_error(comment):
+    print(comment)
+    exit()
 
-    def __call__(self, content):
-        parsed = self.parser.parse(content)
-        
+class ExecutionScope(object):
+    def __init__(self):
         self.vars = {}
         self.functions = {}
 
-        for statement in parsed[1]:
+    def execute_stack(self, stack):
+        for statement in stack:
             self.execute(statement)
 
     def execute(self, statement):
@@ -20,7 +20,11 @@ class TallyInterpreter(object):
             return statement
         elif statement[0] == 'id':
             return self.vars[statement[1]]
+        elif statement[0] == 'array':
+            return statement[1]
         elif statement[0] == '++':
+            if statement[1] not in self.vars:
+                raise_error(f"Variable {statement[1]} not declared")
             self.vars[statement[1]] += 1
         elif statement[0] == 'assign':
             if len(statement) == 3:
@@ -28,7 +32,9 @@ class TallyInterpreter(object):
             elif len(statement) == 4:
                 # Here you could check if the type of the right-hand side matches the declared type
                 self.vars[statement[2]] = self.execute(statement[3])
-        elif statement[0] in ('+', '-', '*', '/', '**', '=='):
+        elif statement[0] == 'func_decl':
+            self.functions[statement[1]] = statement[-1]
+        elif statement[0] in ('+', '-', '*', '/', '**', '==', '!='):
             left = self.execute(statement[1])
             right = self.execute(statement[2])
             if statement[0] == '+':
@@ -43,29 +49,48 @@ class TallyInterpreter(object):
                 return left ** right
             elif statement[0] == '==':
                 return left == right
+            elif statement[0] == '!=':
+                return left != right
         elif statement[0] == 'func_call':
             if statement[1] == 'print':
-                buffer = ""
-                for arg in statement[2]:
-                    buffer += str(self.execute(arg)) + ", "
-                print(buffer[:-2])
+                print(*[self.execute(arg) for arg in statement[2]])
+            else:
+                if statement[1] not in self.functions:
+                    raise_error(f"Function {statement[1]} not declared")
+                for sub_statement in self.functions[statement[1]]:
+                    self.execute(sub_statement)
+        elif statement[0] == 'if':
+            if self.execute(statement[1]):
+                for sub_statement in statement[2]:
+                    self.execute(sub_statement)
+        elif statement[0] == 'if_else':
+            if self.execute(statement[1]):
+                for sub_statement in statement[2]:
+                    self.execute(sub_statement)
+            else:
+                for sub_statement in statement[3]:
+                    self.execute(sub_statement)
+        elif statement[0] == 'for_in':
+            for element in self.execute(statement[2]):
+                self.vars[statement[1][1]] = element
+                for sub_statement in statement[3]:
+                    self.execute(sub_statement)
 
         elif isinstance(statement, str):
             return statement
 
+class TallyInterpreter(object):
+    parser = TallyParser()
+    parser.build()
+
+    def __call__(self, content):
+        parsed = self.parser.parse(content)
+        
+        base_scope = ExecutionScope()
+        base_scope.execute_stack(parsed[1])
+
 if __name__ == '__main__':
     file_path = "examples/math.ta"
-    """ math.ta content:
-    int a = 5
-    b = 5 + 6*2/3 - 1
-
-    d = (1+2) * (3+4)
-
-    a++
-    a++
-    c = a+b
-    e = (2**(2+3))
-    """
     with open(file_path, 'r') as file:
         data = file.read()
         tally = TallyInterpreter()

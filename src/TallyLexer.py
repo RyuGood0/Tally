@@ -50,7 +50,6 @@ class TallyLexer(object):
 		'NEQUAL',
 		'ID',
 		'ASSIGN',
-		'LNEND',
 		'COMMA',
 		'BOOL',
 		'LBRACKET', 

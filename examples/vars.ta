@@ -1,0 +1,17 @@
+a = 1
+int b = 2
+const c = 3
+const float d = 3.14
+
+a++
+
+e = a + b
+e--
+e += 1
+
+print(a)
+print(b)
+print(c)
+print(d)
+print("================")
+print(e)

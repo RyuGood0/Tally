@@ -29,7 +29,6 @@ class TallyParser(object):
     def p_statement(self, p):
         '''
         statement : assignment
-                | assignment_update
                 | function_declaration
                 | return_statement
                 | function_call
@@ -54,21 +53,24 @@ class TallyParser(object):
         else:
             p[0] = [p[1]] + p[3]
 
+    def _get_statement_line(self, p):
+        return p.lineno(1)
+
     def p_if_statement(self, p):
         '''
         if_statement : IF expression LBRACE statement_list RBRACE
                     | IF expression LBRACE statement_list RBRACE ELSE LBRACE statement_list RBRACE
         '''
         if len(p) == 6:
-            p[0] = ('if', p[2], p[4])
+            p[0] = ('if', p[2], p[4], self._get_statement_line(p))
         else:
-            p[0] = ('if_else', p[2], p[4], p[8])
+            p[0] = ('if_else', p[2], p[4], p[8], self._get_statement_line(p))
 
     def p_for_in_statement(self, p):
         '''
-        for_in_statement : FOR id_list IN id LBRACE statement_list RBRACE
+        for_in_statement : FOR id_list IN ID LBRACE statement_list RBRACE
         '''
-        p[0] = ('for_in', p[2], p[4], p[6])
+        p[0] = ('for_in', p[2], p[4], p[6], self._get_statement_line(p))
 
     def p_id_list(self, p):
         '''
@@ -80,31 +82,6 @@ class TallyParser(object):
         else:
             p[0] = ('id', p[1]) + p[3]
 
-    def p_assignment(self, p):
-        '''
-        assignment : ID ASSIGN expression
-                   | type_attr ID ASSIGN expression
-                   | CONST ID ASSIGN expression
-                   | CONST type_attr ID ASSIGN expression
-        '''
-        if len(p) == 4:
-            p[0] = ('assign', p[1], p[3])
-        elif len(p) == 5:
-            if p[1] == 'const':
-                p[0] = ('const_assign', p[2], p[4])
-            else:
-                p[0] = ('assign', p[1], p[2], p[4])
-        else:
-            p[0] = ('const_assign', p[2], p[3], p[5])
-
-    def _get_assignment_type(self, assignment_type):
-        if assignment_type == '=':
-            return 'assign'
-        elif assignment_type == '+=':
-            return 'plus_assign'
-        elif assignment_type == '-=':
-            return 'minus_assign'
-
     def p_assignment_type(self, p):
         '''
         assignment_type : ASSIGN
@@ -113,16 +90,31 @@ class TallyParser(object):
         '''
         p[0] = p[1]
 
-    def p_assignment_update(self, p):
+    def p_assignment(self, p):
         '''
-        assignment_update : ID assignment_type expression
-                          | ID ADD
-                          | ID SUB
+        assignment : ID assignment_type expression
+                   | ID ADD
+                   | ID SUB
+                   | type_attr ID ASSIGN expression
+                   | CONST ID ASSIGN expression
+                   | CONST type_attr ID ASSIGN expression
         '''
         if len(p) == 3:
-            p[0] = (p[2], p[1])
+            p[0] = ('assign', p[1], ('+' if p[2]=='++' else '-', ('id', p[1]), 1))
+        elif p[2] == '=':
+            p[0] = ('assign', p[1], p[3])
+        elif p[2] == '+=':
+            p[0] = ('assign', p[1], ('+', ('id', p[1]), p[3]))
+        elif p[2] == '-=':
+            p[0] = ('assign', p[1], ('-', ('id', p[1]), p[3]))
+        elif len(p) == 5:
+            if p[1] == 'const':
+                p[0] = ('const_assign', p[2], p[4])
+            else:
+                p[0] = ('assign', p[1], p[2], p[4])
         else:
-            p[0] = (self._get_assignment_type(p[2]), p[1], p[3])
+            p[0] = ('const_assign', p[2], p[3], p[5])
+
 
     def p_expression(self, p):
         '''

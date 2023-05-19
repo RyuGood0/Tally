@@ -12,21 +12,16 @@ class Variable:
     type: str = 'any'
     const: bool = False
 
-    def __repr__(self) -> str:
-        return str(self.value)
-
 @dataclass
 class Function:
-    vars: dict
-    functions: dict
     parameters: list
     return_type: str
     body: list
 
 class ExecutionScope(object):
-    def __init__(self):
-        self.vars = {} # entry example: 'x': Variable('int', 5)
-        self.functions = {} # entry example: 'foo': Function({}, {}, [], 'any', [('func_call', 'print', [('id', 'x')])])
+    def __init__(self, vars={}, functions={}):
+        self.vars = vars # entry example: 'x': Variable('int', 5)
+        self.functions = functions # entry example: 'foo': Function({}, {}, [], 'any', [('func_call', 'print', [('id', 'x')])])
 
     def execute_stack(self, stack):
         for statement in stack:
@@ -43,6 +38,8 @@ class ExecutionScope(object):
             return self.vars[statement[1]]
         elif statement[0] == 'array':
             return statement[1]
+        elif statement[0] == "return":
+            self.vars['__return'] = self.execute(statement[1])
         elif statement[0] == 'assign':
             if len(statement) == 3:
                 if statement[1] in self.vars:
@@ -70,7 +67,10 @@ class ExecutionScope(object):
             elif len(statement) == 4:
                 self.vars[statement[2]] = Variable(self.execute(statement[3]), statement[1], True)
         elif statement[0] == 'func_decl':
-            self.functions[statement[1]] = statement[-1]
+            if len(statement) == 4:
+                self.functions[statement[1]] = Function(statement[2], 'any', statement[3])
+            else:
+                self.functions[statement[2]] = Function(statement[3], statement[1], statement[4])
         elif statement[0] in ('+', '-', '*', '/', '**'):
             left = self.execute(statement[1])
             right = self.execute(statement[2])
@@ -119,12 +119,57 @@ class ExecutionScope(object):
                 return left <= right
         elif statement[0] == 'func_call':
             if statement[1] == 'print':
-                print(*[self.execute(arg) for arg in statement[2]], sep=', ')
-            else:
-                if statement[1] not in self.functions:
-                    raise_error(f"Function {statement[1]} not declared")
-                for sub_statement in self.functions[statement[1]]:
-                    self.execute(sub_statement)
+                elements = []
+                for arg in statement[2]:
+                    executed = self.execute(arg)
+                    elements.append(executed.value if isinstance(executed, Variable) else executed)
+                print(*elements, sep=', ')
+                return
+            if statement[1] not in self.functions:
+                raise_error(f"Function {statement[1]} not declared")
+            
+            function = self.functions[statement[1]]
+
+            if len(statement[2]) != len(function.parameters):
+                raise_error(f"Function {statement[1]} takes {len(function.parameters)} parameters, {len(statement[2])} given")
+
+            new_scope = ExecutionScope(self.vars.copy(), self.functions.copy())
+
+            for call_args in statement[2]:
+                if (isinstance(call_args, tuple) or isinstance(call_args, list)) and call_args[0] == 'id':
+                    function_parameter = function.parameters[statement[2].index(call_args)]
+
+                    if call_args[1] not in self.vars:
+                        raise_error(f"Variable {call_args[1]} not defined")
+
+                    call_args = self.vars[call_args[1]]
+
+                    if function_parameter[0] == 'typed_param':
+                        if call_args.type == 'any':
+                            if type(call_args.value).__name__ != function_parameter[1]:
+                                raise_error(f"Parameter {function_parameter[-1]} is not of type {function_parameter[1]}")
+                        elif call_args.type != function_parameter[1]:
+                            raise_error(f"Parameter {function_parameter[-1]} is not of type {function_parameter[1]}")
+
+                    new_scope.vars[function_parameter[-1]] = Variable(call_args.value, call_args.type)
+                else:
+                    function_parameter = function.parameters[statement[2].index(call_args)]
+
+                    if function_parameter[0] == 'typed_param' and type(call_args).__name__ != function_parameter[1]:
+                        raise_error(f"Parameter {function_parameter[-1]} is not of type {function_parameter[1]}")
+
+                    new_scope.vars[function_parameter[-1]] = Variable(self.execute(call_args))
+
+            new_scope.execute_stack(function.body)
+
+            # all variables that have the same name as the ones in the function scope are updated
+            for var in new_scope.vars:
+                if var in self.vars:
+                    self.vars[var] = new_scope.vars[var]
+
+            if "__return" in new_scope.vars:
+                return new_scope.vars["__return"]
+
         elif statement[0] == 'if':
             if self.execute(statement[1]):
                 for sub_statement in statement[2]:
@@ -156,7 +201,7 @@ class TallyInterpreter(object):
         base_scope.execute_stack(parsed[1])
 
 if __name__ == '__main__':
-    file_path = "examples/vars.ta"
+    file_path = "examples/function.ta"
     with open(file_path, 'r') as file:
         data = file.read()
         tally = TallyInterpreter()

@@ -1,0 +1,19 @@
+def add(int a, int b) {
+    return a + b
+}
+
+def float div(a, b) {
+    return a / b
+}
+
+def say_hello() {
+    print("Hello, world!")
+}
+
+c = 5
+
+a = add(c, 9)
+print(a)
+
+b = div(4, 9)
+print(b)

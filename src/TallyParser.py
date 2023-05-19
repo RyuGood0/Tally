@@ -218,13 +218,13 @@ class TallyParser(object):
                         | type_attr ID COMMA func_parameters
         '''
         if len(p) == 2:
-            p[0] = ('param', p[1])
+            p[0] = ['param', p[1]]
         elif len(p) == 3:
-            p[0] = ('typed_param', p[1], p[2])
+            p[0] = ['typed_param', p[1], p[2]]
         elif len(p) == 4:
-            p[0] = ('param', p[1]) + p[3]
+            p[0] = [['param', p[1]]] + [p[3]]
         else:
-            p[0] = ('typed_param', p[1], p[2]) + p[4]
+            p[0] = [['typed_param', p[1], p[2]]] + [p[4]]
 
     def p_error(self, p):
         if p:

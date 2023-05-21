@@ -60,11 +60,18 @@ class TallyParser(object):
         '''
         if_statement : IF expression LBRACE statement_list RBRACE
                     | IF expression LBRACE statement_list RBRACE ELSE LBRACE statement_list RBRACE
+                    | IF LPAREN expression RPAREN LBRACE statement_list RBRACE
+                    | IF LPAREN expression RPAREN LBRACE statement_list RBRACE ELSE LBRACE statement_list RBRACE
         '''
         if len(p) == 6:
             p[0] = ('if', p[2], p[4], self._get_statement_line(p))
-        else:
+        elif len(p) == 10:
             p[0] = ('if_else', p[2], p[4], p[8], self._get_statement_line(p))
+        elif len(p) == 8:
+            p[0] = ('if', p[3], p[6], self._get_statement_line(p))
+        else:
+            p[0] = ('if_else', p[3], p[6], p[10], self._get_statement_line(p))
+
 
     def p_for_in_statement(self, p):
         '''

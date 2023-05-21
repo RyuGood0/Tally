@@ -1,19 +1,11 @@
-def int add(a, b) { # adds two numbers together
-    return a+b
-}
+int a = 1
 
-def float divide(float a, b) {
-    return a/b
-}
+int b = 2 + 3
 
-a = 1.5
-a++
-int b = 3
-str c = "hello world"
-
-print(add(a, b))
-print(divide(a, b))
+int c = b + 1
 
 if a > b {
-    print("a is larger")
+    a = b
+} else {
+    b = a
 }

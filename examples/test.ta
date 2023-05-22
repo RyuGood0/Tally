@@ -9,3 +9,11 @@ if a > b {
 } else {
     b = a
 }
+
+int d = a**b
+
+const int e = 1
+
+const f = 2
+
+str g = "hello"

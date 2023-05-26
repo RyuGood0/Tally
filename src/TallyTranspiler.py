@@ -12,6 +12,10 @@ class Variable:
     value: any
     constant: bool = False
 
+structs = {
+    'dynamic_type': "typedef dynamic_type {\n\tchar* type;\n\tvoid* ptr;\n} dynamic_t;\n"
+}
+
 class TallyTranspiler(object):
     parser = TallyParser()
     parser.build()
@@ -21,6 +25,7 @@ class TallyTranspiler(object):
 
     imports = []
     func_decls = []
+    structs = []
 
     def __call__(self, content):
         parsed = self.parser.parse(content)
@@ -46,7 +51,11 @@ class TallyTranspiler(object):
         for func_decl in self.func_decls:
             func_decl_code += func_decl + "\n"
 
-        c_code = f"{include_code}\n{func_decl_code}int main(int argc, char *argv[]) {{\n{main_code}}}"
+        structs_code = ""
+        for struct in self.structs:
+            structs_code += structs[struct] + "\n"
+
+        c_code = f"{include_code}\n{func_decl_code}\n{structs_code}int main(int argc, char *argv[]) {{\n{main_code}}}"
 
         return c_code
     
@@ -61,8 +70,10 @@ class TallyTranspiler(object):
     def transpile(self, statement):
         if isinstance(statement, int):
             return statement
+        
         elif isinstance(statement, str):
             return statement
+        
         elif statement[0] == 'assign':
             if self.is_assigned(statement)[0]:
                 if self.variables[statement[1]].constant:
@@ -70,17 +81,43 @@ class TallyTranspiler(object):
                 return f"{self.is_assigned(statement)[1].name} = {self.transpile(statement[2])}"
             elif len(statement) == 3:
                 self.variables[statement[1]] = Variable(statement[1], 'any', 0)
-                return f"<TODO_TYPE> {statement[1]} = {self.transpile(statement[2])}"
+                if 'dynamic_type' not in self.structs:
+                    self.structs.append('dynamic_type')
+
+                right_member = self.transpile(statement[2])
+                if isinstance(right_member, int):
+                    d_type = 'int'
+                elif isinstance(right_member, float):
+                    d_type = 'float'
+                elif isinstance(right_member, str):
+                    d_type = 'str'
+                else:
+                    d_type = 'any'
+                
+                return f"dynamic_t* {statement[1]} = {{.type = {d_type}, .value = {right_member}}}"
             elif len(statement) == 4:
                 self.variables[statement[2]] = Variable(statement[2], statement[1], 0)
-                return f"{self.transpile_type(statement[1])} {statement[2]} = {self.transpile(statement[3])}"
+                return f"{self.transpile_type(statement[1])} {statement[2]} = {self.transpile(statement[3])};"
+            
         elif statement[0] == 'const_assign':
             if self.is_assigned(statement)[0]:
                 raise_error(f"Constant {self.is_assigned(statement)[1].name} already assigned")
-            print(statement)
             if len(statement) == 3:
                 self.variables[statement[1]] = Variable(statement[1], 'any', 0, True)
-                return f"const <TODO_TYPE> {statement[1]} = {self.transpile(statement[2])}"
+                if 'dynamic_type' not in self.structs:
+                    self.structs.append('dynamic_type')
+                
+                right_member = self.transpile(statement[2])
+                if isinstance(right_member, int):
+                    d_type = 'int'
+                elif isinstance(right_member, float):
+                    d_type = 'float'
+                elif isinstance(right_member, str):
+                    d_type = 'str'
+                else:
+                    d_type = 'any'
+                
+                return f"dynamic_t* {statement[1]} = {{.type = {d_type}, .value = {right_member}}};"
             elif len(statement) == 4:
                 self.variables[statement[2]] = Variable(statement[2], statement[1], 0, True)
                 return f"const {self.transpile_type(statement[1])} {statement[2]} = {self.transpile(statement[3])}"
@@ -100,6 +137,7 @@ class TallyTranspiler(object):
                 if 'math' not in self.imports:
                     self.imports.append('math')
                 return f"pow({left}, {right})"
+            
         elif statement[0] in ('>', '<', '>=', '<=', '=='):
             left = self.transpile(statement[1])
             right = self.transpile(statement[2])
@@ -113,14 +151,17 @@ class TallyTranspiler(object):
                 return f"{left} <= {right}"
             elif statement[0] == '==':
                 return f"{left} == {right}"
+            
         elif statement[0] == 'id':
             return statement[1]
+        
         elif statement[0] == "if":
             buffer = f"if ({self.transpile(statement[1])}) {{\n"
             for sub_statement in statement[2]:
                 buffer += "\t" + self.transpile(sub_statement) + ";\n"
             buffer += "}"
             return buffer
+        
         elif statement[0] == "if_else":
             buffer = f"if ({self.transpile(statement[1])}) {{\n"
             for sub_statement in statement[2]:
@@ -130,6 +171,7 @@ class TallyTranspiler(object):
                 buffer += "\t" + self.transpile(sub_statement) + ";\n"
             buffer += "}"
             return buffer
+        
         else:
             raise ValueError(f'Cannot transpile: {statement}')
 

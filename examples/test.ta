@@ -5,9 +5,9 @@ int b = 2 + 3
 int c = b + 1
 
 if a > b {
-    a = b
+    print(a)
 } else {
-    b = a
+    print(b)
 }
 
 int d = a**b
@@ -17,3 +17,5 @@ const int e = 1
 const f = 2
 
 str g = "hello"
+
+println(g)

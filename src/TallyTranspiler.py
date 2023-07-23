@@ -21,7 +21,7 @@ class TallyTranspiler(object):
     parser.build()
 
     variables = {}
-    functions = {}
+    functions = []
 
     imports = []
     func_decls = []
@@ -32,14 +32,23 @@ class TallyTranspiler(object):
 
         main_code = ""
 
+        functions_code = ""
+
         for statement in parsed[1]:
-            if isinstance(statement, tuple) and statement[0] != 'func_decl':
+            if isinstance(statement, tuple) and (statement[0] != 'func_decl' and statement[0] != 'typed_func_decl'):
                 buffer = self.transpile(statement)
                 main_code += buffer
                 if not (buffer[-1] == ';' or buffer[-1] == '}'):
                     main_code += ';\n'
                 else:
                     main_code += '\n'
+            elif statement[0] == 'func_decl' or statement[0] == 'typed_func_decl':
+                buffer = self.transpile(statement)
+                functions_code += buffer
+                if not (buffer[-1] == ';' or buffer[-1] == '}'):
+                    functions_code += ';\n\n'
+                else:
+                    functions_code += '\n\n'
 
         main_code = "".join([f"\t{code}\n" for code in main_code.splitlines()])
 
@@ -55,7 +64,7 @@ class TallyTranspiler(object):
         for struct in self.structs:
             structs_code += structs[struct] + "\n"
 
-        c_code = f"{include_code}\n{func_decl_code}\n{structs_code}int main(int argc, char *argv[]) {{\n{main_code}}}"
+        c_code = f"{include_code}\n{func_decl_code}\n{structs_code}\n{functions_code}\nint main(int argc, char *argv[]) {{\n{main_code}}}"
 
         return c_code
     
@@ -69,7 +78,7 @@ class TallyTranspiler(object):
 
     def transpile(self, statement):
         if isinstance(statement, int):
-            return statement
+            return str(statement)
         
         elif isinstance(statement, str):
             return statement
@@ -97,6 +106,8 @@ class TallyTranspiler(object):
                 return f"dynamic_t* {statement[1]} = {{.type = {d_type}, .value = {right_member}}}"
             elif len(statement) == 4:
                 self.variables[statement[2]] = Variable(statement[2], statement[1], 0)
+                if isinstance(statement[3], str):
+                    return f"{self.transpile_type(statement[1])} {statement[2]} = \"{self.transpile(statement[3])}\";"
                 return f"{self.transpile_type(statement[1])} {statement[2]} = {self.transpile(statement[3])};"
             
         elif statement[0] == 'const_assign':
@@ -117,9 +128,11 @@ class TallyTranspiler(object):
                 else:
                     d_type = 'any'
                 
-                return f"dynamic_t* {statement[1]} = {{.type = {d_type}, .value = {right_member}}};"
+                return f"dynamic_t* {statement[1]} = {{.type = \"{d_type}\", .value = {right_member}}};"
             elif len(statement) == 4:
                 self.variables[statement[2]] = Variable(statement[2], statement[1], 0, True)
+                if isinstance(statement[3], str):
+                    return f"{self.transpile_type(statement[1])} {statement[2]} = \"{self.transpile(statement[3])}\";"
                 return f"const {self.transpile_type(statement[1])} {statement[2]} = {self.transpile(statement[3])}"
             
         elif statement[0] in ('+', '-', '*', '/', '**'):
@@ -172,6 +185,115 @@ class TallyTranspiler(object):
             buffer += "}"
             return buffer
         
+        elif statement[0] == "func_call":
+            if statement[1] == "print":
+                if 'stdio' not in self.imports:
+                    self.imports.append('stdio')
+
+                buffer = "printf(\""
+                vars_to_format = []
+                for arg in statement[2]:
+                    if isinstance(arg, str):
+                        buffer += arg
+                    elif arg[0] == 'id':
+                        vars_to_format.append(arg[1])
+                        if self.variables[arg[1]].type == 'int':
+                            buffer += "%d"
+                        elif self.variables[arg[1]].type == 'float':
+                            buffer += "%f"
+                        elif self.variables[arg[1]].type == 'str':
+                            buffer += "%s"
+
+                buffer += "\""
+                for var in vars_to_format:
+                    buffer += f", {var}"
+                buffer += ")"
+
+                return buffer
+            
+            elif statement[1] == "println":
+                if 'stdio' not in self.imports:
+                    self.imports.append('stdio')
+
+                buffer = "printf(\""
+                vars_to_format = []
+                for arg in statement[2]:
+                    if isinstance(arg, str):
+                        buffer += arg
+                    elif arg[0] == 'id':
+                        vars_to_format.append(arg[1])
+                        if self.variables[arg[1]].type == 'int':
+                            buffer += "%d"
+                        elif self.variables[arg[1]].type == 'float':
+                            buffer += "%f"
+                        elif self.variables[arg[1]].type == 'str':
+                            buffer += "%s"
+
+                buffer += "\\n\""
+                for var in vars_to_format:
+                    buffer += f", {var}"
+                buffer += ")"
+
+                return buffer
+
+            elif statement[1] in self.functions:
+                print(statement)
+                return f"{statement[1]}({', '.join([self.transpile(arg) for arg in statement[2]])})"
+            
+            raise ValueError(f'No such function: {statement}')
+        
+        elif statement[0] == 'func_decl':
+            func_name = statement[1]
+            func_args = statement[2]
+            func_body = statement[3]
+
+            self.functions.append(func_name)
+
+            has_return = False
+            for sub_statement in func_body:
+                if sub_statement[0] == 'return':
+                    has_return = True
+                    break
+
+            if not has_return:
+                buffer = f"void {func_name}({', '.join([self.transpile_type(arg[1]) + ' ' + arg[2] for arg in func_args])}) {{\n"
+            else:
+                buffer = f"dynamic_t* {func_name}({', '.join([self.transpile_type(arg[1]) + ' ' + arg[2] for arg in func_args])}) {{\n"
+
+            for sub_statement in func_body:
+                buffer += "\t" + self.transpile(sub_statement) + ";\n"
+
+            buffer += "}"
+
+            return buffer
+
+        elif statement[0] == 'typed_func_decl':
+            func_name = statement[2]
+            func_args = statement[3]
+            func_body = statement[4]
+
+            self.functions.append(func_name)
+
+            buffer = f"{self.transpile_type(statement[1])} {func_name}("
+
+            for arg in func_args:
+                if len(arg) == 2:
+                    buffer += f"dynamic_t* {arg[1]}, "
+                else:
+                    buffer += f"{self.transpile_type(arg[1])} {arg[2]}, "
+
+            buffer = buffer[:-2] + ") {\n"
+
+            for sub_statement in func_body:
+                buffer += "\t" + self.transpile(sub_statement) + ";\n"
+
+            buffer += "}"
+
+            return buffer
+        
+        elif statement[0] == 'return':
+            return f"return {self.transpile(statement[1])}"
+
         else:
             raise ValueError(f'Cannot transpile: {statement}')
 
@@ -186,7 +308,7 @@ class TallyTranspiler(object):
             raise ValueError(f'Cannot transpile type: {type_name}')
 
 if __name__ == '__main__':
-    file_path = "examples/test.ta"
+    file_path = "examples/function.ta"
     with open(file_path, 'r') as file:
         data = file.read()
         tally = TallyTranspiler()

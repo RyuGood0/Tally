@@ -186,9 +186,9 @@ class TallyParser(object):
             if p[3] == '(':
                 p[0] = ('func_decl', p[2], p[4], p[7])
             else:
-                p[0] = ('func_decl', p[2], p[3], [], p[7])
+                p[0] = ('typed_func_decl', p[2], p[3], [], p[7])
         else:
-            p[0] = ('func_decl', p[2], p[3], p[5], p[8])
+            p[0] = ('typed_func_decl', p[2], p[3], p[5], p[8])
 
     def p_function_call(self, p):
         '''
@@ -253,7 +253,7 @@ if __name__ == '__main__':
     m = TallyParser()
     m.build()
 
-    file_path = "examples/math.ta"
+    file_path = "examples/function.ta"
     with open(file_path, 'r') as file:
         data = file.read()
         parsed = m.parse(data)  # Test it

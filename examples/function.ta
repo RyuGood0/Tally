@@ -17,3 +17,6 @@ print(a)
 
 b = div(4, 9)
 print(b)
+
+float pi = 3.14
+print(pi)

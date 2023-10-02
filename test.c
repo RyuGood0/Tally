@@ -3,7 +3,7 @@
 #include <stdarg.h>
 
 typedef struct dynamic_type {
-    uint8_t type; // 0 = int, 1 = float, 2 = string, 3 = list, 4 = dict, 5 = tuple, 6 = set, 7 = bool, 8 = any
+    uint8_t type; // 0 = int, 1 = float, 2 = string, 3 = list, 4 = dict, 5 = tuple, 6 = set, 7 = bool, 8 = null, 9 = any
     void* value;
 } dynamic_t;
 

@@ -143,11 +143,12 @@ int main(int argc, char *argv[]) {
     dynamic_print('\n', 1, e);
 
     append(d->value, e);
+    append(d->value, init_dynamic_var(STRING, (void*)"!"));
 
     dynamic_print('\n', 1, d);
 
     dynamic_t* f = init_dynamic_var(STRING, (void*)"world");
-    dynamic_print('\n', 2, ((dynamic_list_t*) d->value)->value[2], f);
+    dynamic_print('\n', 3, ((dynamic_list_t*) d->value)->value[2], f, ((dynamic_list_t*) d->value)->value[4]);
 
     // Free the allocated memory
     free_dynamic_var(d);

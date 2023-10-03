@@ -54,28 +54,17 @@ void dynamic_print(char end, int num, ...) {
     printf("%c", end);
 }
 
-void free_list(dynamic_list_t* list) {
-    free(list->value);
-}
-
-void append(dynamic_list_t* list, dynamic_t* value) {
-    // if length is equal to capacity, double the capacity
-    if (list->length == list->capacity) {
-        list->capacity *= 2;
-        void* temp = malloc(list->capacity * sizeof(dynamic_t));
-        for (size_t i = 0; i < list->length; i++)
-        {
-            ((dynamic_t*)temp)[i] = ((dynamic_t*)list->value)[i];
+void append(dynamic_list_t** list, dynamic_t* value) {
+    if ((*list)->length == (*list)->capacity) {
+        (*list)->capacity *= 2;
+        dynamic_t* temp = (*list)->value;
+        (*list)->value = malloc((*list)->capacity * sizeof(dynamic_t));
+        for (size_t i = 0; i < (*list)->length; i++) {
+            (*list)->value[i] = temp[i];
         }
-
-        free_list(list);
-
-        list->value = temp;
     }
 
-    // append the value to the list
-    ((dynamic_t*)list->value)[list->length] = *value;
-    list->length++;
+    (*list)->value[(*list)->length++] = *value;
 }
 
 int main(int argc, char *argv[]) {
@@ -89,7 +78,7 @@ int main(int argc, char *argv[]) {
     dynamic_t e = {.type = 3, .value = (void*)1};
     dynamic_print('\n', 1, &e);
 
-    append((dynamic_list_t*)d.value, &e);
+    append((dynamic_list_t**)&d.value, &e);
 
     dynamic_print('\n', 1, &d);
 }

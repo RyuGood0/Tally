@@ -1,36 +1,22 @@
 #include <stdio.h>
-#include <stdint.h>
 #include <stdarg.h>
 #include <stdlib.h>
+#include <string.h>
 
-enum type {
-    INT = 0,
-    FLOAT = 1,
-    STRING = 2,
-    BOOL = 3,
-    LIST = 4,
-    DICT = 5,
-    TUPLE = 6,
-    SET = 7,
-    ANY = 8
-};
-
-typedef struct dynamic_type {
-    uint8_t type;
-    void* value;
-} dynamic_t;
-
-typedef struct dynamic_list {
-    dynamic_t** value;
-    int length;
-    int capacity;
-} dynamic_list_t;
+#include "test.h"
 
 dynamic_t* init_dynamic_var(uint8_t type, void* value) {
     // malloc the var
     dynamic_t* var = malloc(sizeof(dynamic_t));
     var->type = type;
-    var->value = value;
+    if (type == STRING) {
+        char* str = malloc(strlen((char*)value) + 1);
+        strcpy(str, (char*)value);
+        var->value = (void*)str;
+    } else {
+        var->value = value;
+    }
+
     return var;
 }
 
@@ -54,6 +40,19 @@ dynamic_t* init_dynamic_list(int num, ...) {
     }
 
     va_end(valist);
+
+    return list;
+}
+
+dynamic_t* alloc_dynamic_list(int capacity) {
+    dynamic_t* list = malloc(sizeof(dynamic_t));
+    list->type = LIST;
+    list->value = malloc(sizeof(dynamic_list_t));
+
+    dynamic_list_t* list_value = (dynamic_list_t*)list->value;
+    list_value->length = 0;
+    list_value->capacity = capacity;
+    list_value->value = malloc(capacity * sizeof(dynamic_t));
 
     return list;
 }
@@ -116,19 +115,119 @@ void append(dynamic_list_t* list, dynamic_t* value) {
 
 void free_dynamic_list(dynamic_list_t* list) {
     for (size_t i = 0; i < list->length; i++) {
-        free(list->value[i]);
+        free_dynamic_var(&list->value[i]);
     }
 
     free(list->value);
     free(list);
 }
 
-void free_dynamic_var(dynamic_t* var) {
-    if (var->type == LIST) {
-        free_dynamic_list(var->value);
+void free_dynamic_var(dynamic_t** var) {
+    if ((*var)->type == FREED) {
+        return;
+    }
+    if ((*var)->type == STRING) {
+        free((*var)->value);
+    } else if ((*var)->type == LIST) {
+        free_dynamic_list((dynamic_list_t*)(*var)->value);
     }
 
-    free(var);
+    (*var)->value = NULL;
+    (*var)->type = FREED;
+    free(*var);
+    *var = NULL;
+}
+
+dynamic_t* add_dynamic_vars(dynamic_t* first, dynamic_t* second) {
+    if (first->type == INT && second->type == INT) {
+        return init_dynamic_var(INT, (void*) ((int*)first->value + *(int*)second->value));
+    } else if (first->type == FLOAT && second->type == FLOAT) {
+        float result = *(float*)first->value + *(float*)second->value;
+        return init_dynamic_var(FLOAT, (void*)&result);
+    } else if (first->type == STRING && second->type == STRING) {
+        char* result = malloc(strlen((char*)first->value) + strlen((char*)second->value) + 1);
+        strcpy(result, (char*)first->value);
+        strcat(result, (char*)second->value);
+
+        dynamic_t* new = init_dynamic_var(STRING, (void*) result);
+        free(result);
+        return new;
+    } else if (first->type == LIST && second->type == LIST) {
+        dynamic_list_t* first_list = (dynamic_list_t*)first->value;
+        dynamic_list_t* second_list = (dynamic_list_t*)second->value;
+
+        dynamic_t* list = alloc_dynamic_list(first_list->length + second_list->length);
+
+        for (size_t i = 0; i < first_list->length; i++) {
+            append((dynamic_list_t*)list->value, first_list->value[i]);
+        }
+
+        for (size_t i = 0; i < second_list->length; i++) {
+            append((dynamic_list_t*)list->value, second_list->value[i]);
+        }
+
+        return list;
+    } else if ((first->type == INT && second->type == FLOAT) || (first->type == FLOAT && second->type == INT)) {
+        if (first->type == INT) {
+            return init_dynamic_var(FLOAT, (void*)&(float){(int) (int*)first->value + *(float*)second->value});
+        } else {
+            return init_dynamic_var(FLOAT, (void*)&(float){*(float*)first->value + (int) *(int*)second->value});
+        }
+    } else if ((first->type == INT && second->type == STRING) || (first->type == STRING && second->type == INT)) {
+        char* result;
+        if (first->type == INT) {
+            size_t length = snprintf( NULL, 0, "%d", (int*) first->value) + strlen((char*)second->value);
+
+            result = malloc(length + 1);
+            sprintf(result, "%d%s", (int*)first->value, (char*)second->value);
+        } else {
+            size_t length = snprintf( NULL, 0, "%d", (int*) second->value) + strlen((char*)first->value);
+
+            result = malloc(length + 1);
+            sprintf(result, "%s%d", (char*)first->value, (int*)second->value);
+        }
+
+        dynamic_t* new = init_dynamic_var(STRING, (void*) result);
+        free(result);
+        return new;
+    } else if ((first->type == INT && second->type == BOOL) || (first->type == BOOL && second->type == INT)) {
+        int result = 0;
+        if (first->type == INT) {
+            result = (int*)first->value + 1;
+        } else {
+            result = (int*)second->value + 1;
+        }
+
+        return init_dynamic_var(INT, (void*)&result);
+    } else if ((first->type == FLOAT && second->type == STRING) || (first->type == STRING && second->type == FLOAT)) {
+        char* result;
+        if (first->type == FLOAT) {
+            size_t length = snprintf( NULL, 0, "%f", *(float*) first->value) + strlen((char*)second->value);
+
+            result = malloc(length + 1);
+            sprintf(result, "%f%s", *(float*)first->value, (char*)second->value);
+        } else {
+            size_t length = snprintf( NULL, 0, "%f", *(float*) second->value) + strlen((char*)first->value);
+
+            result = malloc(length + 1);
+            sprintf(result, "%s%f", (char*)first->value, *(float*)second->value);
+        }
+
+        dynamic_t* new = init_dynamic_var(STRING, (void*) result);
+        free(result);
+        return new;
+    } else if ((first->type == FLOAT && second->type == BOOL) || (first->type == BOOL && second->type == FLOAT)) {
+        float result = 0;
+        if (first->type == FLOAT) {
+            result = *(float*)first->value + *(int*)second->value;
+        } else {
+            result = *(int*)first->value + *(float*)second->value;
+        }
+
+        return init_dynamic_var(FLOAT, (void*)&result);
+    } else {
+        return NULL;
+    }
 }
 
 int main(int argc, char *argv[]) {
@@ -148,11 +247,14 @@ int main(int argc, char *argv[]) {
     dynamic_print('\n', 1, d);
 
     dynamic_t* f = init_dynamic_var(STRING, (void*)"world");
-    dynamic_print('\n', 3, ((dynamic_list_t*) d->value)->value[2], f, ((dynamic_list_t*) d->value)->value[4]);
+
+    dynamic_t* g = add_dynamic_vars(b, c);
+    dynamic_print('\n', 1, g);
 
     // Free the allocated memory
-    free_dynamic_var(d);
-    free_dynamic_var(f);
+    free_dynamic_var(&d);
+    free_dynamic_var(&f);
+    free_dynamic_var(&g);
 
     return 0;
 }

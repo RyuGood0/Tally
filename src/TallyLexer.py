@@ -24,7 +24,10 @@ class TallyLexer(object):
 		'null' : 'NULL',
 
 		'def' : 'DEF',
-		'class': 'CLASS'
+		'class': 'CLASS',
+
+		'type' : 'TYPE',
+		'untype' : 'UNTYPE'
 	}
 
 	tokens = [

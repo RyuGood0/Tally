@@ -1,3 +1,12 @@
-if 5 > 3 {
-    print("No")
+a = 5
+type a
+untype a
+
+if a == 5 {
+    print("a is 5")
+}
+
+while a > 0 {
+    print(a)
+    a -= 1
 }

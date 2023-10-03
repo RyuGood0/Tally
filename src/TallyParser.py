@@ -34,6 +34,7 @@ class TallyParser(object):
                 | function_call
                 | if_statement
                 | for_in_statement
+                | typing
         '''
         p[0] = p[1]
 
@@ -72,6 +73,17 @@ class TallyParser(object):
         else:
             p[0] = ('if_else', p[3], p[6], p[10], self._get_statement_line(p))
 
+    def p_while_statement(self, p):
+        '''
+        if_statement : WHILE expression LBRACE statement_list RBRACE
+                    | WHILE expression LBRACE statement_list RBRACE ELSE LBRACE statement_list RBRACE
+                    | WHILE LPAREN expression RPAREN LBRACE statement_list RBRACE
+                    | WHILE LPAREN expression RPAREN LBRACE statement_list RBRACE ELSE LBRACE statement_list RBRACE
+        '''
+        if len(p) == 6:
+            p[0] = ('while', p[2], p[4], self._get_statement_line(p))
+        elif len(p) == 8:
+            p[0] = ('while', p[3], p[6], self._get_statement_line(p))
 
     def p_for_in_statement(self, p):
         '''
@@ -233,6 +245,16 @@ class TallyParser(object):
         else:
             p[0] = [['typed_param', p[1], p[2]]] + [p[4]]
 
+    def p_typing(self, p):
+        '''
+        typing : TYPE ID
+               | UNTYPE ID
+        '''
+        if p[1] == 'type':
+            p[0] = ['type_var', p[2]]
+        else:
+            p[0] = ['untype_var', p[2]]
+
     def p_error(self, p):
         if p:
             print(f"Syntax error at token '{p.value}' on line {p.lineno}")
@@ -253,10 +275,13 @@ if __name__ == '__main__':
     m = TallyParser()
     m.build()
 
-    file_path = "examples/function.ta"
+    file_path = "examples/statements.ta"
     with open(file_path, 'r') as file:
         data = file.read()
         parsed = m.parse(data)  # Test it
 
-    for item in parsed[1]:
-        print(item)
+    if parsed is None:
+        print("Parsing failed")
+
+    for i in parsed[1]:
+        print(i)

@@ -62,20 +62,57 @@ void append(dynamic_list_t** list, dynamic_t* value) {
         for (size_t i = 0; i < (*list)->length; i++) {
             (*list)->value[i] = temp[i];
         }
+
+        free(temp);
+
     }
 
     (*list)->value[(*list)->length++] = *value;
 }
 
+dynamic_t* init_dynamic_var(uint8_t type, void* value) {
+    // malloc the var
+    dynamic_t* var = malloc(sizeof(dynamic_t));
+    var->type = type;
+    var->value = value;
+    return var;
+}
+
+dynamic_t* init_dynamic_list(int num, ...) {
+    // malloc the list
+    dynamic_list_t* list = malloc(sizeof(dynamic_list_t));
+    list->length = 0;
+    list->capacity = num;
+    list->value = malloc(num * sizeof(dynamic_t));
+
+    // add the values to the list
+    va_list valist;
+    va_start(valist, num);
+
+    for (int i = 0; i < num; i++) {
+        dynamic_t* arg = va_arg(valist, dynamic_t*);
+        list->value[i] = *arg;
+        list->length++;
+    }
+
+    va_end(valist);
+
+    // return the list
+    dynamic_t* var = malloc(sizeof(dynamic_t));
+    var->type = 4;
+    var->value = list;
+    return var;
+}
+
 int main(int argc, char *argv[]) {
-    dynamic_t a = {.type = 0, .value = (void*)1};
-    dynamic_t b = {.type = 1, .value = (void*)&(float){1.5}};
-    dynamic_t c = {.type = 2, .value = (void*)"hello"};
-    dynamic_t d = {.type = 4, .value = (void*)&(dynamic_list_t){.value = (dynamic_t[]){a, b, c}, .length = 3, .capacity = 3}};
+    dynamic_t a = *init_dynamic_var(0, (void*)1);
+    dynamic_t b = *init_dynamic_var(1, (void*)&(float){1.5});
+    dynamic_t c = *init_dynamic_var(2, (void*)"hello");
+    dynamic_t d = *init_dynamic_list(3, &a, &b, &c);
 
     dynamic_print('\n', 4, &a, &b, &c, &d);
 
-    dynamic_t e = {.type = 3, .value = (void*)1};
+    dynamic_t e = *init_dynamic_var(3, (void*)1);
     dynamic_print('\n', 1, &e);
 
     append((dynamic_list_t**)&d.value, &e);

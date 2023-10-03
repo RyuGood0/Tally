@@ -21,7 +21,7 @@ typedef struct dynamic_type {
 } dynamic_t;
 
 typedef struct dynamic_list {
-    dynamic_t* value;
+    dynamic_t** value;
     int length;
     int capacity;
 } dynamic_list_t;
@@ -36,28 +36,26 @@ dynamic_t* init_dynamic_var(uint8_t type, void* value) {
 
 dynamic_t* init_dynamic_list(int num, ...) {
     // malloc the list
-    dynamic_list_t* list = malloc(sizeof(dynamic_list_t));
-    list->length = 0;
-    list->capacity = num;
-    list->value = malloc(num * sizeof(dynamic_t));
+    dynamic_t* list = malloc(sizeof(dynamic_t));
+    list->type = LIST;
+    list->value = malloc(sizeof(dynamic_list_t));
 
-    // add the values to the list
+    dynamic_list_t* list_value = (dynamic_list_t*)list->value;
+    list_value->length = num;
+    list_value->capacity = num;
+    list_value->value = malloc(num * sizeof(dynamic_t));
+
     va_list valist;
     va_start(valist, num);
 
     for (int i = 0; i < num; i++) {
         dynamic_t* arg = va_arg(valist, dynamic_t*);
-        list->value[i] = *arg;
-        list->length++;
+        list_value->value[i] = arg;
     }
 
     va_end(valist);
 
-    // return the list
-    dynamic_t* var = malloc(sizeof(dynamic_t));
-    var->type = LIST;
-    var->value = list;
-    return var;
+    return list;
 }
 
 void dynamic_print(char end, int num, ...) {
@@ -82,7 +80,7 @@ void dynamic_print(char end, int num, ...) {
 
             for (size_t i = 0; i < list->length; i++)
             {
-                dynamic_print('\0', 1, list->value + i);
+                dynamic_print('\0', 1, list->value[i]);
                 if (i != list->length - 1) {
                     printf(", ");
                 }
@@ -103,14 +101,34 @@ void dynamic_print(char end, int num, ...) {
 void append(dynamic_list_t* list, dynamic_t* value) {
     if (list->length == list->capacity) {
         list->capacity *= 2;
-        dynamic_t* temp = list->value;
+        dynamic_t** temp = list->value;
         list->value = malloc(list->capacity * sizeof(dynamic_t));
         for (size_t i = 0; i < list->length; i++) {
             list->value[i] = temp[i];
         }
+
+        free(temp);
+        temp = NULL;
     }
 
-    list->value[list->length++] = *value;
+    list->value[list->length++] = value;
+}
+
+void free_dynamic_list(dynamic_list_t* list) {
+    for (size_t i = 0; i < list->length; i++) {
+        free(list->value[i]);
+    }
+
+    free(list->value);
+    free(list);
+}
+
+void free_dynamic_var(dynamic_t* var) {
+    if (var->type == LIST) {
+        free_dynamic_list(var->value);
+    }
+
+    free(var);
 }
 
 int main(int argc, char *argv[]) {
@@ -127,4 +145,13 @@ int main(int argc, char *argv[]) {
     append(d->value, e);
 
     dynamic_print('\n', 1, d);
+
+    dynamic_t* f = init_dynamic_var(STRING, (void*)"world");
+    dynamic_print('\n', 2, ((dynamic_list_t*) d->value)->value[2], f);
+
+    // Free the allocated memory
+    free_dynamic_var(d);
+    free_dynamic_var(f);
+
+    return 0;
 }

@@ -432,11 +432,18 @@ int main(int argc, char *argv[]) {
     print_dynamics('\n', 4, a, b, c, d);
 
     // print(f"Hello {a}!")
-    char* str = fstring("Hello %s! Hi %s", 2, dynamic_var_to_string(a), dynamic_var_to_string(b));
+    char* args[2] = {dynamic_var_to_string(a), dynamic_var_to_string(b)};
+    char* str = fstring("Hello %s! Hi %s", 2, args[0], args[1]);
+    for (size_t i = 0; i < 2; i++)
+    {
+        free(args[i]);
+    }
+    
     printf("%s\n", str);
 
     // Free the allocated memory
     free_dynamic_var(&d);
+    free(str);
 
     return 0;
 }

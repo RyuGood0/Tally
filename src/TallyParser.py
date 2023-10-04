@@ -151,6 +151,7 @@ class TallyParser(object):
                    | LPAREN expression RPAREN
                    | NUMBER
                    | STRING
+                   | FSTRING
                    | FLOAT
                    | BOOL
                    | NULL

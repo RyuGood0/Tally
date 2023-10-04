@@ -31,6 +31,7 @@ class TallyLexer(object):
 	}
 
 	tokens = [
+		'FSTRING',
 		'NUMBER',
 		'FLOAT',
 		'STRING',
@@ -95,6 +96,11 @@ class TallyLexer(object):
 		t.value = float(t.value)
 		return t
 	
+	def t_FSTRING(self, t):
+		r'f\"[^\"]*\"'
+		t.value = t.value[2:-1]
+		return t
+
 	def t_STRING(self, t):
 		r'\"[^\"]*\"'
 		t.value = t.value[1:-1]
@@ -143,14 +149,7 @@ if __name__ == "__main__":
 	m.build()           # Build the lexer
 	m.test(
 		"""
-		a = 4 + 5
-		def add(a, b) {
-			return a + b
-		}
-
-		b = "Hello"
-
-		# Comment here
-		float c = 3.14
+		a = 5
+		print(f"hi {a}!")
 		"""
 	)     # Test it

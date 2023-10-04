@@ -345,5 +345,5 @@ if __name__ == '__main__':
             f.write(c_code)
 
         import subprocess
-        subprocess.Popen("gcc ../temp.c -o out")
+        subprocess.Popen("gcc -o out temp.c")
         subprocess.Popen("./out")

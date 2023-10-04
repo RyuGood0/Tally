@@ -28,7 +28,11 @@ dynamic_t* init_dynamic_var(uint8_t type, void* value);
 
 dynamic_t* init_dynamic_list(int num, ...);
 
-void dynamic_print(char end, int num, ...);
+dynamic_t* alloc_dynamic_list(int capacity);
+
+char* dynamic_var_to_string(dynamic_t* var);
+
+void print_dynamics(char end, int num, ...);
 
 void append(dynamic_list_t* list, dynamic_t* value);
 
@@ -37,3 +41,9 @@ void free_dynamic_list(dynamic_list_t* list);
 void free_dynamic_var(dynamic_t** var);
 
 dynamic_t* add_dynamic_vars(dynamic_t* first, dynamic_t* second);
+
+dynamic_t* sub_dynamic_vars(dynamic_t* first, dynamic_t* second);
+
+dynamic_t* mul_dynamic_vars(dynamic_t* first, dynamic_t* second);
+
+dynamic_t* div_dynamic_vars(dynamic_t* first, dynamic_t* second);

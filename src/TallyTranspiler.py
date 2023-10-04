@@ -9,7 +9,7 @@ def raise_error(comment):
 class Variable:
     name: str
     type: int
-    value: any
+    dynamic: bool = False
     constant: bool = False
 
 structs = {
@@ -20,14 +20,19 @@ dynamic_type_map = {
     'int': 0,
     'float': 1,
     'str': 2,
-    'any': 3
+    'bool': 3,
+    'list': 4,
+    'dict': 5,
+    'tuple': 6,
+    'set': 7,
+    'any': 8
 }
 
 class TallyTranspiler(object):
     parser = TallyParser()
     parser.build()
 
-    variables = {}
+    variables = {} # {name: Variable}
     functions = {}
 
     imports = []
@@ -94,24 +99,46 @@ class TallyTranspiler(object):
             return statement
         
         elif statement[0] == 'assign':
-            if self.is_assigned(statement)[0]:
+            """
+            Ex assign:
+            dynamic_t* a = init_dynamic_var(INT, (void*)&(int){3});
+            dynamic_t* b = init_dynamic_var(FLOAT, (void*)&(float){1.5});
+            dynamic_t* c = init_dynamic_var(STRING, (void*)"hello");
+
+            Ex reassign:
+            f = update_dynamic_var(f, INT, (void*)&(int){5});
+            """
+            assigned = self.is_assigned(statement)
+            if assigned[0]:
                 if self.variables[statement[1]].constant:
-                    raise_error(f"Cannot reassign constant {self.is_assigned(statement)[1].name}")
-                return f"{self.is_assigned(statement)[1].name} = {self.transpile(statement[2])}"
+                    raise_error(f"Cannot reassign constant {assigned[1].name}")
+
+                d_type = dynamic_type_map[self.get_inferred_type(statement[2])]
+
+                if d_type == 0:
+                    return f"{assigned[1].name} = update_dynamic_var({statement[1]}, INT, (void*)&(int){{{self.transpile(statement[2])}}});"
+                elif d_type == 1:
+                    return f"{assigned[1].name} = update_dynamic_var({statement[1]}, FLOAT, (void*)&(float){{{self.transpile(statement[2])}}});"
+                elif d_type == 2:
+                    return f"{assigned[1].name} = update_dynamic_var({statement[1]}, STRING, (void*)\"{self.transpile(statement[2])}\");"
+
             elif len(statement) == 3:
                 if not isinstance(statement[2], tuple):
-                    d_type = self.get_inferred_type(statement[2])
-                    self.variables[statement[1]] = Variable(statement[1], dynamic_type_map[d_type], 0)
-                    if 'dynamic_type' not in self.structs:
-                        self.structs.append('dynamic_type')
-                        self.imports.append("stdint")
+                    d_type = dynamic_type_map[self.get_inferred_type(statement[2])]
+                    self.variables[statement[1]] = Variable(statement[1], d_type, True)
                 else:
-                    d_type = self.get_inferred_type(statement[2])
-                    self.variables[statement[1]] = Variable(statement[1], dynamic_type_map[d_type], 0)
+                    d_type = dynamic_type_map[self.get_inferred_type(statement[2])]
+                    self.variables[statement[1]] = Variable(statement[1], d_type, True)
 
                 right_member = self.transpile(statement[2])
 
-                return f"dynamic_t {statement[1]} = {{.type = {dynamic_type_map[d_type]}, .value = {right_member}}};"
+                if d_type == 0:
+                    return f"dynamic_t* {statement[1]} = init_dynamic_var(INT, (void*)&(int){{{right_member}}});"
+                elif d_type == 1:
+                    return f"dynamic_t* {statement[1]} = init_dynamic_var(FLOAT, (void*)&(float){{{right_member}}});"
+                elif d_type == 2:
+                    return f"dynamic_t* {statement[1]} = init_dynamic_var(STRING, (void*)\"{right_member}\");"
+                
             elif len(statement) == 4:
                 self.variables[statement[2]] = Variable(statement[2], dynamic_type_map[statement[1]], 0)
                 if isinstance(statement[3], str):
@@ -123,18 +150,21 @@ class TallyTranspiler(object):
                 raise_error(f"Constant {self.is_assigned(statement)[1].name} already assigned")
             if len(statement) == 3:
                 if not isinstance(statement[2], tuple):
-                    d_type  = self.get_inferred_type(statement[2])
-                    self.variables[statement[1]] = Variable(statement[1], dynamic_type_map[d_type], 0, True)
-                    if 'dynamic_type' not in self.structs:
-                        self.structs.append('dynamic_type')
-                        self.imports.append("stdint")
+                    d_type  = dynamic_type_map[self.get_inferred_type(statement[2])]
+                    self.variables[statement[1]] = Variable(statement[1], d_type, 0, True)
                 else:
-                    d_type = self.get_inferred_type(statement[2])
-                    self.variables[statement[1]] = Variable(statement[1], dynamic_type_map[d_type], 0, True)
+                    d_type = dynamic_type_map[self.get_inferred_type(statement[2])]
+                    self.variables[statement[1]] = Variable(statement[1], d_type, 0, True)
 
                 right_member = self.transpile(statement[2])
 
-                return f"dynamic_t {statement[1]} = {{.type = {dynamic_type_map[d_type]}, .value = {right_member}}};"
+                if d_type == 0:
+                    return f"const dynamic_t* {statement[1]} = init_dynamic_var(INT, (void*)&(int){{{right_member}}});"
+                elif d_type == 1:
+                    return f"const dynamic_t* {statement[1]} = init_dynamic_var(FLOAT, (void*)&(float){{{right_member}}});"
+                elif d_type == 2:
+                    return f"const dynamic_t* {statement[1]} = init_dynamic_var(STRING, (void*)\"{right_member}\");"
+
             elif len(statement) == 4:
                 self.variables[statement[2]] = Variable(statement[2], dynamic_type_map[statement[1]], 0, True)
                 if isinstance(statement[3], str):
@@ -193,34 +223,6 @@ class TallyTranspiler(object):
         
         elif statement[0] == "func_call":
             if statement[1] == "print":
-                if 'stdio' not in self.imports:
-                    self.imports.append('stdio')
-
-                buffer = "printf(\""
-                vars_to_format = []
-                for arg in statement[2]:
-                    if isinstance(arg, str):
-                        buffer += arg
-                    elif arg[0] == 'id':
-                        vars_to_format.append(arg[1])
-                        if self.variables[arg[1]].type == 0:
-                            buffer += "%d"
-                        elif self.variables[arg[1]].type == 1:
-                            buffer += "%f"
-                        elif self.variables[arg[1]].type == 2:
-                            buffer += "%s"
-
-                buffer += "\""
-                for var in vars_to_format:
-                    buffer += f", {var}"
-                buffer += ")"
-
-                return buffer
-            
-            elif statement[1] == "println":
-                if 'stdio' not in self.imports:
-                    self.imports.append('stdio')
-
                 buffer = "printf(\""
                 vars_to_format = []
                 for arg in statement[2]:
@@ -325,6 +327,8 @@ class TallyTranspiler(object):
             return 'int'
         elif isinstance(statement, float):
             return 'float'
+        elif isinstance(statement, str):
+            return 'str'
         elif statement[0] == "func_call":
             # check return type of function
             return self.functions[statement[1]]['type']
@@ -344,6 +348,6 @@ if __name__ == '__main__':
         with open("temp.c", "w") as f:
             f.write(c_code)
 
-        import subprocess
-        subprocess.Popen("gcc -o out temp.c")
-        subprocess.Popen("./out")
+        #import subprocess
+        #subprocess.Popen("gcc -o out temp.c")
+        #subprocess.Popen("./out")

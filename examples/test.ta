@@ -14,8 +14,16 @@ int d = a**b
 
 const int e = 1
 
-const f = 2
+f = "hi"
+
+print("hello", e, f)
+
+print(f)
+
+f = 1
+
+print(f)
 
 str g = "hello"
 
-println(g)
+print(g)

@@ -54,6 +54,18 @@ class TallyTranspiler(object):
 			code_c += transpiled + "\n"
 
 		return code_c
+
+	def clean_statements(self, statements):
+		# TODO
+		"""
+		for fstring statements, add an assign statement ("str_UUID = ***") before the top call and a del statement after
+
+		Ex:
+		[('func_call', 'print', [('fstring', 'Hello {a}')]] -> [('assign', 'str', 'str_UUID', 'Hello {a}'), ('func_call', 'print', [('id', 'str_UUID')]), ('del', 'str_UUID')]
+		[('assign', 'var_name', ('fstring', 'Hello {a}'))] -> [('assign', 'str', 'str_UUID', 'Hello {a}'), ('assign', 'var_name', ('id', 'str_UUID')), ('del', 'str_UUID')
+		[('if', ['==', 1, 1.000], [('assign', 'var_name', ('fstring', 'Hello {a}'))])] -> [('if', ['==', 1, 1.000], [('assign', 'str', 'str_UUID', 'Hello {a}'), ('assign', 'var_name', ('id', 'str_UUID')), ('del', 'str_UUID')])]
+		"""
+		pass
 	
 	def is_assigned(self, var_name):
 		# return True if variable is assigned, False otherwise

@@ -305,10 +305,66 @@ dynamic_t* sub_dynamic_vars(dynamic_t* first, dynamic_t* second) {
     }
 }
 
+dynamic_t* mult_dynamic_vars(dynamic_t* first, dynamic_t* second) {
+    if (first->type == INT && second->type == INT) {
+        int result = *(int*)first->value * *(int*)second->value;
+        return init_dynamic_var(INT, (void*)&result);
+    } else if (first->type == FLOAT && second->type == FLOAT) {
+        float result = *(float*)first->value * *(float*)second->value;
+        return init_dynamic_var(FLOAT, (void*)&result);
+    } else if ((first->type == INT && second->type == FLOAT) || (first->type == FLOAT && second->type == INT)) {
+        if (first->type == INT) {
+            return init_dynamic_var(FLOAT, (void*)&(float){*(int*)first->value * *(float*)second->value});
+        } else {
+            return init_dynamic_var(FLOAT, (void*)&(float){*(float*)first->value * *(int*)second->value});
+        }
+    } else if ((first->type == INT && second->type == STRING) || (first->type == STRING && second->type == INT)) {
+        char* result;
+        if (first->type == INT) {
+            result = (char*) malloc(strlen((char*)second->value) * *(int*)first->value + 1);
+            strcpy(result, (char*)first->value);
+            for (size_t i = 0; i < *(int*)first->value; i++) {
+                strcat(result, (char*)second->value);
+            }
+        } else {
+            result = (char*) malloc(strlen((char*)first->value) * *(int*)second->value + 1);
+            strcpy(result, (char*)second->value);
+            for (size_t i = 0; i < *(int*)second->value; i++) {
+                strcat(result, (char*)first->value);
+            }
+        }
+        
+
+        dynamic_t* new = init_dynamic_var(STRING, (void*) result);
+        free(result);
+        return new;
+    } else if ((first->type == INT && second->type == BOOL) || (first->type == BOOL && second->type == INT)) {
+        int result = 0;
+        if (first->type == INT) {
+            result = *(int*)first->value;
+        } else {
+            result = *(int*)second->value;
+        }
+
+        return init_dynamic_var(INT, (void*)&result);
+    } else if ((first->type == FLOAT && second->type == BOOL) || (first->type == BOOL && second->type == FLOAT)) {
+        float result = 0;
+        if (first->type == FLOAT) {
+            result = *(float*)first->value;
+        } else {
+            result = *(float*)second->value;
+        }
+
+        return init_dynamic_var(FLOAT, (void*)&result);
+    } else {
+        return NULL;
+    }
+}
+
 int main(int argc, char *argv[]) {
-    dynamic_t* a = init_dynamic_var(INT, (void*)&(int){1});
+    dynamic_t* a = init_dynamic_var(INT, (void*)&(int){3});
     dynamic_t* b = init_dynamic_var(FLOAT, (void*)&(float){1.5});
-    dynamic_t* c = init_dynamic_var(STRING, (void*)"1");
+    dynamic_t* c = init_dynamic_var(STRING, (void*)"hello");
     dynamic_t* d = init_dynamic_list(3, a, b, c);
 
     dynamic_print('\n', 4, a, b, c, d);
@@ -323,7 +379,7 @@ int main(int argc, char *argv[]) {
 
     dynamic_t* f = init_dynamic_var(STRING, (void*)"world");
 
-    dynamic_t* g = sub_dynamic_vars(e, b);
+    dynamic_t* g = mult_dynamic_vars(b, a);
     dynamic_print('\n', 1, g);
 
     // Free the allocated memory

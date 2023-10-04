@@ -1,778 +1,778 @@
-==510== Memcheck, a memory error detector
-==510== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==510== Using Valgrind-3.14.0-353a3587bb-20181007X and LibVEX; rerun with -h for copyright info
-==510== Command: ./test
-==510== Parent PID: 26005
-==510== 
---510-- 
---510-- Valgrind options:
---510--    --leak-check=full
---510--    --show-leak-kinds=all
---510--    --track-origins=yes
---510--    --verbose
---510--    --log-file=valgrind-out.txt
---510-- Contents of /proc/version:
---510--   Linux version 5.15.117-19680-g54e910f94133 (chrome-bot@chromeos-release-builder-us-central1-a-x32-3-j707) (Chromium OS 17.0_pre496208_p20230501-r12 clang version 17.0.0 (/mnt/host/source/src/third_party/llvm-project 98f5a340975bc00197c57e39eb4ca26e2da0e8a2), LLD 17.0.0) #1 SMP PREEMPT Mon Aug 28 18:36:09 PDT 2023
---510-- 
---510-- Arch and hwcaps: AMD64, LittleEndian, amd64-cx16-rdtscp-sse3
---510-- Page sizes: currently 4096, max supported 4096
---510-- Valgrind library directory: /usr/lib/x86_64-linux-gnu/valgrind
---510-- Reading syms from /home/kyuci/Codes/Tally/test
---510-- Reading syms from /lib/x86_64-linux-gnu/ld-2.28.so
---510--   Considering /usr/lib/debug/.build-id/9d/a9b30d436da7f984fc9904fbea9ab251f0c401.debug ..
---510--   .. build-id is valid
---510-- Reading syms from /usr/lib/x86_64-linux-gnu/valgrind/memcheck-amd64-linux
---510--   Considering /usr/lib/debug/.build-id/32/2e77af97f403c3d34ff09edf60b089e72ec889.debug ..
---510--   .. build-id is valid
---510--    object doesn't have a dynamic symbol table
---510-- Scheduler: using generic scheduler lock implementation.
---510-- Reading suppressions file: /usr/lib/x86_64-linux-gnu/valgrind/default.supp
-==510== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-510-by-kyuci-on-???
-==510== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-510-by-kyuci-on-???
-==510== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-510-by-kyuci-on-???
-==510== 
-==510== TO CONTROL THIS PROCESS USING vgdb (which you probably
-==510== don't want to do, unless you know exactly what you're doing,
-==510== or are doing some strange experiment):
-==510==   /usr/lib/x86_64-linux-gnu/valgrind/../../bin/vgdb --pid=510 ...command...
-==510== 
-==510== TO DEBUG THIS PROCESS USING GDB: start GDB like this
-==510==   /path/to/gdb ./test
-==510== and then give GDB the following command
-==510==   target remote | /usr/lib/x86_64-linux-gnu/valgrind/../../bin/vgdb --pid=510
-==510== --pid is optional if only one valgrind process is running
-==510== 
---510-- REDIR: 0x401e320 (ld-linux-x86-64.so.2:strlen) redirected to 0x580c9ce2 (vgPlain_amd64_linux_REDIR_FOR_strlen)
---510-- REDIR: 0x401e100 (ld-linux-x86-64.so.2:index) redirected to 0x580c9cfc (vgPlain_amd64_linux_REDIR_FOR_index)
---510-- Reading syms from /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_core-amd64-linux.so
---510--   Considering /usr/lib/debug/.build-id/34/fbc4cdfbfce1bfc3d2e522a01a050bf724c930.debug ..
---510--   .. build-id is valid
---510-- Reading syms from /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so
---510--   Considering /usr/lib/debug/.build-id/ca/bb7898ea982d936cbfadd70ae831c6eb63623f.debug ..
---510--   .. build-id is valid
-==510== WARNING: new redirection conflicts with existing -- ignoring it
---510--     old: 0x0401e320 (strlen              ) R-> (0000.0) 0x580c9ce2 vgPlain_amd64_linux_REDIR_FOR_strlen
---510--     new: 0x0401e320 (strlen              ) R-> (2007.0) 0x04838d80 strlen
---510-- REDIR: 0x401ab40 (ld-linux-x86-64.so.2:strcmp) redirected to 0x4839e40 (strcmp)
---510-- REDIR: 0x401e860 (ld-linux-x86-64.so.2:mempcpy) redirected to 0x483d860 (mempcpy)
---510-- Reading syms from /lib/x86_64-linux-gnu/libc-2.28.so
---510--   Considering /usr/lib/debug/.build-id/a6/5a82147cd98619525049d4c29cc45f88d1fb00.debug ..
---510--   .. build-id is valid
---510-- REDIR: 0x48dbf50 (libc.so.6:memmove) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48db320 (libc.so.6:strncpy) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48dc230 (libc.so.6:strcasecmp) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48dad30 (libc.so.6:strcat) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48db350 (libc.so.6:rindex) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48dd730 (libc.so.6:rawmemchr) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48f60d0 (libc.so.6:wmemchr) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48f5b70 (libc.so.6:wcscmp) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48dc0c0 (libc.so.6:mempcpy) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48dbef0 (libc.so.6:bcmp) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48db2c0 (libc.so.6:strncmp) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48dada0 (libc.so.6:strcmp) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48dc020 (libc.so.6:memset) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48f5b40 (libc.so.6:wcschr) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48db260 (libc.so.6:strnlen) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48dae30 (libc.so.6:strcspn) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48dc280 (libc.so.6:strncasecmp) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48dae00 (libc.so.6:strcpy) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48dc3c0 (libc.so.6:memcpy@@GLIBC_2.14) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48f7370 (libc.so.6:wcsnlen) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48db380 (libc.so.6:strpbrk) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48dad60 (libc.so.6:index) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48db230 (libc.so.6:strlen) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48e2120 (libc.so.6:memrchr) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48dc2d0 (libc.so.6:strcasecmp_l) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48dbec0 (libc.so.6:memchr) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48f5c50 (libc.so.6:wcslen) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48db620 (libc.so.6:strspn) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48dc200 (libc.so.6:stpncpy) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48dc1d0 (libc.so.6:stpcpy) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48dd760 (libc.so.6:strchrnul) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48dc320 (libc.so.6:strncasecmp_l) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---510-- REDIR: 0x48ead90 (libc.so.6:__strrchr_sse2) redirected to 0x48387d0 (__strrchr_sse2)
---510-- REDIR: 0x48d7510 (libc.so.6:malloc) redirected to 0x4835710 (malloc)
---510-- REDIR: 0x48eb080 (libc.so.6:__strlen_sse2) redirected to 0x4838cc0 (__strlen_sse2)
---510-- REDIR: 0x48effa0 (libc.so.6:__strcpy_sse2_unaligned) redirected to 0x4838db0 (strcpy)
---510-- REDIR: 0x48eab80 (libc.so.6:__strchrnul_sse2) redirected to 0x483d390 (strchrnul)
---510-- REDIR: 0x48f4ea0 (libc.so.6:__mempcpy_sse2_unaligned) redirected to 0x483d4a0 (mempcpy)
---510-- REDIR: 0x48d7b60 (libc.so.6:free) redirected to 0x4836940 (free)
-==510== Conditional jump or move depends on uninitialised value(s)
-==510==    at 0x48A6C30: __printf_fp_l (printf_fp.c:387)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== Conditional jump or move depends on uninitialised value(s)
-==510==    at 0x48A6C4A: __printf_fp_l (printf_fp.c:387)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== Conditional jump or move depends on uninitialised value(s)
-==510==    at 0x489C5D0: __mpn_extract_double (dbl2mpn.c:56)
-==510==    by 0x48A6F23: __printf_fp_l (printf_fp.c:387)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== Conditional jump or move depends on uninitialised value(s)
-==510==    at 0x48A6395: __printf_fp_l (printf_fp.c:437)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== Conditional jump or move depends on uninitialised value(s)
-==510==    at 0x48A72CA: __printf_fp_l (printf_fp.c:640)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== Use of uninitialised value of size 8
-==510==    at 0x48A72D8: __printf_fp_l (printf_fp.c:816)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== Use of uninitialised value of size 8
-==510==    at 0x489B278: __mpn_lshift (lshift.S:59)
-==510==    by 0x48A72DC: __printf_fp_l (printf_fp.c:816)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== Use of uninitialised value of size 8
-==510==    at 0x489B27B: __mpn_lshift (lshift.S:60)
-==510==    by 0x48A72DC: __printf_fp_l (printf_fp.c:816)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== Use of uninitialised value of size 8
-==510==    at 0x48A72F6: __printf_fp_l (printf_fp.c:817)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== Use of uninitialised value of size 8
-==510==    at 0x48A5C89: hack_digit (printf_fp.c:169)
-==510==    by 0x48A686B: __printf_fp_l (printf_fp.c:933)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== Use of uninitialised value of size 8
-==510==    at 0x489B854: __mpn_mul_1 (mul_1.S:36)
-==510==    by 0x48A5C90: hack_digit (printf_fp.c:170)
-==510==    by 0x48A686B: __printf_fp_l (printf_fp.c:933)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== Use of uninitialised value of size 8
-==510==    at 0x489B878: __mpn_mul_1 (mul_1.S:52)
-==510==    by 0x48A5C90: hack_digit (printf_fp.c:170)
-==510==    by 0x48A686B: __printf_fp_l (printf_fp.c:933)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== Use of uninitialised value of size 8
-==510==    at 0x48A5C89: hack_digit (printf_fp.c:169)
-==510==    by 0x48A68FC: __printf_fp_l (printf_fp.c:957)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== Use of uninitialised value of size 8
-==510==    at 0x489B854: __mpn_mul_1 (mul_1.S:36)
-==510==    by 0x48A5C90: hack_digit (printf_fp.c:170)
-==510==    by 0x48A68FC: __printf_fp_l (printf_fp.c:957)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== Use of uninitialised value of size 8
-==510==    at 0x489B878: __mpn_mul_1 (mul_1.S:52)
-==510==    by 0x48A5C90: hack_digit (printf_fp.c:170)
-==510==    by 0x48A68FC: __printf_fp_l (printf_fp.c:957)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== Conditional jump or move depends on uninitialised value(s)
-==510==    at 0x48A692F: __printf_fp_l (printf_fp.c:969)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== Use of uninitialised value of size 8
-==510==    at 0x48A5C89: hack_digit (printf_fp.c:169)
-==510==    by 0x48A693C: __printf_fp_l (printf_fp.c:970)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== Use of uninitialised value of size 8
-==510==    at 0x489B854: __mpn_mul_1 (mul_1.S:36)
-==510==    by 0x48A5C90: hack_digit (printf_fp.c:170)
-==510==    by 0x48A693C: __printf_fp_l (printf_fp.c:970)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== Use of uninitialised value of size 8
-==510==    at 0x489B878: __mpn_mul_1 (mul_1.S:52)
-==510==    by 0x48A5C90: hack_digit (printf_fp.c:170)
-==510==    by 0x48A693C: __printf_fp_l (printf_fp.c:970)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== Conditional jump or move depends on uninitialised value(s)
-==510==    at 0x48A694E: __printf_fp_l (printf_fp.c:972)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== Use of uninitialised value of size 8
-==510==    at 0x48A6977: __printf_fp_l (printf_fp.c:982)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== Conditional jump or move depends on uninitialised value(s)
-==510==    at 0x48A697D: __printf_fp_l (printf_fp.c:982)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== Use of uninitialised value of size 8
-==510==    at 0x48A6986: __printf_fp_l (printf_fp.c:982)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== Conditional jump or move depends on uninitialised value(s)
-==510==    at 0x48A698C: __printf_fp_l (printf_fp.c:982)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== Conditional jump or move depends on uninitialised value(s)
-==510==    at 0x48A71E8: round_away (rounding-mode.h:52)
-==510==    by 0x48A71E8: __printf_fp_l (printf_fp.c:989)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== Conditional jump or move depends on uninitialised value(s)
-==510==    at 0x48A6BEC: __printf_fp_l (printf_fp.c:1157)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== Conditional jump or move depends on uninitialised value(s)
-==510==    at 0x48A79D6: __printf_fp_l (printf_fp.c:1220)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== Conditional jump or move depends on uninitialised value(s)
-==510==    at 0x48A79BB: __printf_fp_l (printf_fp.c:1222)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== Conditional jump or move depends on uninitialised value(s)
-==510==    at 0x48CF98A: _IO_file_overflow@@GLIBC_2.2.5 (fileops.c:790)
-==510==    by 0x48A7C5E: __printf_fp_l (printf_fp.c:1246)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== Syscall param write(buf) points to uninitialised byte(s)
-==510==    at 0x493D3B4: write (write.c:26)
-==510==    by 0x48CE4FC: _IO_file_write@@GLIBC_2.2.5 (fileops.c:1188)
-==510==    by 0x48CD89E: new_do_write (fileops.c:456)
-==510==    by 0x48CF648: _IO_new_do_write (fileops.c:433)
-==510==    by 0x48CF648: _IO_do_write@@GLIBC_2.2.5 (fileops.c:430)
-==510==    by 0x48CFA32: _IO_file_overflow@@GLIBC_2.2.5 (fileops.c:791)
-==510==    by 0x48C6474: putchar (putchar.c:28)
-==510==    by 0x109731: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Address 0x4a16290 is 0 bytes inside a block of size 1,024 alloc'd
-==510==    at 0x483577F: malloc (vg_replace_malloc.c:299)
-==510==    by 0x48C284B: _IO_file_doallocate (filedoalloc.c:101)
-==510==    by 0x48D083F: _IO_doallocbuf (genops.c:347)
-==510==    by 0x48CFAC7: _IO_file_overflow@@GLIBC_2.2.5 (fileops.c:752)
-==510==    by 0x48CEBCE: _IO_new_file_xsputn (fileops.c:1251)
-==510==    by 0x48CEBCE: _IO_file_xsputn@@GLIBC_2.2.5 (fileops.c:1204)
-==510==    by 0x48A3938: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x10957D: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10A9DB: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== 
-==510== HEAP SUMMARY:
-==510==     in use at exit: 0 bytes in 0 blocks
-==510==   total heap usage: 15 allocs, 15 frees, 1,326 bytes allocated
-==510== 
-==510== All heap blocks were freed -- no leaks are possible
-==510== 
-==510== ERROR SUMMARY: 63 errors from 30 contexts (suppressed: 0 from 0)
-==510== 
-==510== 1 errors in context 1 of 30:
-==510== Syscall param write(buf) points to uninitialised byte(s)
-==510==    at 0x493D3B4: write (write.c:26)
-==510==    by 0x48CE4FC: _IO_file_write@@GLIBC_2.2.5 (fileops.c:1188)
-==510==    by 0x48CD89E: new_do_write (fileops.c:456)
-==510==    by 0x48CF648: _IO_new_do_write (fileops.c:433)
-==510==    by 0x48CF648: _IO_do_write@@GLIBC_2.2.5 (fileops.c:430)
-==510==    by 0x48CFA32: _IO_file_overflow@@GLIBC_2.2.5 (fileops.c:791)
-==510==    by 0x48C6474: putchar (putchar.c:28)
-==510==    by 0x109731: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Address 0x4a16290 is 0 bytes inside a block of size 1,024 alloc'd
-==510==    at 0x483577F: malloc (vg_replace_malloc.c:299)
-==510==    by 0x48C284B: _IO_file_doallocate (filedoalloc.c:101)
-==510==    by 0x48D083F: _IO_doallocbuf (genops.c:347)
-==510==    by 0x48CFAC7: _IO_file_overflow@@GLIBC_2.2.5 (fileops.c:752)
-==510==    by 0x48CEBCE: _IO_new_file_xsputn (fileops.c:1251)
-==510==    by 0x48CEBCE: _IO_file_xsputn@@GLIBC_2.2.5 (fileops.c:1204)
-==510==    by 0x48A3938: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x10957D: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10A9DB: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== 
-==510== 1 errors in context 2 of 30:
-==510== Conditional jump or move depends on uninitialised value(s)
-==510==    at 0x48A6BEC: __printf_fp_l (printf_fp.c:1157)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== 
-==510== 1 errors in context 3 of 30:
-==510== Conditional jump or move depends on uninitialised value(s)
-==510==    at 0x48A71E8: round_away (rounding-mode.h:52)
-==510==    by 0x48A71E8: __printf_fp_l (printf_fp.c:989)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== 
-==510== 1 errors in context 4 of 30:
-==510== Conditional jump or move depends on uninitialised value(s)
-==510==    at 0x48A698C: __printf_fp_l (printf_fp.c:982)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== 
-==510== 1 errors in context 5 of 30:
-==510== Use of uninitialised value of size 8
-==510==    at 0x48A6986: __printf_fp_l (printf_fp.c:982)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== 
-==510== 1 errors in context 6 of 30:
-==510== Conditional jump or move depends on uninitialised value(s)
-==510==    at 0x48A697D: __printf_fp_l (printf_fp.c:982)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== 
-==510== 1 errors in context 7 of 30:
-==510== Use of uninitialised value of size 8
-==510==    at 0x48A6977: __printf_fp_l (printf_fp.c:982)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== 
-==510== 1 errors in context 8 of 30:
-==510== Conditional jump or move depends on uninitialised value(s)
-==510==    at 0x48A694E: __printf_fp_l (printf_fp.c:972)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== 
-==510== 1 errors in context 9 of 30:
-==510== Use of uninitialised value of size 8
-==510==    at 0x489B878: __mpn_mul_1 (mul_1.S:52)
-==510==    by 0x48A5C90: hack_digit (printf_fp.c:170)
-==510==    by 0x48A693C: __printf_fp_l (printf_fp.c:970)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== 
-==510== 1 errors in context 10 of 30:
-==510== Use of uninitialised value of size 8
-==510==    at 0x489B854: __mpn_mul_1 (mul_1.S:36)
-==510==    by 0x48A5C90: hack_digit (printf_fp.c:170)
-==510==    by 0x48A693C: __printf_fp_l (printf_fp.c:970)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== 
-==510== 1 errors in context 11 of 30:
-==510== Use of uninitialised value of size 8
-==510==    at 0x48A5C89: hack_digit (printf_fp.c:169)
-==510==    by 0x48A693C: __printf_fp_l (printf_fp.c:970)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== 
-==510== 1 errors in context 12 of 30:
-==510== Conditional jump or move depends on uninitialised value(s)
-==510==    at 0x48A692F: __printf_fp_l (printf_fp.c:969)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== 
-==510== 1 errors in context 13 of 30:
-==510== Use of uninitialised value of size 8
-==510==    at 0x489B878: __mpn_mul_1 (mul_1.S:52)
-==510==    by 0x48A5C90: hack_digit (printf_fp.c:170)
-==510==    by 0x48A686B: __printf_fp_l (printf_fp.c:933)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== 
-==510== 1 errors in context 14 of 30:
-==510== Use of uninitialised value of size 8
-==510==    at 0x489B854: __mpn_mul_1 (mul_1.S:36)
-==510==    by 0x48A5C90: hack_digit (printf_fp.c:170)
-==510==    by 0x48A686B: __printf_fp_l (printf_fp.c:933)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== 
-==510== 1 errors in context 15 of 30:
-==510== Use of uninitialised value of size 8
-==510==    at 0x48A5C89: hack_digit (printf_fp.c:169)
-==510==    by 0x48A686B: __printf_fp_l (printf_fp.c:933)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== 
-==510== 1 errors in context 16 of 30:
-==510== Use of uninitialised value of size 8
-==510==    at 0x48A72F6: __printf_fp_l (printf_fp.c:817)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== 
-==510== 1 errors in context 17 of 30:
-==510== Use of uninitialised value of size 8
-==510==    at 0x489B27B: __mpn_lshift (lshift.S:60)
-==510==    by 0x48A72DC: __printf_fp_l (printf_fp.c:816)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== 
-==510== 1 errors in context 18 of 30:
-==510== Use of uninitialised value of size 8
-==510==    at 0x489B278: __mpn_lshift (lshift.S:59)
-==510==    by 0x48A72DC: __printf_fp_l (printf_fp.c:816)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== 
-==510== 1 errors in context 19 of 30:
-==510== Use of uninitialised value of size 8
-==510==    at 0x48A72D8: __printf_fp_l (printf_fp.c:816)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== 
-==510== 1 errors in context 20 of 30:
-==510== Conditional jump or move depends on uninitialised value(s)
-==510==    at 0x48A72CA: __printf_fp_l (printf_fp.c:640)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== 
-==510== 1 errors in context 21 of 30:
-==510== Conditional jump or move depends on uninitialised value(s)
-==510==    at 0x48A6395: __printf_fp_l (printf_fp.c:437)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== 
-==510== 1 errors in context 22 of 30:
-==510== Conditional jump or move depends on uninitialised value(s)
-==510==    at 0x489C5D0: __mpn_extract_double (dbl2mpn.c:56)
-==510==    by 0x48A6F23: __printf_fp_l (printf_fp.c:387)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== 
-==510== 1 errors in context 23 of 30:
-==510== Conditional jump or move depends on uninitialised value(s)
-==510==    at 0x48A6C4A: __printf_fp_l (printf_fp.c:387)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== 
-==510== 1 errors in context 24 of 30:
-==510== Conditional jump or move depends on uninitialised value(s)
-==510==    at 0x48A6C30: __printf_fp_l (printf_fp.c:387)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== 
-==510== 6 errors in context 25 of 30:
-==510== Use of uninitialised value of size 8
-==510==    at 0x489B878: __mpn_mul_1 (mul_1.S:52)
-==510==    by 0x48A5C90: hack_digit (printf_fp.c:170)
-==510==    by 0x48A68FC: __printf_fp_l (printf_fp.c:957)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== 
-==510== 6 errors in context 26 of 30:
-==510== Use of uninitialised value of size 8
-==510==    at 0x489B854: __mpn_mul_1 (mul_1.S:36)
-==510==    by 0x48A5C90: hack_digit (printf_fp.c:170)
-==510==    by 0x48A68FC: __printf_fp_l (printf_fp.c:957)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== 
-==510== 6 errors in context 27 of 30:
-==510== Use of uninitialised value of size 8
-==510==    at 0x48A5C89: hack_digit (printf_fp.c:169)
-==510==    by 0x48A68FC: __printf_fp_l (printf_fp.c:957)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== 
-==510== 7 errors in context 28 of 30:
-==510== Conditional jump or move depends on uninitialised value(s)
-==510==    at 0x48CF98A: _IO_file_overflow@@GLIBC_2.2.5 (fileops.c:790)
-==510==    by 0x48A7C5E: __printf_fp_l (printf_fp.c:1246)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== 
-==510== 7 errors in context 29 of 30:
-==510== Conditional jump or move depends on uninitialised value(s)
-==510==    at 0x48A79BB: __printf_fp_l (printf_fp.c:1222)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== 
-==510== 7 errors in context 30 of 30:
-==510== Conditional jump or move depends on uninitialised value(s)
-==510==    at 0x48A79D6: __printf_fp_l (printf_fp.c:1220)
-==510==    by 0x48A367A: vfprintf (vfprintf.c:1637)
-==510==    by 0x48AB735: printf (printf.c:33)
-==510==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510==    by 0x10AAA9: main (in /home/kyuci/Codes/Tally/test)
-==510==  Uninitialised value was created by a stack allocation
-==510==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
-==510== 
-==510== ERROR SUMMARY: 63 errors from 30 contexts (suppressed: 0 from 0)
+==1066== Memcheck, a memory error detector
+==1066== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==1066== Using Valgrind-3.14.0-353a3587bb-20181007X and LibVEX; rerun with -h for copyright info
+==1066== Command: ./test
+==1066== Parent PID: 26005
+==1066== 
+--1066-- 
+--1066-- Valgrind options:
+--1066--    --leak-check=full
+--1066--    --show-leak-kinds=all
+--1066--    --track-origins=yes
+--1066--    --verbose
+--1066--    --log-file=valgrind-out.txt
+--1066-- Contents of /proc/version:
+--1066--   Linux version 5.15.117-19680-g54e910f94133 (chrome-bot@chromeos-release-builder-us-central1-a-x32-3-j707) (Chromium OS 17.0_pre496208_p20230501-r12 clang version 17.0.0 (/mnt/host/source/src/third_party/llvm-project 98f5a340975bc00197c57e39eb4ca26e2da0e8a2), LLD 17.0.0) #1 SMP PREEMPT Mon Aug 28 18:36:09 PDT 2023
+--1066-- 
+--1066-- Arch and hwcaps: AMD64, LittleEndian, amd64-cx16-rdtscp-sse3
+--1066-- Page sizes: currently 4096, max supported 4096
+--1066-- Valgrind library directory: /usr/lib/x86_64-linux-gnu/valgrind
+--1066-- Reading syms from /home/kyuci/Codes/Tally/test
+--1066-- Reading syms from /lib/x86_64-linux-gnu/ld-2.28.so
+--1066--   Considering /usr/lib/debug/.build-id/9d/a9b30d436da7f984fc9904fbea9ab251f0c401.debug ..
+--1066--   .. build-id is valid
+--1066-- Reading syms from /usr/lib/x86_64-linux-gnu/valgrind/memcheck-amd64-linux
+--1066--   Considering /usr/lib/debug/.build-id/32/2e77af97f403c3d34ff09edf60b089e72ec889.debug ..
+--1066--   .. build-id is valid
+--1066--    object doesn't have a dynamic symbol table
+--1066-- Scheduler: using generic scheduler lock implementation.
+--1066-- Reading suppressions file: /usr/lib/x86_64-linux-gnu/valgrind/default.supp
+==1066== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-1066-by-kyuci-on-???
+==1066== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-1066-by-kyuci-on-???
+==1066== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-1066-by-kyuci-on-???
+==1066== 
+==1066== TO CONTROL THIS PROCESS USING vgdb (which you probably
+==1066== don't want to do, unless you know exactly what you're doing,
+==1066== or are doing some strange experiment):
+==1066==   /usr/lib/x86_64-linux-gnu/valgrind/../../bin/vgdb --pid=1066 ...command...
+==1066== 
+==1066== TO DEBUG THIS PROCESS USING GDB: start GDB like this
+==1066==   /path/to/gdb ./test
+==1066== and then give GDB the following command
+==1066==   target remote | /usr/lib/x86_64-linux-gnu/valgrind/../../bin/vgdb --pid=1066
+==1066== --pid is optional if only one valgrind process is running
+==1066== 
+--1066-- REDIR: 0x401e320 (ld-linux-x86-64.so.2:strlen) redirected to 0x580c9ce2 (vgPlain_amd64_linux_REDIR_FOR_strlen)
+--1066-- REDIR: 0x401e100 (ld-linux-x86-64.so.2:index) redirected to 0x580c9cfc (vgPlain_amd64_linux_REDIR_FOR_index)
+--1066-- Reading syms from /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_core-amd64-linux.so
+--1066--   Considering /usr/lib/debug/.build-id/34/fbc4cdfbfce1bfc3d2e522a01a050bf724c930.debug ..
+--1066--   .. build-id is valid
+--1066-- Reading syms from /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so
+--1066--   Considering /usr/lib/debug/.build-id/ca/bb7898ea982d936cbfadd70ae831c6eb63623f.debug ..
+--1066--   .. build-id is valid
+==1066== WARNING: new redirection conflicts with existing -- ignoring it
+--1066--     old: 0x0401e320 (strlen              ) R-> (0000.0) 0x580c9ce2 vgPlain_amd64_linux_REDIR_FOR_strlen
+--1066--     new: 0x0401e320 (strlen              ) R-> (2007.0) 0x04838d80 strlen
+--1066-- REDIR: 0x401ab40 (ld-linux-x86-64.so.2:strcmp) redirected to 0x4839e40 (strcmp)
+--1066-- REDIR: 0x401e860 (ld-linux-x86-64.so.2:mempcpy) redirected to 0x483d860 (mempcpy)
+--1066-- Reading syms from /lib/x86_64-linux-gnu/libc-2.28.so
+--1066--   Considering /usr/lib/debug/.build-id/a6/5a82147cd98619525049d4c29cc45f88d1fb00.debug ..
+--1066--   .. build-id is valid
+--1066-- REDIR: 0x48dbf50 (libc.so.6:memmove) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48db320 (libc.so.6:strncpy) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48dc230 (libc.so.6:strcasecmp) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48dad30 (libc.so.6:strcat) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48db350 (libc.so.6:rindex) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48dd730 (libc.so.6:rawmemchr) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48f60d0 (libc.so.6:wmemchr) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48f5b70 (libc.so.6:wcscmp) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48dc0c0 (libc.so.6:mempcpy) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48dbef0 (libc.so.6:bcmp) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48db2c0 (libc.so.6:strncmp) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48dada0 (libc.so.6:strcmp) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48dc020 (libc.so.6:memset) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48f5b40 (libc.so.6:wcschr) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48db260 (libc.so.6:strnlen) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48dae30 (libc.so.6:strcspn) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48dc280 (libc.so.6:strncasecmp) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48dae00 (libc.so.6:strcpy) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48dc3c0 (libc.so.6:memcpy@@GLIBC_2.14) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48f7370 (libc.so.6:wcsnlen) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48db380 (libc.so.6:strpbrk) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48dad60 (libc.so.6:index) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48db230 (libc.so.6:strlen) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48e2120 (libc.so.6:memrchr) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48dc2d0 (libc.so.6:strcasecmp_l) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48dbec0 (libc.so.6:memchr) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48f5c50 (libc.so.6:wcslen) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48db620 (libc.so.6:strspn) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48dc200 (libc.so.6:stpncpy) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48dc1d0 (libc.so.6:stpcpy) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48dd760 (libc.so.6:strchrnul) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48dc320 (libc.so.6:strncasecmp_l) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--1066-- REDIR: 0x48ead90 (libc.so.6:__strrchr_sse2) redirected to 0x48387d0 (__strrchr_sse2)
+--1066-- REDIR: 0x48d7510 (libc.so.6:malloc) redirected to 0x4835710 (malloc)
+--1066-- REDIR: 0x48eb080 (libc.so.6:__strlen_sse2) redirected to 0x4838cc0 (__strlen_sse2)
+--1066-- REDIR: 0x48effa0 (libc.so.6:__strcpy_sse2_unaligned) redirected to 0x4838db0 (strcpy)
+--1066-- REDIR: 0x48eab80 (libc.so.6:__strchrnul_sse2) redirected to 0x483d390 (strchrnul)
+--1066-- REDIR: 0x48f4ea0 (libc.so.6:__mempcpy_sse2_unaligned) redirected to 0x483d4a0 (mempcpy)
+--1066-- REDIR: 0x48d7b60 (libc.so.6:free) redirected to 0x4836940 (free)
+==1066== Conditional jump or move depends on uninitialised value(s)
+==1066==    at 0x48A6C30: __printf_fp_l (printf_fp.c:387)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== Conditional jump or move depends on uninitialised value(s)
+==1066==    at 0x48A6C4A: __printf_fp_l (printf_fp.c:387)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== Conditional jump or move depends on uninitialised value(s)
+==1066==    at 0x489C5D0: __mpn_extract_double (dbl2mpn.c:56)
+==1066==    by 0x48A6F23: __printf_fp_l (printf_fp.c:387)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== Conditional jump or move depends on uninitialised value(s)
+==1066==    at 0x48A6395: __printf_fp_l (printf_fp.c:437)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== Conditional jump or move depends on uninitialised value(s)
+==1066==    at 0x48A72CA: __printf_fp_l (printf_fp.c:640)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== Use of uninitialised value of size 8
+==1066==    at 0x48A72D8: __printf_fp_l (printf_fp.c:816)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== Use of uninitialised value of size 8
+==1066==    at 0x489B278: __mpn_lshift (lshift.S:59)
+==1066==    by 0x48A72DC: __printf_fp_l (printf_fp.c:816)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== Use of uninitialised value of size 8
+==1066==    at 0x489B27B: __mpn_lshift (lshift.S:60)
+==1066==    by 0x48A72DC: __printf_fp_l (printf_fp.c:816)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== Use of uninitialised value of size 8
+==1066==    at 0x48A72F6: __printf_fp_l (printf_fp.c:817)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== Use of uninitialised value of size 8
+==1066==    at 0x48A5C89: hack_digit (printf_fp.c:169)
+==1066==    by 0x48A686B: __printf_fp_l (printf_fp.c:933)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== Use of uninitialised value of size 8
+==1066==    at 0x489B854: __mpn_mul_1 (mul_1.S:36)
+==1066==    by 0x48A5C90: hack_digit (printf_fp.c:170)
+==1066==    by 0x48A686B: __printf_fp_l (printf_fp.c:933)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== Use of uninitialised value of size 8
+==1066==    at 0x489B878: __mpn_mul_1 (mul_1.S:52)
+==1066==    by 0x48A5C90: hack_digit (printf_fp.c:170)
+==1066==    by 0x48A686B: __printf_fp_l (printf_fp.c:933)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== Use of uninitialised value of size 8
+==1066==    at 0x48A5C89: hack_digit (printf_fp.c:169)
+==1066==    by 0x48A68FC: __printf_fp_l (printf_fp.c:957)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== Use of uninitialised value of size 8
+==1066==    at 0x489B854: __mpn_mul_1 (mul_1.S:36)
+==1066==    by 0x48A5C90: hack_digit (printf_fp.c:170)
+==1066==    by 0x48A68FC: __printf_fp_l (printf_fp.c:957)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== Use of uninitialised value of size 8
+==1066==    at 0x489B878: __mpn_mul_1 (mul_1.S:52)
+==1066==    by 0x48A5C90: hack_digit (printf_fp.c:170)
+==1066==    by 0x48A68FC: __printf_fp_l (printf_fp.c:957)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== Conditional jump or move depends on uninitialised value(s)
+==1066==    at 0x48A692F: __printf_fp_l (printf_fp.c:969)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== Use of uninitialised value of size 8
+==1066==    at 0x48A5C89: hack_digit (printf_fp.c:169)
+==1066==    by 0x48A693C: __printf_fp_l (printf_fp.c:970)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== Use of uninitialised value of size 8
+==1066==    at 0x489B854: __mpn_mul_1 (mul_1.S:36)
+==1066==    by 0x48A5C90: hack_digit (printf_fp.c:170)
+==1066==    by 0x48A693C: __printf_fp_l (printf_fp.c:970)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== Use of uninitialised value of size 8
+==1066==    at 0x489B878: __mpn_mul_1 (mul_1.S:52)
+==1066==    by 0x48A5C90: hack_digit (printf_fp.c:170)
+==1066==    by 0x48A693C: __printf_fp_l (printf_fp.c:970)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== Conditional jump or move depends on uninitialised value(s)
+==1066==    at 0x48A694E: __printf_fp_l (printf_fp.c:972)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== Use of uninitialised value of size 8
+==1066==    at 0x48A6977: __printf_fp_l (printf_fp.c:982)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== Conditional jump or move depends on uninitialised value(s)
+==1066==    at 0x48A697D: __printf_fp_l (printf_fp.c:982)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== Use of uninitialised value of size 8
+==1066==    at 0x48A6986: __printf_fp_l (printf_fp.c:982)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== Conditional jump or move depends on uninitialised value(s)
+==1066==    at 0x48A698C: __printf_fp_l (printf_fp.c:982)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== Conditional jump or move depends on uninitialised value(s)
+==1066==    at 0x48A71E8: round_away (rounding-mode.h:52)
+==1066==    by 0x48A71E8: __printf_fp_l (printf_fp.c:989)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== Conditional jump or move depends on uninitialised value(s)
+==1066==    at 0x48A6BEC: __printf_fp_l (printf_fp.c:1157)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== Conditional jump or move depends on uninitialised value(s)
+==1066==    at 0x48A79D6: __printf_fp_l (printf_fp.c:1220)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== Conditional jump or move depends on uninitialised value(s)
+==1066==    at 0x48A79BB: __printf_fp_l (printf_fp.c:1222)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== Conditional jump or move depends on uninitialised value(s)
+==1066==    at 0x48CF98A: _IO_file_overflow@@GLIBC_2.2.5 (fileops.c:790)
+==1066==    by 0x48A7C5E: __printf_fp_l (printf_fp.c:1246)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== Syscall param write(buf) points to uninitialised byte(s)
+==1066==    at 0x493D3B4: write (write.c:26)
+==1066==    by 0x48CE4FC: _IO_file_write@@GLIBC_2.2.5 (fileops.c:1188)
+==1066==    by 0x48CD89E: new_do_write (fileops.c:456)
+==1066==    by 0x48CF648: _IO_new_do_write (fileops.c:433)
+==1066==    by 0x48CF648: _IO_do_write@@GLIBC_2.2.5 (fileops.c:430)
+==1066==    by 0x48CFA32: _IO_file_overflow@@GLIBC_2.2.5 (fileops.c:791)
+==1066==    by 0x48C6474: putchar (putchar.c:28)
+==1066==    by 0x109731: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Address 0x4a16290 is 0 bytes inside a block of size 1,024 alloc'd
+==1066==    at 0x483577F: malloc (vg_replace_malloc.c:299)
+==1066==    by 0x48C284B: _IO_file_doallocate (filedoalloc.c:101)
+==1066==    by 0x48D083F: _IO_doallocbuf (genops.c:347)
+==1066==    by 0x48CFAC7: _IO_file_overflow@@GLIBC_2.2.5 (fileops.c:752)
+==1066==    by 0x48CEBCE: _IO_new_file_xsputn (fileops.c:1251)
+==1066==    by 0x48CEBCE: _IO_file_xsputn@@GLIBC_2.2.5 (fileops.c:1204)
+==1066==    by 0x48A3938: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x10957D: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AB39: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== 
+==1066== HEAP SUMMARY:
+==1066==     in use at exit: 0 bytes in 0 blocks
+==1066==   total heap usage: 15 allocs, 15 frees, 1,326 bytes allocated
+==1066== 
+==1066== All heap blocks were freed -- no leaks are possible
+==1066== 
+==1066== ERROR SUMMARY: 63 errors from 30 contexts (suppressed: 0 from 0)
+==1066== 
+==1066== 1 errors in context 1 of 30:
+==1066== Syscall param write(buf) points to uninitialised byte(s)
+==1066==    at 0x493D3B4: write (write.c:26)
+==1066==    by 0x48CE4FC: _IO_file_write@@GLIBC_2.2.5 (fileops.c:1188)
+==1066==    by 0x48CD89E: new_do_write (fileops.c:456)
+==1066==    by 0x48CF648: _IO_new_do_write (fileops.c:433)
+==1066==    by 0x48CF648: _IO_do_write@@GLIBC_2.2.5 (fileops.c:430)
+==1066==    by 0x48CFA32: _IO_file_overflow@@GLIBC_2.2.5 (fileops.c:791)
+==1066==    by 0x48C6474: putchar (putchar.c:28)
+==1066==    by 0x109731: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Address 0x4a16290 is 0 bytes inside a block of size 1,024 alloc'd
+==1066==    at 0x483577F: malloc (vg_replace_malloc.c:299)
+==1066==    by 0x48C284B: _IO_file_doallocate (filedoalloc.c:101)
+==1066==    by 0x48D083F: _IO_doallocbuf (genops.c:347)
+==1066==    by 0x48CFAC7: _IO_file_overflow@@GLIBC_2.2.5 (fileops.c:752)
+==1066==    by 0x48CEBCE: _IO_new_file_xsputn (fileops.c:1251)
+==1066==    by 0x48CEBCE: _IO_file_xsputn@@GLIBC_2.2.5 (fileops.c:1204)
+==1066==    by 0x48A3938: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x10957D: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AB39: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== 
+==1066== 1 errors in context 2 of 30:
+==1066== Conditional jump or move depends on uninitialised value(s)
+==1066==    at 0x48A6BEC: __printf_fp_l (printf_fp.c:1157)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== 
+==1066== 1 errors in context 3 of 30:
+==1066== Conditional jump or move depends on uninitialised value(s)
+==1066==    at 0x48A71E8: round_away (rounding-mode.h:52)
+==1066==    by 0x48A71E8: __printf_fp_l (printf_fp.c:989)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== 
+==1066== 1 errors in context 4 of 30:
+==1066== Conditional jump or move depends on uninitialised value(s)
+==1066==    at 0x48A698C: __printf_fp_l (printf_fp.c:982)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== 
+==1066== 1 errors in context 5 of 30:
+==1066== Use of uninitialised value of size 8
+==1066==    at 0x48A6986: __printf_fp_l (printf_fp.c:982)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== 
+==1066== 1 errors in context 6 of 30:
+==1066== Conditional jump or move depends on uninitialised value(s)
+==1066==    at 0x48A697D: __printf_fp_l (printf_fp.c:982)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== 
+==1066== 1 errors in context 7 of 30:
+==1066== Use of uninitialised value of size 8
+==1066==    at 0x48A6977: __printf_fp_l (printf_fp.c:982)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== 
+==1066== 1 errors in context 8 of 30:
+==1066== Conditional jump or move depends on uninitialised value(s)
+==1066==    at 0x48A694E: __printf_fp_l (printf_fp.c:972)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== 
+==1066== 1 errors in context 9 of 30:
+==1066== Use of uninitialised value of size 8
+==1066==    at 0x489B878: __mpn_mul_1 (mul_1.S:52)
+==1066==    by 0x48A5C90: hack_digit (printf_fp.c:170)
+==1066==    by 0x48A693C: __printf_fp_l (printf_fp.c:970)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== 
+==1066== 1 errors in context 10 of 30:
+==1066== Use of uninitialised value of size 8
+==1066==    at 0x489B854: __mpn_mul_1 (mul_1.S:36)
+==1066==    by 0x48A5C90: hack_digit (printf_fp.c:170)
+==1066==    by 0x48A693C: __printf_fp_l (printf_fp.c:970)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== 
+==1066== 1 errors in context 11 of 30:
+==1066== Use of uninitialised value of size 8
+==1066==    at 0x48A5C89: hack_digit (printf_fp.c:169)
+==1066==    by 0x48A693C: __printf_fp_l (printf_fp.c:970)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== 
+==1066== 1 errors in context 12 of 30:
+==1066== Conditional jump or move depends on uninitialised value(s)
+==1066==    at 0x48A692F: __printf_fp_l (printf_fp.c:969)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== 
+==1066== 1 errors in context 13 of 30:
+==1066== Use of uninitialised value of size 8
+==1066==    at 0x489B878: __mpn_mul_1 (mul_1.S:52)
+==1066==    by 0x48A5C90: hack_digit (printf_fp.c:170)
+==1066==    by 0x48A686B: __printf_fp_l (printf_fp.c:933)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== 
+==1066== 1 errors in context 14 of 30:
+==1066== Use of uninitialised value of size 8
+==1066==    at 0x489B854: __mpn_mul_1 (mul_1.S:36)
+==1066==    by 0x48A5C90: hack_digit (printf_fp.c:170)
+==1066==    by 0x48A686B: __printf_fp_l (printf_fp.c:933)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== 
+==1066== 1 errors in context 15 of 30:
+==1066== Use of uninitialised value of size 8
+==1066==    at 0x48A5C89: hack_digit (printf_fp.c:169)
+==1066==    by 0x48A686B: __printf_fp_l (printf_fp.c:933)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== 
+==1066== 1 errors in context 16 of 30:
+==1066== Use of uninitialised value of size 8
+==1066==    at 0x48A72F6: __printf_fp_l (printf_fp.c:817)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== 
+==1066== 1 errors in context 17 of 30:
+==1066== Use of uninitialised value of size 8
+==1066==    at 0x489B27B: __mpn_lshift (lshift.S:60)
+==1066==    by 0x48A72DC: __printf_fp_l (printf_fp.c:816)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== 
+==1066== 1 errors in context 18 of 30:
+==1066== Use of uninitialised value of size 8
+==1066==    at 0x489B278: __mpn_lshift (lshift.S:59)
+==1066==    by 0x48A72DC: __printf_fp_l (printf_fp.c:816)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== 
+==1066== 1 errors in context 19 of 30:
+==1066== Use of uninitialised value of size 8
+==1066==    at 0x48A72D8: __printf_fp_l (printf_fp.c:816)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== 
+==1066== 1 errors in context 20 of 30:
+==1066== Conditional jump or move depends on uninitialised value(s)
+==1066==    at 0x48A72CA: __printf_fp_l (printf_fp.c:640)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== 
+==1066== 1 errors in context 21 of 30:
+==1066== Conditional jump or move depends on uninitialised value(s)
+==1066==    at 0x48A6395: __printf_fp_l (printf_fp.c:437)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== 
+==1066== 1 errors in context 22 of 30:
+==1066== Conditional jump or move depends on uninitialised value(s)
+==1066==    at 0x489C5D0: __mpn_extract_double (dbl2mpn.c:56)
+==1066==    by 0x48A6F23: __printf_fp_l (printf_fp.c:387)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== 
+==1066== 1 errors in context 23 of 30:
+==1066== Conditional jump or move depends on uninitialised value(s)
+==1066==    at 0x48A6C4A: __printf_fp_l (printf_fp.c:387)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== 
+==1066== 1 errors in context 24 of 30:
+==1066== Conditional jump or move depends on uninitialised value(s)
+==1066==    at 0x48A6C30: __printf_fp_l (printf_fp.c:387)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== 
+==1066== 6 errors in context 25 of 30:
+==1066== Use of uninitialised value of size 8
+==1066==    at 0x489B878: __mpn_mul_1 (mul_1.S:52)
+==1066==    by 0x48A5C90: hack_digit (printf_fp.c:170)
+==1066==    by 0x48A68FC: __printf_fp_l (printf_fp.c:957)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== 
+==1066== 6 errors in context 26 of 30:
+==1066== Use of uninitialised value of size 8
+==1066==    at 0x489B854: __mpn_mul_1 (mul_1.S:36)
+==1066==    by 0x48A5C90: hack_digit (printf_fp.c:170)
+==1066==    by 0x48A68FC: __printf_fp_l (printf_fp.c:957)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== 
+==1066== 6 errors in context 27 of 30:
+==1066== Use of uninitialised value of size 8
+==1066==    at 0x48A5C89: hack_digit (printf_fp.c:169)
+==1066==    by 0x48A68FC: __printf_fp_l (printf_fp.c:957)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== 
+==1066== 7 errors in context 28 of 30:
+==1066== Conditional jump or move depends on uninitialised value(s)
+==1066==    at 0x48CF98A: _IO_file_overflow@@GLIBC_2.2.5 (fileops.c:790)
+==1066==    by 0x48A7C5E: __printf_fp_l (printf_fp.c:1246)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== 
+==1066== 7 errors in context 29 of 30:
+==1066== Conditional jump or move depends on uninitialised value(s)
+==1066==    at 0x48A79BB: __printf_fp_l (printf_fp.c:1222)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== 
+==1066== 7 errors in context 30 of 30:
+==1066== Conditional jump or move depends on uninitialised value(s)
+==1066==    at 0x48A79D6: __printf_fp_l (printf_fp.c:1220)
+==1066==    by 0x48A367A: vfprintf (vfprintf.c:1637)
+==1066==    by 0x48AB735: printf (printf.c:33)
+==1066==    by 0x1095B4: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066==    by 0x10AC07: main (in /home/kyuci/Codes/Tally/test)
+==1066==  Uninitialised value was created by a stack allocation
+==1066==    at 0x109471: dynamic_print (in /home/kyuci/Codes/Tally/test)
+==1066== 
+==1066== ERROR SUMMARY: 63 errors from 30 contexts (suppressed: 0 from 0)

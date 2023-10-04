@@ -333,7 +333,6 @@ dynamic_t* mult_dynamic_vars(dynamic_t* first, dynamic_t* second) {
                 strcat(result, (char*)first->value);
             }
         }
-        
 
         dynamic_t* new = init_dynamic_var(STRING, (void*) result);
         free(result);
@@ -361,6 +360,24 @@ dynamic_t* mult_dynamic_vars(dynamic_t* first, dynamic_t* second) {
     }
 }
 
+dynamic_t* div_dynamic_vars(dynamic_t* first, dynamic_t* second) {
+if (first->type == INT && second->type == INT) {
+        int result = (float) *(int*)first->value / *(int*)second->value;
+        return init_dynamic_var(FLOAT, (void*)&result);
+    } else if (first->type == FLOAT && second->type == FLOAT) {
+        float result = *(float*)first->value / *(float*)second->value;
+        return init_dynamic_var(FLOAT, (void*)&result);
+    } else if ((first->type == INT && second->type == FLOAT) || (first->type == FLOAT && second->type == INT)) {
+        if (first->type == INT) {
+            return init_dynamic_var(FLOAT, (void*)&(float){*(int*)first->value / *(float*)second->value});
+        } else {
+            return init_dynamic_var(FLOAT, (void*)&(float){*(float*)first->value / *(int*)second->value});
+        }
+    } else {
+        return NULL;
+    }
+}
+
 int main(int argc, char *argv[]) {
     dynamic_t* a = init_dynamic_var(INT, (void*)&(int){3});
     dynamic_t* b = init_dynamic_var(FLOAT, (void*)&(float){1.5});
@@ -379,7 +396,7 @@ int main(int argc, char *argv[]) {
 
     dynamic_t* f = init_dynamic_var(STRING, (void*)"world");
 
-    dynamic_t* g = mult_dynamic_vars(b, a);
+    dynamic_t* g = div_dynamic_vars(a, b);
     dynamic_print('\n', 1, g);
 
     // Free the allocated memory

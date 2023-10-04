@@ -34,6 +34,8 @@ char* dynamic_var_to_string(dynamic_t* var);
 
 void print_dynamics(char end, int num, ...);
 
+void pprint(char end, int num, ...);
+
 void append(dynamic_list_t* list, dynamic_t* value);
 
 void free_dynamic_list(dynamic_list_t* list);

@@ -1,110 +1,291 @@
-==9368== Memcheck, a memory error detector
-==9368== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==9368== Using Valgrind-3.14.0-353a3587bb-20181007X and LibVEX; rerun with -h for copyright info
-==9368== Command: ./test
-==9368== Parent PID: 1448
-==9368== 
---9368-- 
---9368-- Valgrind options:
---9368--    --leak-check=full
---9368--    --show-leak-kinds=all
---9368--    --track-origins=yes
---9368--    --verbose
---9368--    --log-file=valgrind-out.txt
---9368-- Contents of /proc/version:
---9368--   Linux version 5.15.117-19680-g54e910f94133 (chrome-bot@chromeos-release-builder-us-central1-a-x32-3-j707) (Chromium OS 17.0_pre496208_p20230501-r12 clang version 17.0.0 (/mnt/host/source/src/third_party/llvm-project 98f5a340975bc00197c57e39eb4ca26e2da0e8a2), LLD 17.0.0) #1 SMP PREEMPT Mon Aug 28 18:36:09 PDT 2023
---9368-- 
---9368-- Arch and hwcaps: AMD64, LittleEndian, amd64-cx16-rdtscp-sse3
---9368-- Page sizes: currently 4096, max supported 4096
---9368-- Valgrind library directory: /usr/lib/x86_64-linux-gnu/valgrind
---9368-- Reading syms from /home/kyuci/Codes/Tally/test
---9368-- Reading syms from /lib/x86_64-linux-gnu/ld-2.28.so
---9368--   Considering /usr/lib/debug/.build-id/9d/a9b30d436da7f984fc9904fbea9ab251f0c401.debug ..
---9368--   .. build-id is valid
---9368-- Reading syms from /usr/lib/x86_64-linux-gnu/valgrind/memcheck-amd64-linux
---9368--   Considering /usr/lib/debug/.build-id/32/2e77af97f403c3d34ff09edf60b089e72ec889.debug ..
---9368--   .. build-id is valid
---9368--    object doesn't have a dynamic symbol table
---9368-- Scheduler: using generic scheduler lock implementation.
---9368-- Reading suppressions file: /usr/lib/x86_64-linux-gnu/valgrind/default.supp
-==9368== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-9368-by-kyuci-on-???
-==9368== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-9368-by-kyuci-on-???
-==9368== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-9368-by-kyuci-on-???
-==9368== 
-==9368== TO CONTROL THIS PROCESS USING vgdb (which you probably
-==9368== don't want to do, unless you know exactly what you're doing,
-==9368== or are doing some strange experiment):
-==9368==   /usr/lib/x86_64-linux-gnu/valgrind/../../bin/vgdb --pid=9368 ...command...
-==9368== 
-==9368== TO DEBUG THIS PROCESS USING GDB: start GDB like this
-==9368==   /path/to/gdb ./test
-==9368== and then give GDB the following command
-==9368==   target remote | /usr/lib/x86_64-linux-gnu/valgrind/../../bin/vgdb --pid=9368
-==9368== --pid is optional if only one valgrind process is running
-==9368== 
---9368-- REDIR: 0x401e320 (ld-linux-x86-64.so.2:strlen) redirected to 0x580c9ce2 (vgPlain_amd64_linux_REDIR_FOR_strlen)
---9368-- REDIR: 0x401e100 (ld-linux-x86-64.so.2:index) redirected to 0x580c9cfc (vgPlain_amd64_linux_REDIR_FOR_index)
---9368-- Reading syms from /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_core-amd64-linux.so
---9368--   Considering /usr/lib/debug/.build-id/34/fbc4cdfbfce1bfc3d2e522a01a050bf724c930.debug ..
---9368--   .. build-id is valid
---9368-- Reading syms from /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so
---9368--   Considering /usr/lib/debug/.build-id/ca/bb7898ea982d936cbfadd70ae831c6eb63623f.debug ..
---9368--   .. build-id is valid
-==9368== WARNING: new redirection conflicts with existing -- ignoring it
---9368--     old: 0x0401e320 (strlen              ) R-> (0000.0) 0x580c9ce2 vgPlain_amd64_linux_REDIR_FOR_strlen
---9368--     new: 0x0401e320 (strlen              ) R-> (2007.0) 0x04838d80 strlen
---9368-- REDIR: 0x401ab40 (ld-linux-x86-64.so.2:strcmp) redirected to 0x4839e40 (strcmp)
---9368-- REDIR: 0x401e860 (ld-linux-x86-64.so.2:mempcpy) redirected to 0x483d860 (mempcpy)
---9368-- Reading syms from /lib/x86_64-linux-gnu/libc-2.28.so
---9368--   Considering /usr/lib/debug/.build-id/a6/5a82147cd98619525049d4c29cc45f88d1fb00.debug ..
---9368--   .. build-id is valid
---9368-- REDIR: 0x48dbf50 (libc.so.6:memmove) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48db320 (libc.so.6:strncpy) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48dc230 (libc.so.6:strcasecmp) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48dad30 (libc.so.6:strcat) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48db350 (libc.so.6:rindex) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48dd730 (libc.so.6:rawmemchr) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48f60d0 (libc.so.6:wmemchr) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48f5b70 (libc.so.6:wcscmp) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48dc0c0 (libc.so.6:mempcpy) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48dbef0 (libc.so.6:bcmp) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48db2c0 (libc.so.6:strncmp) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48dada0 (libc.so.6:strcmp) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48dc020 (libc.so.6:memset) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48f5b40 (libc.so.6:wcschr) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48db260 (libc.so.6:strnlen) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48dae30 (libc.so.6:strcspn) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48dc280 (libc.so.6:strncasecmp) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48dae00 (libc.so.6:strcpy) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48dc3c0 (libc.so.6:memcpy@@GLIBC_2.14) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48f7370 (libc.so.6:wcsnlen) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48db380 (libc.so.6:strpbrk) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48dad60 (libc.so.6:index) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48db230 (libc.so.6:strlen) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48e2120 (libc.so.6:memrchr) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48dc2d0 (libc.so.6:strcasecmp_l) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48dbec0 (libc.so.6:memchr) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48f5c50 (libc.so.6:wcslen) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48db620 (libc.so.6:strspn) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48dc200 (libc.so.6:stpncpy) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48dc1d0 (libc.so.6:stpcpy) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48dd760 (libc.so.6:strchrnul) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48dc320 (libc.so.6:strncasecmp_l) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
---9368-- REDIR: 0x48ead90 (libc.so.6:__strrchr_sse2) redirected to 0x48387d0 (__strrchr_sse2)
---9368-- REDIR: 0x48d7510 (libc.so.6:malloc) redirected to 0x4835710 (malloc)
---9368-- REDIR: 0x48eb080 (libc.so.6:__strlen_sse2) redirected to 0x4838cc0 (__strlen_sse2)
---9368-- REDIR: 0x48effa0 (libc.so.6:__strcpy_sse2_unaligned) redirected to 0x4838db0 (strcpy)
---9368-- REDIR: 0x48eab80 (libc.so.6:__strchrnul_sse2) redirected to 0x483d390 (strchrnul)
---9368-- REDIR: 0x48d7b60 (libc.so.6:free) redirected to 0x4836940 (free)
---9368-- REDIR: 0x48f4ea0 (libc.so.6:__mempcpy_sse2_unaligned) redirected to 0x483d4a0 (mempcpy)
---9368-- REDIR: 0x48d82e0 (libc.so.6:calloc) redirected to 0x4837ab0 (calloc)
---9368-- REDIR: 0x48f2f90 (libc.so.6:__strcat_sse2_unaligned) redirected to 0x4838940 (strcat)
-==9368== 
-==9368== HEAP SUMMARY:
-==9368==     in use at exit: 0 bytes in 0 blocks
-==9368==   total heap usage: 16 allocs, 16 frees, 1,237 bytes allocated
-==9368== 
-==9368== All heap blocks were freed -- no leaks are possible
-==9368== 
-==9368== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
-==9368== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==11422== Memcheck, a memory error detector
+==11422== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==11422== Using Valgrind-3.14.0-353a3587bb-20181007X and LibVEX; rerun with -h for copyright info
+==11422== Command: ./test
+==11422== Parent PID: 1448
+==11422== 
+--11422-- 
+--11422-- Valgrind options:
+--11422--    --leak-check=full
+--11422--    --show-leak-kinds=all
+--11422--    --track-origins=yes
+--11422--    --verbose
+--11422--    --log-file=valgrind-out.txt
+--11422-- Contents of /proc/version:
+--11422--   Linux version 5.15.117-19680-g54e910f94133 (chrome-bot@chromeos-release-builder-us-central1-a-x32-3-j707) (Chromium OS 17.0_pre496208_p20230501-r12 clang version 17.0.0 (/mnt/host/source/src/third_party/llvm-project 98f5a340975bc00197c57e39eb4ca26e2da0e8a2), LLD 17.0.0) #1 SMP PREEMPT Mon Aug 28 18:36:09 PDT 2023
+--11422-- 
+--11422-- Arch and hwcaps: AMD64, LittleEndian, amd64-cx16-rdtscp-sse3
+--11422-- Page sizes: currently 4096, max supported 4096
+--11422-- Valgrind library directory: /usr/lib/x86_64-linux-gnu/valgrind
+--11422-- Reading syms from /home/kyuci/Codes/Tally/test
+--11422-- Reading syms from /lib/x86_64-linux-gnu/ld-2.28.so
+--11422--   Considering /usr/lib/debug/.build-id/9d/a9b30d436da7f984fc9904fbea9ab251f0c401.debug ..
+--11422--   .. build-id is valid
+--11422-- Reading syms from /usr/lib/x86_64-linux-gnu/valgrind/memcheck-amd64-linux
+--11422--   Considering /usr/lib/debug/.build-id/32/2e77af97f403c3d34ff09edf60b089e72ec889.debug ..
+--11422--   .. build-id is valid
+--11422--    object doesn't have a dynamic symbol table
+--11422-- Scheduler: using generic scheduler lock implementation.
+--11422-- Reading suppressions file: /usr/lib/x86_64-linux-gnu/valgrind/default.supp
+==11422== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-11422-by-kyuci-on-???
+==11422== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-11422-by-kyuci-on-???
+==11422== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-11422-by-kyuci-on-???
+==11422== 
+==11422== TO CONTROL THIS PROCESS USING vgdb (which you probably
+==11422== don't want to do, unless you know exactly what you're doing,
+==11422== or are doing some strange experiment):
+==11422==   /usr/lib/x86_64-linux-gnu/valgrind/../../bin/vgdb --pid=11422 ...command...
+==11422== 
+==11422== TO DEBUG THIS PROCESS USING GDB: start GDB like this
+==11422==   /path/to/gdb ./test
+==11422== and then give GDB the following command
+==11422==   target remote | /usr/lib/x86_64-linux-gnu/valgrind/../../bin/vgdb --pid=11422
+==11422== --pid is optional if only one valgrind process is running
+==11422== 
+--11422-- REDIR: 0x401e320 (ld-linux-x86-64.so.2:strlen) redirected to 0x580c9ce2 (vgPlain_amd64_linux_REDIR_FOR_strlen)
+--11422-- REDIR: 0x401e100 (ld-linux-x86-64.so.2:index) redirected to 0x580c9cfc (vgPlain_amd64_linux_REDIR_FOR_index)
+--11422-- Reading syms from /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_core-amd64-linux.so
+--11422--   Considering /usr/lib/debug/.build-id/34/fbc4cdfbfce1bfc3d2e522a01a050bf724c930.debug ..
+--11422--   .. build-id is valid
+--11422-- Reading syms from /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so
+--11422--   Considering /usr/lib/debug/.build-id/ca/bb7898ea982d936cbfadd70ae831c6eb63623f.debug ..
+--11422--   .. build-id is valid
+==11422== WARNING: new redirection conflicts with existing -- ignoring it
+--11422--     old: 0x0401e320 (strlen              ) R-> (0000.0) 0x580c9ce2 vgPlain_amd64_linux_REDIR_FOR_strlen
+--11422--     new: 0x0401e320 (strlen              ) R-> (2007.0) 0x04838d80 strlen
+--11422-- REDIR: 0x401ab40 (ld-linux-x86-64.so.2:strcmp) redirected to 0x4839e40 (strcmp)
+--11422-- REDIR: 0x401e860 (ld-linux-x86-64.so.2:mempcpy) redirected to 0x483d860 (mempcpy)
+--11422-- Reading syms from /lib/x86_64-linux-gnu/libc-2.28.so
+--11422--   Considering /usr/lib/debug/.build-id/a6/5a82147cd98619525049d4c29cc45f88d1fb00.debug ..
+--11422--   .. build-id is valid
+--11422-- REDIR: 0x48dbf50 (libc.so.6:memmove) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48db320 (libc.so.6:strncpy) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48dc230 (libc.so.6:strcasecmp) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48dad30 (libc.so.6:strcat) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48db350 (libc.so.6:rindex) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48dd730 (libc.so.6:rawmemchr) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48f60d0 (libc.so.6:wmemchr) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48f5b70 (libc.so.6:wcscmp) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48dc0c0 (libc.so.6:mempcpy) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48dbef0 (libc.so.6:bcmp) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48db2c0 (libc.so.6:strncmp) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48dada0 (libc.so.6:strcmp) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48dc020 (libc.so.6:memset) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48f5b40 (libc.so.6:wcschr) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48db260 (libc.so.6:strnlen) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48dae30 (libc.so.6:strcspn) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48dc280 (libc.so.6:strncasecmp) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48dae00 (libc.so.6:strcpy) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48dc3c0 (libc.so.6:memcpy@@GLIBC_2.14) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48f7370 (libc.so.6:wcsnlen) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48db380 (libc.so.6:strpbrk) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48dad60 (libc.so.6:index) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48db230 (libc.so.6:strlen) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48e2120 (libc.so.6:memrchr) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48dc2d0 (libc.so.6:strcasecmp_l) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48dbec0 (libc.so.6:memchr) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48f5c50 (libc.so.6:wcslen) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48db620 (libc.so.6:strspn) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48dc200 (libc.so.6:stpncpy) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48dc1d0 (libc.so.6:stpcpy) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48dd760 (libc.so.6:strchrnul) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48dc320 (libc.so.6:strncasecmp_l) redirected to 0x482b1b0 (_vgnU_ifunc_wrapper)
+--11422-- REDIR: 0x48ead90 (libc.so.6:__strrchr_sse2) redirected to 0x48387d0 (__strrchr_sse2)
+--11422-- REDIR: 0x48d7510 (libc.so.6:malloc) redirected to 0x4835710 (malloc)
+--11422-- REDIR: 0x48eb080 (libc.so.6:__strlen_sse2) redirected to 0x4838cc0 (__strlen_sse2)
+--11422-- REDIR: 0x48effa0 (libc.so.6:__strcpy_sse2_unaligned) redirected to 0x4838db0 (strcpy)
+--11422-- REDIR: 0x48eab80 (libc.so.6:__strchrnul_sse2) redirected to 0x483d390 (strchrnul)
+--11422-- REDIR: 0x48d7b60 (libc.so.6:free) redirected to 0x4836940 (free)
+--11422-- REDIR: 0x48f4ea0 (libc.so.6:__mempcpy_sse2_unaligned) redirected to 0x483d4a0 (mempcpy)
+--11422-- REDIR: 0x48d82e0 (libc.so.6:calloc) redirected to 0x4837ab0 (calloc)
+--11422-- REDIR: 0x48f2f90 (libc.so.6:__strcat_sse2_unaligned) redirected to 0x4838940 (strcat)
+==11422== Invalid write of size 1
+==11422==    at 0x48D0A15: _IO_default_xsputn (genops.c:394)
+==11422==    by 0x48D0A15: _IO_default_xsputn (genops.c:370)
+==11422==    by 0x48A332A: vfprintf (vfprintf.c:1638)
+==11422==    by 0x48C5450: vsprintf (iovsprintf.c:42)
+==11422==    by 0x109B83: fstring (in /home/kyuci/Codes/Tally/test)
+==11422==    by 0x10AEF0: main (in /home/kyuci/Codes/Tally/test)
+==11422==  Address 0x4a16a1e is 0 bytes after a block of size 14 alloc'd
+==11422==    at 0x4837B65: calloc (vg_replace_malloc.c:752)
+==11422==    by 0x109B2F: fstring (in /home/kyuci/Codes/Tally/test)
+==11422==    by 0x10AEF0: main (in /home/kyuci/Codes/Tally/test)
+==11422== 
+==11422== Invalid write of size 1
+==11422==    at 0x48C545F: vsprintf (iovsprintf.c:43)
+==11422==    by 0x109B83: fstring (in /home/kyuci/Codes/Tally/test)
+==11422==    by 0x10AEF0: main (in /home/kyuci/Codes/Tally/test)
+==11422==  Address 0x4a16a24 is 6 bytes after a block of size 14 alloc'd
+==11422==    at 0x4837B65: calloc (vg_replace_malloc.c:752)
+==11422==    by 0x109B2F: fstring (in /home/kyuci/Codes/Tally/test)
+==11422==    by 0x10AEF0: main (in /home/kyuci/Codes/Tally/test)
+==11422== 
+==11422== Invalid read of size 1
+==11422==    at 0x4838CD4: __strlen_sse2 (vg_replace_strmem.c:462)
+==11422==    by 0x48C4A4F: puts (ioputs.c:35)
+==11422==    by 0x10AF00: main (in /home/kyuci/Codes/Tally/test)
+==11422==  Address 0x4a16a1e is 0 bytes after a block of size 14 alloc'd
+==11422==    at 0x4837B65: calloc (vg_replace_malloc.c:752)
+==11422==    by 0x109B2F: fstring (in /home/kyuci/Codes/Tally/test)
+==11422==    by 0x10AEF0: main (in /home/kyuci/Codes/Tally/test)
+==11422== 
+==11422== Invalid read of size 1
+==11422==    at 0x48CEB65: _IO_new_file_xsputn (fileops.c:1226)
+==11422==    by 0x48CEB65: _IO_file_xsputn@@GLIBC_2.2.5 (fileops.c:1204)
+==11422==    by 0x48C4B0D: puts (ioputs.c:40)
+==11422==    by 0x10AF00: main (in /home/kyuci/Codes/Tally/test)
+==11422==  Address 0x4a16a23 is 5 bytes after a block of size 14 alloc'd
+==11422==    at 0x4837B65: calloc (vg_replace_malloc.c:752)
+==11422==    by 0x109B2F: fstring (in /home/kyuci/Codes/Tally/test)
+==11422==    by 0x10AEF0: main (in /home/kyuci/Codes/Tally/test)
+==11422== 
+==11422== Invalid read of size 1
+==11422==    at 0x48CEB7C: _IO_new_file_xsputn (fileops.c:1226)
+==11422==    by 0x48CEB7C: _IO_file_xsputn@@GLIBC_2.2.5 (fileops.c:1204)
+==11422==    by 0x48C4B0D: puts (ioputs.c:40)
+==11422==    by 0x10AF00: main (in /home/kyuci/Codes/Tally/test)
+==11422==  Address 0x4a16a22 is 4 bytes after a block of size 14 alloc'd
+==11422==    at 0x4837B65: calloc (vg_replace_malloc.c:752)
+==11422==    by 0x109B2F: fstring (in /home/kyuci/Codes/Tally/test)
+==11422==    by 0x10AEF0: main (in /home/kyuci/Codes/Tally/test)
+==11422== 
+==11422== Invalid read of size 1
+==11422==    at 0x483D536: mempcpy (vg_replace_strmem.c:1536)
+==11422==    by 0x48CEB24: _IO_new_file_xsputn (fileops.c:1243)
+==11422==    by 0x48CEB24: _IO_file_xsputn@@GLIBC_2.2.5 (fileops.c:1204)
+==11422==    by 0x48C4B0D: puts (ioputs.c:40)
+==11422==    by 0x10AF00: main (in /home/kyuci/Codes/Tally/test)
+==11422==  Address 0x4a16a1e is 0 bytes after a block of size 14 alloc'd
+==11422==    at 0x4837B65: calloc (vg_replace_malloc.c:752)
+==11422==    by 0x109B2F: fstring (in /home/kyuci/Codes/Tally/test)
+==11422==    by 0x10AEF0: main (in /home/kyuci/Codes/Tally/test)
+==11422== 
+==11422== Invalid read of size 1
+==11422==    at 0x483D528: mempcpy (vg_replace_strmem.c:1536)
+==11422==    by 0x48CEB24: _IO_new_file_xsputn (fileops.c:1243)
+==11422==    by 0x48CEB24: _IO_file_xsputn@@GLIBC_2.2.5 (fileops.c:1204)
+==11422==    by 0x48C4B0D: puts (ioputs.c:40)
+==11422==    by 0x10AF00: main (in /home/kyuci/Codes/Tally/test)
+==11422==  Address 0x4a16a1f is 1 bytes after a block of size 14 alloc'd
+==11422==    at 0x4837B65: calloc (vg_replace_malloc.c:752)
+==11422==    by 0x109B2F: fstring (in /home/kyuci/Codes/Tally/test)
+==11422==    by 0x10AEF0: main (in /home/kyuci/Codes/Tally/test)
+==11422== 
+==11422== 
+==11422== HEAP SUMMARY:
+==11422==     in use at exit: 25 bytes in 3 blocks
+==11422==   total heap usage: 19 allocs, 16 frees, 1,262 bytes allocated
+==11422== 
+==11422== Searching for pointers to 3 not-freed blocks
+==11422== Checked 70,472 bytes
+==11422== 
+==11422== 2 bytes in 1 blocks are definitely lost in loss record 1 of 3
+==11422==    at 0x483577F: malloc (vg_replace_malloc.c:299)
+==11422==    by 0x10958A: dynamic_var_to_string (in /home/kyuci/Codes/Tally/test)
+==11422==    by 0x10AED4: main (in /home/kyuci/Codes/Tally/test)
+==11422== 
+==11422== 9 bytes in 1 blocks are definitely lost in loss record 2 of 3
+==11422==    at 0x483577F: malloc (vg_replace_malloc.c:299)
+==11422==    by 0x10960E: dynamic_var_to_string (in /home/kyuci/Codes/Tally/test)
+==11422==    by 0x10AEC5: main (in /home/kyuci/Codes/Tally/test)
+==11422== 
+==11422== 14 bytes in 1 blocks are definitely lost in loss record 3 of 3
+==11422==    at 0x4837B65: calloc (vg_replace_malloc.c:752)
+==11422==    by 0x109B2F: fstring (in /home/kyuci/Codes/Tally/test)
+==11422==    by 0x10AEF0: main (in /home/kyuci/Codes/Tally/test)
+==11422== 
+==11422== LEAK SUMMARY:
+==11422==    definitely lost: 25 bytes in 3 blocks
+==11422==    indirectly lost: 0 bytes in 0 blocks
+==11422==      possibly lost: 0 bytes in 0 blocks
+==11422==    still reachable: 0 bytes in 0 blocks
+==11422==         suppressed: 0 bytes in 0 blocks
+==11422== 
+==11422== ERROR SUMMARY: 29 errors from 10 contexts (suppressed: 0 from 0)
+==11422== 
+==11422== 1 errors in context 1 of 10:
+==11422== Invalid read of size 1
+==11422==    at 0x48CEB65: _IO_new_file_xsputn (fileops.c:1226)
+==11422==    by 0x48CEB65: _IO_file_xsputn@@GLIBC_2.2.5 (fileops.c:1204)
+==11422==    by 0x48C4B0D: puts (ioputs.c:40)
+==11422==    by 0x10AF00: main (in /home/kyuci/Codes/Tally/test)
+==11422==  Address 0x4a16a23 is 5 bytes after a block of size 14 alloc'd
+==11422==    at 0x4837B65: calloc (vg_replace_malloc.c:752)
+==11422==    by 0x109B2F: fstring (in /home/kyuci/Codes/Tally/test)
+==11422==    by 0x10AEF0: main (in /home/kyuci/Codes/Tally/test)
+==11422== 
+==11422== 
+==11422== 1 errors in context 2 of 10:
+==11422== Invalid write of size 1
+==11422==    at 0x48C545F: vsprintf (iovsprintf.c:43)
+==11422==    by 0x109B83: fstring (in /home/kyuci/Codes/Tally/test)
+==11422==    by 0x10AEF0: main (in /home/kyuci/Codes/Tally/test)
+==11422==  Address 0x4a16a24 is 6 bytes after a block of size 14 alloc'd
+==11422==    at 0x4837B65: calloc (vg_replace_malloc.c:752)
+==11422==    by 0x109B2F: fstring (in /home/kyuci/Codes/Tally/test)
+==11422==    by 0x10AEF0: main (in /home/kyuci/Codes/Tally/test)
+==11422== 
+==11422== 
+==11422== 3 errors in context 3 of 10:
+==11422== Invalid read of size 1
+==11422==    at 0x483D528: mempcpy (vg_replace_strmem.c:1536)
+==11422==    by 0x48CEB24: _IO_new_file_xsputn (fileops.c:1243)
+==11422==    by 0x48CEB24: _IO_file_xsputn@@GLIBC_2.2.5 (fileops.c:1204)
+==11422==    by 0x48C4B0D: puts (ioputs.c:40)
+==11422==    by 0x10AF00: main (in /home/kyuci/Codes/Tally/test)
+==11422==  Address 0x4a16a1f is 1 bytes after a block of size 14 alloc'd
+==11422==    at 0x4837B65: calloc (vg_replace_malloc.c:752)
+==11422==    by 0x109B2F: fstring (in /home/kyuci/Codes/Tally/test)
+==11422==    by 0x10AEF0: main (in /home/kyuci/Codes/Tally/test)
+==11422== 
+==11422== 
+==11422== 3 errors in context 4 of 10:
+==11422== Invalid read of size 1
+==11422==    at 0x483D536: mempcpy (vg_replace_strmem.c:1536)
+==11422==    by 0x48CEB24: _IO_new_file_xsputn (fileops.c:1243)
+==11422==    by 0x48CEB24: _IO_file_xsputn@@GLIBC_2.2.5 (fileops.c:1204)
+==11422==    by 0x48C4B0D: puts (ioputs.c:40)
+==11422==    by 0x10AF00: main (in /home/kyuci/Codes/Tally/test)
+==11422==  Address 0x4a16a1e is 0 bytes after a block of size 14 alloc'd
+==11422==    at 0x4837B65: calloc (vg_replace_malloc.c:752)
+==11422==    by 0x109B2F: fstring (in /home/kyuci/Codes/Tally/test)
+==11422==    by 0x10AEF0: main (in /home/kyuci/Codes/Tally/test)
+==11422== 
+==11422== 
+==11422== 5 errors in context 5 of 10:
+==11422== Invalid read of size 1
+==11422==    at 0x48CEB7C: _IO_new_file_xsputn (fileops.c:1226)
+==11422==    by 0x48CEB7C: _IO_file_xsputn@@GLIBC_2.2.5 (fileops.c:1204)
+==11422==    by 0x48C4B0D: puts (ioputs.c:40)
+==11422==    by 0x10AF00: main (in /home/kyuci/Codes/Tally/test)
+==11422==  Address 0x4a16a22 is 4 bytes after a block of size 14 alloc'd
+==11422==    at 0x4837B65: calloc (vg_replace_malloc.c:752)
+==11422==    by 0x109B2F: fstring (in /home/kyuci/Codes/Tally/test)
+==11422==    by 0x10AEF0: main (in /home/kyuci/Codes/Tally/test)
+==11422== 
+==11422== 
+==11422== 6 errors in context 6 of 10:
+==11422== Invalid write of size 1
+==11422==    at 0x48D0A15: _IO_default_xsputn (genops.c:394)
+==11422==    by 0x48D0A15: _IO_default_xsputn (genops.c:370)
+==11422==    by 0x48A332A: vfprintf (vfprintf.c:1638)
+==11422==    by 0x48C5450: vsprintf (iovsprintf.c:42)
+==11422==    by 0x109B83: fstring (in /home/kyuci/Codes/Tally/test)
+==11422==    by 0x10AEF0: main (in /home/kyuci/Codes/Tally/test)
+==11422==  Address 0x4a16a1e is 0 bytes after a block of size 14 alloc'd
+==11422==    at 0x4837B65: calloc (vg_replace_malloc.c:752)
+==11422==    by 0x109B2F: fstring (in /home/kyuci/Codes/Tally/test)
+==11422==    by 0x10AEF0: main (in /home/kyuci/Codes/Tally/test)
+==11422== 
+==11422== 
+==11422== 7 errors in context 7 of 10:
+==11422== Invalid read of size 1
+==11422==    at 0x4838CD4: __strlen_sse2 (vg_replace_strmem.c:462)
+==11422==    by 0x48C4A4F: puts (ioputs.c:35)
+==11422==    by 0x10AF00: main (in /home/kyuci/Codes/Tally/test)
+==11422==  Address 0x4a16a1e is 0 bytes after a block of size 14 alloc'd
+==11422==    at 0x4837B65: calloc (vg_replace_malloc.c:752)
+==11422==    by 0x109B2F: fstring (in /home/kyuci/Codes/Tally/test)
+==11422==    by 0x10AEF0: main (in /home/kyuci/Codes/Tally/test)
+==11422== 
+==11422== ERROR SUMMARY: 29 errors from 10 contexts (suppressed: 0 from 0)

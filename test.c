@@ -151,6 +151,28 @@ void print_dynamics(char end, int num, ...) {
     printf("%c", end);
 }
 
+char* fstring(char* format, int num, ...) {
+    // act like python's fstring, all args are strings
+    va_list valist;
+    va_start(valist, num);
+
+    size_t length = 0;
+
+    for (int i = 0; i < num; i++) {
+        char* arg = va_arg(valist, char*);
+        length += strlen(arg);
+    }
+
+    char* result = calloc(length + num * 2 + 1, sizeof(char));
+
+    va_start(valist, num);
+    vsprintf(result, format, valist);
+
+    va_end(valist);
+
+    return result;
+}
+
 void append(dynamic_list_t* list, dynamic_t* value) {
     if (list->length == list->capacity) {
         list->capacity *= 2;
@@ -408,6 +430,10 @@ int main(int argc, char *argv[]) {
     dynamic_t* d = init_dynamic_list(3, a, b, c);
 
     print_dynamics('\n', 4, a, b, c, d);
+
+    // print(f"Hello {a}!")
+    char* str = fstring("Hello %s! Hi %s", 2, dynamic_var_to_string(a), dynamic_var_to_string(b));
+    printf("%s\n", str);
 
     // Free the allocated memory
     free_dynamic_var(&d);

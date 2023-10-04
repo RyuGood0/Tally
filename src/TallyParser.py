@@ -35,6 +35,7 @@ class TallyParser(object):
 				| if_statement
 				| for_in_statement
 				| typing
+				| del
 		'''
 		p[0] = p[1]
 
@@ -172,6 +173,12 @@ class TallyParser(object):
 		'''
 				
 		p[0] = ('fstring', p[1])
+
+	def p_del(self, p):
+		'''
+		del : DEL ID
+		'''
+		p[0] = ('del', p[2])
 
 	def p_expression_uminus(self, p):
 		'expression : MINUS expression %prec UMINUS'

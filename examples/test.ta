@@ -3,3 +3,5 @@ a = 5
 str b = f"a is {a}"
 
 print("hello world", a, b)
+
+del a

@@ -163,7 +163,8 @@ char* fstring(char* format, int num, ...) {
         length += strlen(arg);
     }
 
-    char* result = calloc(length + num * 2 + 1, sizeof(char));
+    printf("%d\n", length);
+    char* result = calloc(length + strlen(format) - 2*num + 1, sizeof(char));
 
     va_start(valist, num);
     vsprintf(result, format, valist);
@@ -438,7 +439,7 @@ int main(int argc, char *argv[]) {
     {
         free(args[i]);
     }
-    
+
     printf("%s\n", str);
 
     // Free the allocated memory

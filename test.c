@@ -21,8 +21,22 @@ dynamic_t* init_dynamic_var(uint8_t type, void* value) {
 }
 
 dynamic_t* update_dynamic_var(dynamic_t* var, int type, void* value) {
-    free_dynamic_var(&var);
-    return init_dynamic_var(type, value);
+    if (var->type == STRING) {
+        free(var->value);
+    } else if (var->type == LIST) {
+        free_dynamic_list((dynamic_list_t*)var->value);
+    }
+
+    var->type = type;
+    if (type == STRING) {
+        char* str = malloc(strlen((char*)value) + 1);
+        strcpy(str, (char*)value);
+        var->value = (void*)str;
+    } else {
+        var->value = value;
+    }
+
+    return var;
 }
 
 dynamic_t* init_dynamic_list(int num, ...) {
@@ -132,7 +146,6 @@ char* dynamic_var_to_string(dynamic_t* var) {
 }
 
 void print_dynamics(char end, int num, ...) {
-    // act like python's print function
     va_list valist;
     va_start(valist, num);
 
@@ -151,27 +164,67 @@ void print_dynamics(char end, int num, ...) {
     printf("%c", end);
 }
 
-char* fstring(char* format, int num, ...) {
+char* fstring(char* format, char** args) {
     // act like python's fstring, all args are strings
-    va_list valist;
-    va_start(valist, num);
-
+    
     size_t length = 0;
+    int found = 0;
 
-    for (int i = 0; i < num; i++) {
-        char* arg = va_arg(valist, char*);
-        length += strlen(arg);
+    for (size_t i = 0; i < strlen(format); i++) {
+        if (format[i] == '%') {
+            if (format[i + 1] == 's') {
+                length += strlen(args[found]);
+                found++;
+            } else {
+                length += 2;
+            }
+        } else {
+            length++;
+        }
     }
 
-    printf("%d\n", length);
-    char* result = calloc(length + strlen(format) - 2*num + 1, sizeof(char));
+    char* result = calloc(length + 1, sizeof(char));
 
-    va_start(valist, num);
-    vsprintf(result, format, valist);
+    size_t index = 0;
+    found = 0;
 
-    va_end(valist);
+    for (size_t i = 0; i < strlen(format); i++) {
+        if (format[i] == '%') {
+            if (format[i + 1] == 's') {
+                strcat(result, args[found]);
+                found++;
+                index++;
+                i++;
+            } else {
+                result[index++] = format[i];
+                result[index++] = format[i + 1];
+                i++;
+            }
+        } else {
+            result[index++] = format[i];
+        }
+    }
 
+    // free the args
+    for (size_t i = 0; i < found; i++) {
+        free(args[i]);
+    }
+    
     return result;
+}
+
+void pprint(int length, char** args) {
+    // act like python's print
+    for (size_t i = 0; i < length; i++) {
+        printf("%s", args[i]);
+        free(args[i]);
+
+        if (i != length - 1) {
+            printf(" ");
+        }
+    }
+    
+    printf("\n");
 }
 
 void append(dynamic_list_t* list, dynamic_t* value) {
@@ -424,6 +477,44 @@ if (first->type == INT && second->type == INT) {
     }
 }
 
+char* copy_string(char* str) {
+    char* result = malloc(strlen(str) + 1);
+    strcpy(result, str);
+
+    return result;
+}
+
+char* int_to_string(int val) {
+    size_t length = snprintf( NULL, 0, "%d", val);
+
+    char* result = malloc(length + 1);
+    sprintf(result, "%d", val);
+
+    return result;
+}
+
+char* float_to_string(float val) {
+    size_t length = snprintf( NULL, 0, "%f", val);
+
+    char* result = malloc(length + 1);
+    sprintf(result, "%f", val);
+
+    return result;
+}
+
+char* bool_to_string(int val) {
+    char* result;
+    if (val == 0) {
+        result = malloc(6);
+        strcpy(result, "False");
+    } else {
+        result = malloc(5);
+        strcpy(result, "True");
+    }
+
+    return result;
+}
+
 int main(int argc, char *argv[]) {
     dynamic_t* a = init_dynamic_var(INT, (void*)&(int){3});
     dynamic_t* b = init_dynamic_var(FLOAT, (void*)&(float){1.5});
@@ -433,18 +524,14 @@ int main(int argc, char *argv[]) {
     print_dynamics('\n', 4, a, b, c, d);
 
     // print(f"Hello {a}!")
-    char* args[2] = {dynamic_var_to_string(a), dynamic_var_to_string(b)};
-    char* str = fstring("Hello %s! Hi %s", 2, args[0], args[1]);
-    for (size_t i = 0; i < 2; i++)
-    {
-        free(args[i]);
-    }
-
-    printf("%s\n", str);
+    char* str_UUID = fstring("Hello %s! %s", (char* []){dynamic_var_to_string(a), copy_string("Hi")});
+    dynamic_t* e = init_dynamic_var(STRING, (void*) str_UUID);
+    free(str_UUID);
+    pprint(4, (char* []){dynamic_var_to_string(a), dynamic_var_to_string(b), dynamic_var_to_string(c), dynamic_var_to_string(e)});
 
     // Free the allocated memory
     free_dynamic_var(&d);
-    free(str);
+    free_dynamic_var(&e);
 
     return 0;
 }

@@ -2,352 +2,272 @@ from TallyParser import TallyParser
 from dataclasses import dataclass
 
 def raise_error(comment):
-    print(comment)
-    exit()
+	print(comment)
+	exit()
 
 @dataclass
 class Variable:
-    name: str
-    type: int
-    dynamic: bool = False
-    constant: bool = False
+	name: str
+	type: int
+	dynamic: bool = False
+	constant: bool = False
 
-structs = {
-    'dynamic_type': "typedef struct dynamic_type {\n\tuint8_t type;\n\tvoid* value;\n} dynamic_t;\n"
-}
+@dataclass
+class Function:
+	name: str
+	args: list
+	body: list
+	type: int
 
 dynamic_type_map = {
-    'int': 0,
-    'float': 1,
-    'str': 2,
-    'bool': 3,
-    'list': 4,
-    'dict': 5,
-    'tuple': 6,
-    'set': 7,
-    'any': 8
+	'int': 0,
+	'float': 1,
+	'str': 2,
+	'bool': 3,
+	'list': 4,
+	'dict': 5,
+	'tuple': 6,
+	'set': 7,
+	'any': 8
 }
 
+import uuid
 class TallyTranspiler(object):
-    parser = TallyParser()
-    parser.build()
+	parser = TallyParser()
+	parser.build()
 
-    variables = {} # {name: Variable}
-    functions = {}
+	variables = {} # {name: Variable}
+	functions = {} # {name: Function}
 
-    imports = []
-    func_decls = []
-    structs = []
+	def __call__(self, content):
+		parsed = self.parser.parse(content)
 
-    def __call__(self, content):
-        parsed = self.parser.parse(content)
+		code_c = ""
 
-        main_code = ""
+		for statement in parsed[1]:
+			"""
+			Start by defining all functions,
+			then add all to main()
+			"""
+			
+			transpiled = self.transpile(statement)
+			code_c += transpiled + "\n"
 
-        functions_code = ""
+		return code_c
+	
+	def is_assigned(self, var_name):
+		# return True if variable is assigned, False otherwise
+		if var_name in self.variables:
+			return True
+		return False
 
-        for statement in parsed[1]:
-            if isinstance(statement, tuple) and (statement[0] != 'func_decl' and statement[0] != 'typed_func_decl'):
-                buffer = self.transpile(statement)
-                main_code += buffer
-                if not (buffer[-1] == ';' or buffer[-1] == '}'):
-                    main_code += ';\n'
-                else:
-                    main_code += '\n'
-            elif statement[0] == 'func_decl' or statement[0] == 'typed_func_decl':
-                buffer = self.transpile(statement)
-                functions_code += buffer
-                if not (buffer[-1] == ';' or buffer[-1] == '}'):
-                    functions_code += ';\n\n'
-                else:
-                    functions_code += '\n\n'
+	def transpile(self, statement):
+		if isinstance(statement, int):
+			return str(statement)
+		elif isinstance(statement, float):
+			return str(statement)
+		elif isinstance(statement, str):
+			return str
+		
+		if statement[0] == "assign":
+			if len(statement) == 3:
+				"""
+				("assign", "var_name", value), dynamic type
 
-        main_code = "".join([f"\t{code}\n" for code in main_code.splitlines()])
+				assignement:
+				dynamic_t* a = init_dynamic_var(INT, (void*)&(int){3});
+				dynamic_t* b = init_dynamic_var(FLOAT, (void*)&(float){1.5});
+				dynamic_t* c = init_dynamic_var(STRING, (void*)"hello");
 
-        include_code = ""
-        for imps in self.imports:
-            include_code += f"#include <{imps}.h>\n"
+				update:
+				c = update_dynamic_var(c, FLOAT, (void*)&(float){2.5});
+				"""
+				if self.is_assigned(statement[1]) and self.variables[statement[1]].constant:
+					raise_error(f"Cannot assign to constant variable: {statement[1]}")
 
-        func_decl_code = ""
-        for func_decl in self.func_decls:
-            func_decl_code += func_decl + "\n"
+				d_type = dynamic_type_map[self.get_inferred_type(statement[2])]
+				right_member = self.transpile(statement[2])
+				if not self.is_assigned(statement[1]):
+					self.variables[statement[1]] = Variable(statement[1], d_type, True)
 
-        structs_code = ""
-        for struct in self.structs:
-            structs_code += structs[struct] + "\n"
+					if d_type == dynamic_type_map['int']:
+						return f"dynamic_t* {statement[1]} = init_dynamic_var(INT, (void*)&(int){{{right_member}}});"
+					elif d_type == dynamic_type_map['float']:
+						return f"dynamic_t* {statement[1]} = init_dynamic_var(FLOAT, (void*)&(float){{{right_member}}});"
+					elif d_type == dynamic_type_map['str']:
+						return f"dynamic_t* {statement[1]} = init_dynamic_var(STRING, (void*)\"{right_member}\");"
+					elif d_type == dynamic_type_map['bool']:
+						return f"dynamic_t* {statement[1]} = init_dynamic_var(BOOL, (void*)&(bool){{{right_member}}});"
+					else:
+						return f"dynamic_t* {statement[1]} = init_dynamic_var(ANY, (void*)&({right_member}));"
+				else:
+					if d_type == dynamic_type_map['int']:
+						return f"{statement[1]} = update_dynamic_var({statement[1]}, INT, (void*)&(int){{{right_member}}});"
+					elif d_type == dynamic_type_map['float']:
+						return f"{statement[1]} = update_dynamic_var({statement[1]}, FLOAT, (void*)&(float){{{right_member}}});"
+					elif d_type == dynamic_type_map['str']:
+						return f"{statement[1]} = update_dynamic_var({statement[1]}, STRING, (void*)\"{right_member}\");"
+					elif d_type == dynamic_type_map['bool']:
+						return f"{statement[1]} = update_dynamic_var({statement[1]}, BOOL, (void*)&(bool){{{right_member}}});"
+					else:
+						return f"{statement[1]} = update_dynamic_var({statement[1]}, ANY, (void*)&({right_member}));"
+					
+			else:
+				"""
+				('assign', 'int', 'a', 4)
 
-        c_code = f"{include_code}\n{func_decl_code}\n{structs_code}\n{functions_code}\nint main(int argc, char *argv[]) {{\n{main_code}}}"
+				assignement:
+				int a = 4;
+				"""
+				
+				if self.is_assigned(statement[2]) and self.variables[statement[2]].constant:
+					raise_error(f"Cannot assign to constant variable: {statement[2]}")
 
-        return c_code
-    
-    def is_assigned(self, statement):
-        if statement[0] == 'assign':
-            if len(statement) == 3 and statement[1] in self.variables:
-                return True, self.variables[statement[1]]
-            elif len(statement) == 4 and statement[2] in self.variables:
-                return True, self.variables[statement[2]]
-        return False, None
+				d_type = dynamic_type_map[statement[1]]
+				right_member = self.transpile(statement[3])
+				if not self.is_assigned(statement[2]):
+					self.variables[statement[2]] = Variable(statement[2], d_type, False)
 
-    def transpile(self, statement):
-        if isinstance(statement, int):
-            return str(statement)
-        
-        elif isinstance(statement, float):
-            return str(statement)
-        
-        elif isinstance(statement, str):
-            return statement
-        
-        elif statement[0] == 'assign':
-            """
-            Ex assign:
-            dynamic_t* a = init_dynamic_var(INT, (void*)&(int){3});
-            dynamic_t* b = init_dynamic_var(FLOAT, (void*)&(float){1.5});
-            dynamic_t* c = init_dynamic_var(STRING, (void*)"hello");
+					if d_type == dynamic_type_map['int']:
+						return f"int {statement[2]} = {right_member};"
+					elif d_type == dynamic_type_map['float']:
+						return f"float {statement[2]} = {right_member};"
+					elif d_type == dynamic_type_map['str']:
+						return f"char* {statement[2]} = \"{right_member}\";"
+					elif d_type == dynamic_type_map['bool']:
+						return f"bool {statement[2]} = {right_member};"
+					else:
+						return f"void* {statement[2]} = {right_member};"
+					
+				else:
+					raise_error(f"Variable already assigned: {statement[2]}")
+		
+		elif statement[0] == "fstring":
+			"""
+			('fstring', 'Hello {a}! Hi {b}')
 
-            Ex reassign:
-            f = update_dynamic_var(f, INT, (void*)&(int){5});
-            """
-            assigned = self.is_assigned(statement)
-            if assigned[0]:
-                if self.variables[statement[1]].constant:
-                    raise_error(f"Cannot reassign constant {assigned[1].name}")
+			code:
+			fstring("Hello %s! Hi %s", (char* []){dynamic_var_to_string(a), dynamic_var_to_string(b)})
+			"""
 
-                d_type = dynamic_type_map[self.get_inferred_type(statement[2])]
+			# get all var_names
+			var_names = []
+			for i in range(len(statement[1])):
+				if statement[1][i] == '{' and (i == 0 or statement[1][i-1] != '\\'):
+					var_name = ""
+					i += 1
+					while statement[1][i] != '}':
+						var_name += statement[1][i]
+						i += 1
 
-                if d_type == 0:
-                    return f"{assigned[1].name} = update_dynamic_var({statement[1]}, INT, (void*)&(int){{{self.transpile(statement[2])}}});"
-                elif d_type == 1:
-                    return f"{assigned[1].name} = update_dynamic_var({statement[1]}, FLOAT, (void*)&(float){{{self.transpile(statement[2])}}});"
-                elif d_type == 2:
-                    return f"{assigned[1].name} = update_dynamic_var({statement[1]}, STRING, (void*)\"{self.transpile(statement[2])}\");"
+					if not self.is_assigned(var_name):
+						raise_error(f"Variable not assigned: {var_name}")
 
-            elif len(statement) == 3:
-                if not isinstance(statement[2], tuple):
-                    d_type = dynamic_type_map[self.get_inferred_type(statement[2])]
-                    self.variables[statement[1]] = Variable(statement[1], d_type, True)
-                else:
-                    d_type = dynamic_type_map[self.get_inferred_type(statement[2])]
-                    self.variables[statement[1]] = Variable(statement[1], d_type, True)
+					var_names.append(var_name)
 
-                right_member = self.transpile(statement[2])
+			# get all str conversions
+			str_conversions = []
+			for var_name in var_names:
+				str_conversions.append(self.string_conversion(var_name))
 
-                if d_type == 0:
-                    return f"dynamic_t* {statement[1]} = init_dynamic_var(INT, (void*)&(int){{{right_member}}});"
-                elif d_type == 1:
-                    return f"dynamic_t* {statement[1]} = init_dynamic_var(FLOAT, (void*)&(float){{{right_member}}});"
-                elif d_type == 2:
-                    return f"dynamic_t* {statement[1]} = init_dynamic_var(STRING, (void*)\"{right_member}\");"
-                
-            elif len(statement) == 4:
-                self.variables[statement[2]] = Variable(statement[2], dynamic_type_map[statement[1]], 0)
-                if isinstance(statement[3], str):
-                    return f"{self.transpile_type(statement[1])} {statement[2]} = \"{self.transpile(statement[3])}\";"
-                return f"{self.transpile_type(statement[1])} {statement[2]} = {self.transpile(statement[3])};"
-            
-        elif statement[0] == 'const_assign':
-            if self.is_assigned(statement)[0]:
-                raise_error(f"Constant {self.is_assigned(statement)[1].name} already assigned")
-            if len(statement) == 3:
-                if not isinstance(statement[2], tuple):
-                    d_type  = dynamic_type_map[self.get_inferred_type(statement[2])]
-                    self.variables[statement[1]] = Variable(statement[1], d_type, 0, True)
-                else:
-                    d_type = dynamic_type_map[self.get_inferred_type(statement[2])]
-                    self.variables[statement[1]] = Variable(statement[1], d_type, 0, True)
+			# create fstring call
+			format_string = ""
+			i = 0
+			while i < len(statement[1]):
+				if statement[1][i] == '{' and (i == 0 or statement[1][i-1] != '\\'):
+					format_string += "%s"
+					i += 1
+					while statement[1][i] != '}':
+						i += 1
+				else:
+					format_string += statement[1][i]
+				i += 1
 
-                right_member = self.transpile(statement[2])
+			fstring_call = f"fstring(\"{format_string}\", (char* []){{"
+			for i in range(len(str_conversions)):
+				fstring_call += str_conversions[i]
+				if i != len(str_conversions) - 1:
+					fstring_call += ", "
 
-                if d_type == 0:
-                    return f"const dynamic_t* {statement[1]} = init_dynamic_var(INT, (void*)&(int){{{right_member}}});"
-                elif d_type == 1:
-                    return f"const dynamic_t* {statement[1]} = init_dynamic_var(FLOAT, (void*)&(float){{{right_member}}});"
-                elif d_type == 2:
-                    return f"const dynamic_t* {statement[1]} = init_dynamic_var(STRING, (void*)\"{right_member}\");"
+			fstring_call += "})"
 
-            elif len(statement) == 4:
-                self.variables[statement[2]] = Variable(statement[2], dynamic_type_map[statement[1]], 0, True)
-                if isinstance(statement[3], str):
-                    return f"{self.transpile_type(statement[1])} {statement[2]} = \"{self.transpile(statement[3])}\";"
-                return f"const {self.transpile_type(statement[1])} {statement[2]} = {self.transpile(statement[3])}"
-            
-        elif statement[0] in ('+', '-', '*', '/', '**'):
-            left = self.transpile(statement[1])
-            right = self.transpile(statement[2])
-            if statement[0] == '+':
-                return f"{left} + {right}"
-            elif statement[0] == '-':
-                return f"{left} - {right}"
-            elif statement[0] == '*':
-                return f"{left} * {right}"
-            elif statement[0] == '/':
-                return f"{left} / {right}"
-            elif statement[0] == '**':
-                if 'math' not in self.imports:
-                    self.imports.append('math')
-                return f"pow({left}, {right})"
-            
-        elif statement[0] in ('>', '<', '>=', '<=', '=='):
-            left = self.transpile(statement[1])
-            right = self.transpile(statement[2])
-            if statement[0] == '>':
-                return f"{left} > {right}"
-            elif statement[0] == '<':
-                return f"{left} < {right}"
-            elif statement[0] == '>=':
-                return f"{left} >= {right}"
-            elif statement[0] == '<=':
-                return f"{left} <= {right}"
-            elif statement[0] == '==':
-                return f"{left} == {right}"
-            
-        elif statement[0] == 'id':
-            return statement[1]
-        
-        elif statement[0] == "if":
-            buffer = f"if ({self.transpile(statement[1])}) {{\n"
-            for sub_statement in statement[2]:
-                buffer += "\t" + self.transpile(sub_statement) + ";\n"
-            buffer += "}"
-            return buffer
-        
-        elif statement[0] == "if_else":
-            buffer = f"if ({self.transpile(statement[1])}) {{\n"
-            for sub_statement in statement[2]:
-                buffer += "\t" + self.transpile(sub_statement) + ";\n"
-            buffer += "} else {\n"
-            for sub_statement in statement[3]:
-                buffer += "\t" + self.transpile(sub_statement) + ";\n"
-            buffer += "}"
-            return buffer
-        
-        elif statement[0] == "func_call":
-            if statement[1] == "print":
-                buffer = "printf(\""
-                vars_to_format = []
-                for arg in statement[2]:
-                    if isinstance(arg, str):
-                        buffer += arg
-                    elif arg[0] == 'id':
-                        vars_to_format.append(arg[1])
-                        if self.variables[arg[1]].type == 0:
-                            buffer += "%d"
-                        elif self.variables[arg[1]].type == 1:
-                            buffer += "%f"
-                        elif self.variables[arg[1]].type == 2:
-                            buffer += "%s"
+			return fstring_call
 
-                buffer += "\\n\""
-                for var in vars_to_format:
-                    buffer += f", {var}"
-                buffer += ")"
+		elif statement[0] == "func_call":
+			if statement[1] == "print":
+				"""
+				('func_call', 'print', ['hello world', a])
 
-                return buffer
+				code:
+				pprint(4, (char* []){copy_string("hello world"), dynamic_var_to_string(a)});
+				"""
+				
+				# get all str conversions
+				str_conversions = []
+				for i in statement[2]:
+					if isinstance(i, str):
+						str_conversions.append(f"copy_string(\"{i}\")")
+					else:
+						str_conversions.append(self.string_conversion(i[1]))
 
-            elif statement[1] in self.functions:
-                return f"{statement[1]}({', '.join([self.transpile(arg) for arg in statement[2]])})"
-            
-            raise ValueError(f'No such function: {statement}')
-        
-        elif statement[0] == 'func_decl':
-            func_name = statement[1]
-            func_args = statement[2]
-            func_body = statement[3]
+				# create print call
+				print_call = f"pprint({len(str_conversions)}, (char* []){{"
+				for i in range(len(str_conversions)):
+					print_call += str_conversions[i]
+					if i != len(str_conversions) - 1:
+						print_call += ", "
 
-            self.functions[func_name] = {
-                "args": func_args,
-                "body": func_body,
-                "type": 'any'
-            }
+				print_call += "})"
+				return print_call
 
-            has_return = False
-            for sub_statement in func_body:
-                if sub_statement[0] == 'return':
-                    has_return = True
-                    break
+		raise_error(f"Unknown statement type: {statement}")
+		
+	def string_conversion(self, var_name):
+		stored_var = self.variables[var_name]
 
-            if not has_return:
-                buffer = f"void {func_name}({', '.join([self.transpile_type(arg[1]) + ' ' + arg[2] for arg in func_args])}) {{\n"
-            else:
-                buffer = f"dynamic_t* {func_name}({', '.join([self.transpile_type(arg[1]) + ' ' + arg[2] for arg in func_args])}) {{\n"
+		if stored_var.dynamic:
+			return f"dynamic_var_to_string({var_name})"
+		elif stored_var.type == dynamic_type_map['str']:
+			return f"copy_string({var_name})"
+		elif stored_var.type == dynamic_type_map['int']:
+			return f"int_to_string({var_name})"
+		elif stored_var.type == dynamic_type_map['float']:
+			return f"float_to_string({var_name})"
+		elif stored_var.type == dynamic_type_map['bool']:
+			return f"bool_to_string({var_name})"
+		else:
+			raise_error(f"Cannot convert type to string: {stored_var.type}")
 
-            for sub_statement in func_body:
-                buffer += "\t" + self.transpile(sub_statement) + ";\n"
+	def get_inferred_type(self, statement):
+		if isinstance(statement, int):
+			return 'int'
+		elif isinstance(statement, float):
+			return 'float'
+		elif isinstance(statement, str):
+			return 'str'
+		elif statement[0] == 'func_call':
+			return self.functions[statement[1]].type
+		elif statement[0] == 'fstring':
+			return dynamic_type_map['str']
 
-            buffer += "}"
-
-            return buffer
-
-        elif statement[0] == 'typed_func_decl':
-            func_name = statement[2]
-            func_args = statement[3]
-            func_body = statement[4]
-
-            self.functions[func_name] = {
-                "args": func_args,
-                "body": func_body,
-                "type": statement[1]
-            }
-
-            buffer = f"{self.transpile_type(statement[1])} {func_name}("
-
-            for arg in func_args:
-                if len(arg) == 2:
-                    buffer += f"dynamic_t* {arg[1]}, "
-                else:
-                    buffer += f"{self.transpile_type(arg[1])} {arg[2]}, "
-
-            buffer = buffer[:-2] + ") {\n"
-
-            for sub_statement in func_body:
-                buffer += "\t" + self.transpile(sub_statement) + ";\n"
-
-            buffer += "}"
-
-            return buffer
-        
-        elif statement[0] == 'return':
-            return f"return {self.transpile(statement[1])}"
-
-        else:
-            raise ValueError(f'Cannot transpile: {statement}')
-
-    def transpile_type(self, type_name):
-        if type_name == 'int':
-            return 'int'
-        elif type_name == 'float':
-            return 'float'
-        elif type_name == 'str':
-            return 'char*'
-        else:
-            raise ValueError(f'Cannot transpile type: {type_name}')
-        
-    def get_inferred_type(self, statement):
-        if isinstance(statement, int):
-            return 'int'
-        elif isinstance(statement, float):
-            return 'float'
-        elif isinstance(statement, str):
-            return 'str'
-        elif statement[0] == "func_call":
-            # check return type of function
-            return self.functions[statement[1]]['type']
-        return 'any'
+		return dynamic_type_map['any']
 
 if __name__ == '__main__':
-    file_path = "examples/test.ta"
-    with open(file_path, 'r') as file:
-        data = file.read()
-        tally = TallyTranspiler()
-        c_code = tally(data)
-        print(c_code)
+	file_path = "examples/test.ta"
+	with open(file_path, 'r') as file:
+		data = file.read()
+		tally = TallyTranspiler()
+		c_code = tally(data)
 
-    run = True
+		print("Transpiled code:")
+		print(c_code)
 
-    if run:
-        with open("temp.c", "w") as f:
-            f.write(c_code)
+	run = True
 
-        #import subprocess
-        #subprocess.Popen("gcc -o out temp.c")
-        #subprocess.Popen("./out")
+	if run:
+		with open("temp.c", "w") as f:
+			f.write(c_code)
+
+		#import subprocess
+		#subprocess.Popen("gcc -o out temp.c")
+		#subprocess.Popen("./out")

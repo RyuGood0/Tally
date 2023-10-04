@@ -1,29 +1,5 @@
-int a = 1
+a = 5
 
-int b = 2 + 3
+str b = f"a is {a}"
 
-int c = b + 1
-
-if a > b {
-    print(a)
-} else {
-    print(b)
-}
-
-int d = a**b
-
-const int e = 1
-
-f = "hi"
-
-print("hello", e, f)
-
-print(f)
-
-f = 1
-
-print(f)
-
-str g = "hello"
-
-print(g)
+print("hello world", a, b)

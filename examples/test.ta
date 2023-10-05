@@ -1,7 +1,11 @@
 a = 5
 
-str b = f"a is {a}"
+b = f"a is {a}"
+
+str c = "Hello World"
 
 print("hello world", a, b)
+
+print(f"hello world {a} {b}")
 
 del a

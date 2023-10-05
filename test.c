@@ -515,6 +515,10 @@ char* bool_to_string(int val) {
     return result;
 }
 
+char* hello() {
+    return copy_string("Hello World!");
+}
+
 int main(int argc, char *argv[]) {
     dynamic_t* a = init_dynamic_var(INT, (void*)&(int){3});
     dynamic_t* b = init_dynamic_var(FLOAT, (void*)&(float){1.5});
@@ -527,7 +531,7 @@ int main(int argc, char *argv[]) {
     char* str_UUID = fstring("Hello %s! %s", (char* []){dynamic_var_to_string(a), copy_string("Hi")});
     dynamic_t* e = init_dynamic_var(STRING, (void*) str_UUID);
     free(str_UUID);
-    pprint(4, (char* []){dynamic_var_to_string(a), dynamic_var_to_string(b), dynamic_var_to_string(c), dynamic_var_to_string(e)});
+    pprint(2, (char* []){hello(), dynamic_var_to_string(e)});
 
     // Free the allocated memory
     free_dynamic_var(&d);

@@ -44,7 +44,7 @@ class TallyTranspiler(object):
 
 		code_c = ""
 
-		for statement in parsed[1]:
+		for statement in self.clean_statements(parsed[1]):
 			"""
 			Start by defining all functions,
 			then add all to main()
@@ -56,17 +56,79 @@ class TallyTranspiler(object):
 		return code_c
 
 	def clean_statements(self, statements):
-		# TODO
 		"""
 		for fstring statements, add an assign statement ("str_UUID = ***") before the top call and a del statement after
 
 		Ex:
-		[('func_call', 'print', [('fstring', 'Hello {a}')]] -> [('assign', 'str', 'str_UUID', 'Hello {a}'), ('func_call', 'print', [('id', 'str_UUID')]), ('del', 'str_UUID')]
-		[('assign', 'var_name', ('fstring', 'Hello {a}'))] -> [('assign', 'str', 'str_UUID', 'Hello {a}'), ('assign', 'var_name', ('id', 'str_UUID')), ('del', 'str_UUID')
-		[('if', ['==', 1, 1.000], [('assign', 'var_name', ('fstring', 'Hello {a}'))])] -> [('if', ['==', 1, 1.000], [('assign', 'str', 'str_UUID', 'Hello {a}'), ('assign', 'var_name', ('id', 'str_UUID')), ('del', 'str_UUID')])]
+		[('func_call', 'print', [('fstring', 'Hello {a}')]] -> [('assign', 'str', 'str_UUID', ('fstring', 'Hello {a}')), ('func_call', 'print', [('id', 'str_UUID')]), ('del', 'str_UUID')]
+		[('assign', 'var_name', ('fstring', 'Hello {a}'))] -> [('assign', 'str', 'str_UUID', ('fstring', 'Hello {a}')), ('assign', 'var_name', ('id', 'str_UUID')), ('del', 'str_UUID')
+		[('assign', 'str', 'var_name', ('fstring', 'Hello {a}'))] -> [('assign', 'str', 'var_name', ('fstring', 'Hello {a}'))]
+		[('if', ['==', 1, 1.000], [('assign', 'var_name', ('fstring', 'Hello {a}'))])] -> [('if', ['==', 1, 1.000], [('assign', 'str', 'str_UUID', ('fstring', 'Hello {a}')), ('assign', 'var_name', ('id', 'str_UUID')), ('del', 'str_UUID')])]
+		
+		If the statement is not a fstring and does not contain a fstring, return the statement
+		Else, if statement is a fstring, add assign and del statements before and after
+		Else, if statement contains a fstring, check type of statement and add assign and del statements in the correct place
+		=> for a func_call it should happen before the statement, but for a statement that create a new "block" (if, while, for, func_decl, ...) it should happen inside the block
+		BUT for a typed assign statement, nothing should be added
 		"""
-		pass
-	
+		print(statements)
+		new_statements = []
+
+		for stmt in statements:
+			if not isinstance(stmt, tuple):
+				new_statements.append(stmt)
+				continue
+
+			stmt_type, *stmt_data = stmt
+			if stmt_type == 'assign':
+				print(stmt_data)
+				if len(stmt_data) == 3:
+					var_type, var_name, var_value = stmt_data
+					if var_type == 'str' and isinstance(var_value, tuple) and var_value[0] == 'fstring':
+						new_statements.append((stmt_type, *stmt_data))
+				else:
+					# Assignment without var_type, add assign and del statements
+					var_name, var_value = stmt_data
+					if isinstance(var_value, tuple) and var_value[0] == 'fstring':
+						str_UUID = f'str_UUID_{uuid.uuid4().hex}'  # Generate a unique str_UUID
+						new_statements.append(('assign', 'str', str_UUID, ('fstring', var_value[1])))
+						new_statements.append(('assign', var_name, ('id', str_UUID)))
+						new_statements.append(('del', str_UUID))
+					else:
+						new_statements.append((stmt_type, *stmt_data))
+			elif stmt_type == 'fstring':
+				# This is an fstring, but not part of a func_call, so just add it as is
+				new_statements.append((stmt_type, stmt_data[0]))
+			elif stmt_type == 'func_call':
+				args = []
+				for arg in stmt_data[1]:
+					if not isinstance(arg, tuple):
+						args.append(arg)
+					else:
+						arg_type, *arg_data = arg
+						if arg_type == 'fstring':
+							# Add an assign statement before the fstring argument
+							str_UUID = f'str_UUID_{uuid.uuid4().hex}'  # Generate a unique str_UUID
+							new_statements.append(('assign', 'str', str_UUID, ('fstring', arg_data[0])))
+							# Add the fstring argument as an id to the argument list
+							args.append(('id', str_UUID))
+						else:
+							args.append((arg_type, *arg_data))
+
+				# Add the func_call statement with modified arguments
+				new_statements.append(('func_call', stmt_data[0], args))
+				# Add a del statement for the str_UUIDs used in the fstring arguments
+				for arg_type, *arg_data in stmt_data[1]:
+					if arg_type == 'fstring':
+						new_statements.append(('del', str_UUID))
+			else:
+				# If the statement is not an fstring or func_call, add it as is
+				new_statements.append((stmt_type, *stmt_data))
+
+		print(new_statements)
+
+		return new_statements
+
 	def is_assigned(self, var_name):
 		# return True if variable is assigned, False otherwise
 		if var_name in self.variables:
@@ -79,7 +141,7 @@ class TallyTranspiler(object):
 		elif isinstance(statement, float):
 			return str(statement)
 		elif isinstance(statement, str):
-			return str
+			return f'"{statement}"'
 		
 		if statement[0] == "assign":
 			if len(statement) == 3:
@@ -97,7 +159,7 @@ class TallyTranspiler(object):
 				if self.is_assigned(statement[1]) and self.variables[statement[1]].constant:
 					raise_error(f"Cannot assign to constant variable: {statement[1]}")
 
-				d_type = dynamic_type_map[self.get_inferred_type(statement[2])]
+				d_type = self.get_inferred_type(statement[2])
 				right_member = self.transpile(statement[2])
 				if not self.is_assigned(statement[1]):
 					self.variables[statement[1]] = Variable(statement[1], d_type, True)
@@ -107,7 +169,7 @@ class TallyTranspiler(object):
 					elif d_type == dynamic_type_map['float']:
 						return f"dynamic_t* {statement[1]} = init_dynamic_var(FLOAT, (void*)&(float){{{right_member}}});"
 					elif d_type == dynamic_type_map['str']:
-						return f"dynamic_t* {statement[1]} = init_dynamic_var(STRING, (void*)\"{right_member}\");"
+						return f"dynamic_t* {statement[1]} = init_dynamic_var(STRING, (void*){right_member});"
 					elif d_type == dynamic_type_map['bool']:
 						return f"dynamic_t* {statement[1]} = init_dynamic_var(BOOL, (void*)&(bool){{{right_member}}});"
 					else:
@@ -118,7 +180,7 @@ class TallyTranspiler(object):
 					elif d_type == dynamic_type_map['float']:
 						return f"{statement[1]} = update_dynamic_var({statement[1]}, FLOAT, (void*)&(float){{{right_member}}});"
 					elif d_type == dynamic_type_map['str']:
-						return f"{statement[1]} = update_dynamic_var({statement[1]}, STRING, (void*)\"{right_member}\");"
+						return f"{statement[1]} = update_dynamic_var({statement[1]}, STRING, (void*){right_member});"
 					elif d_type == dynamic_type_map['bool']:
 						return f"{statement[1]} = update_dynamic_var({statement[1]}, BOOL, (void*)&(bool){{{right_member}}});"
 					else:
@@ -131,7 +193,7 @@ class TallyTranspiler(object):
 				assignement:
 				int a = 4;
 				"""
-				
+
 				if self.is_assigned(statement[2]) and self.variables[statement[2]].constant:
 					raise_error(f"Cannot assign to constant variable: {statement[2]}")
 
@@ -145,7 +207,7 @@ class TallyTranspiler(object):
 					elif d_type == dynamic_type_map['float']:
 						return f"float {statement[2]} = {right_member};"
 					elif d_type == dynamic_type_map['str']:
-						return f"char* {statement[2]} = \"{right_member}\";"
+						return f"char* {statement[2]} = {right_member};"
 					elif d_type == dynamic_type_map['bool']:
 						return f"bool {statement[2]} = {right_member};"
 					else:
@@ -209,18 +271,39 @@ class TallyTranspiler(object):
 			if statement[1] == "print":
 				"""
 				('func_call', 'print', ['hello world', a])
+				('func_call', 'print', [('func_call', 'hello', []]) => hello is a function that returns a string
+				('func_call', 'print', [('func_call', 'hello', [])]) => hello is a function that returns a dynamic var
 
 				code:
 				pprint(4, (char* []){copy_string("hello world"), dynamic_var_to_string(a)});
+				pprint(1, (char* []){hello()});
+				pprint(1, (char* []){dynamic_var_to_string(hello())});
 				"""
 				
 				# get all str conversions
 				str_conversions = []
 				for i in statement[2]:
-					if isinstance(i, str):
-						str_conversions.append(f"copy_string(\"{i}\")")
+					# parse each argument
+					if isinstance(i, int):
+						str_conversions.append(f"int_to_string({i})")
+					elif isinstance(i, float):
+						str_conversions.append(f"float_to_string({i})")
+					elif isinstance(i, str):
+						str_conversions.append(f'"{i}"')
+					elif i[0] == 'func_call':
+						# check if function returns a dynamic var
+						if self.functions[i[1]].type == dynamic_type_map['any']:
+							str_conversions.append(self.string_conversion(i[1]))
+						else:
+							str_conversions.append(f"copy_string({i[1]});")
+					elif i[0] == 'id':
+						# check if variable is dynamic
+						if self.variables[i[1]].dynamic:
+							str_conversions.append(self.string_conversion(i[1]))
+						else:
+							str_conversions.append(f"copy_string({i[1]});")
 					else:
-						str_conversions.append(self.string_conversion(i[1]))
+						raise_error(f"Unknown argument type: {i}")
 
 				# create print call
 				print_call = f"pprint({len(str_conversions)}, (char* []){{"
@@ -231,6 +314,21 @@ class TallyTranspiler(object):
 
 				print_call += "})"
 				return print_call
+
+		elif statement[0] == "del":
+			# free variable
+			if not self.is_assigned(statement[1]):
+				raise_error(f"Variable not assigned: {statement[1]}")
+
+			if self.variables[statement[1]].dynamic:
+				self.variables.pop(statement[1])
+				return f"free_dynamic_var({statement[1]});"
+			else:
+				self.variables.pop(statement[1])
+				return f"free({statement[1]});"
+
+		elif statement[0] == 'id':
+			return statement[1]
 
 		raise_error(f"Unknown statement type: {statement}")
 		
@@ -252,15 +350,17 @@ class TallyTranspiler(object):
 
 	def get_inferred_type(self, statement):
 		if isinstance(statement, int):
-			return 'int'
+			return dynamic_type_map['int']
 		elif isinstance(statement, float):
-			return 'float'
+			return dynamic_type_map['float']
 		elif isinstance(statement, str):
-			return 'str'
+			return dynamic_type_map['str']
 		elif statement[0] == 'func_call':
 			return self.functions[statement[1]].type
 		elif statement[0] == 'fstring':
 			return dynamic_type_map['str']
+		elif statement[0] == 'id':
+			return self.variables[statement[1]].type
 
 		return dynamic_type_map['any']
 

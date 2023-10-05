@@ -99,7 +99,6 @@ class TallyTranspiler(object):
 
 			stmt_type, *stmt_data = stmt
 			if stmt_type == 'assign':
-				print(stmt_data)
 				if len(stmt_data) == 3:
 					var_type, var_name, var_value = stmt_data
 					if var_type == 'str' and isinstance(var_value, tuple) and var_value[0] == 'fstring':
@@ -347,6 +346,29 @@ class TallyTranspiler(object):
 
 		elif statement[0] == 'id':
 			return statement[1]
+
+		elif statement[0] == 'if':
+			"""
+			('if', ('==', ('id', 'a'), 5), [('func_call', 'print', ['a is 5'])]) => a is a dynamic var
+			('if', ('>', ('id', 'a'), ('id', 'b')), [('func_call', 'print', ['a is greater than b'])]) => a and b are a dynamic var
+			('if', ('==', ('id', 'a'), 5), [('func_call', 'print', ['a is 5'])]) => a is an int
+
+			code:
+			dynamic_t* cmp_UUID = init_dynamic_var(INT, (void*)&(int){5});
+			if (dynamic_equals(a, cmp_UUID)) {
+				pprint(1, (char* []){copy_string("a is 5")});
+			}
+			free_dynamic_var(&cmp_UUID);
+
+			if (dynamic_greater_than(a, b)) {
+				pprint(1, (char* []){copy_string("a is greater than b")});
+			}
+
+			if (a == 5) {
+				pprint(1, (char* []){copy_string("a is 5")});
+			}
+			"""
+			pass
 
 		raise_error(f"Unknown statement type: {statement}")
 		

@@ -66,13 +66,13 @@ class TallyParser(object):
 					| IF LPAREN expression RPAREN LBRACE statement_list RBRACE ELSE LBRACE statement_list RBRACE
 		'''
 		if len(p) == 6:
-			p[0] = ('if', p[2], p[4], self._get_statement_line(p))
+			p[0] = ('if', p[2], p[4])
 		elif len(p) == 10:
-			p[0] = ('if_else', p[2], p[4], p[8], self._get_statement_line(p))
+			p[0] = ('if_else', p[2], p[4], p[8])
 		elif len(p) == 8:
-			p[0] = ('if', p[3], p[6], self._get_statement_line(p))
+			p[0] = ('if', p[3], p[6])
 		else:
-			p[0] = ('if_else', p[3], p[6], p[10], self._get_statement_line(p))
+			p[0] = ('if_else', p[3], p[6], p[10])
 
 	def p_while_statement(self, p):
 		'''
@@ -82,15 +82,15 @@ class TallyParser(object):
 					| WHILE LPAREN expression RPAREN LBRACE statement_list RBRACE ELSE LBRACE statement_list RBRACE
 		'''
 		if len(p) == 6:
-			p[0] = ('while', p[2], p[4], self._get_statement_line(p))
+			p[0] = ('while', p[2], p[4])
 		elif len(p) == 8:
-			p[0] = ('while', p[3], p[6], self._get_statement_line(p))
+			p[0] = ('while', p[3], p[6])
 
 	def p_for_in_statement(self, p):
 		'''
 		for_in_statement : FOR id_list IN ID LBRACE statement_list RBRACE
 		'''
-		p[0] = ('for_in', p[2], p[4], p[6], self._get_statement_line(p))
+		p[0] = ('for_in', p[2], p[4], p[6])
 
 	def p_id_list(self, p):
 		'''

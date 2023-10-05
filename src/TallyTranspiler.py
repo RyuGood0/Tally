@@ -60,6 +60,14 @@ class TallyTranspiler(object):
 
 		main_code = "".join([f"\t{code}\n" for code in main_code.splitlines()])
 		code_c += f"int main(int argc, char *argv[]) {{\n{main_code}"
+
+		# add free statements for all variables
+		for var_name in self.variables:
+			if self.variables[var_name].dynamic:
+				code_c += f"\tfree_dynamic_var(&{var_name});\n"
+			else:
+				code_c += f"\tfree({var_name});\n"
+
 		code_c += "\treturn 0;\n"
 		code_c += "}"
 

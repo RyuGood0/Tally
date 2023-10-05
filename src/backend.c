@@ -515,15 +515,3 @@ char* bool_to_string(int val) {
     return result;
 }
 
-int main(int argc, char *argv[]) {
-	dynamic_t* a = init_dynamic_var(INT, (void*)&(int){5});
-	char* str_UUID_b9134ed06ccf447a89b9040533b8201a = fstring("a is %s", (char* []){dynamic_var_to_string(a)});
-	dynamic_t* b = init_dynamic_var(STRING, (void*)str_UUID_b9134ed06ccf447a89b9040533b8201a);
-	free(str_UUID_b9134ed06ccf447a89b9040533b8201a);
-	pprint(3, (char* []){copy_string("hello world"), dynamic_var_to_string(a), dynamic_var_to_string(b)});
-	char* str_UUID_d5c8d9414e1c4a0bad2e6f4d9cecc881 = fstring("hello world %s %s", (char* []){dynamic_var_to_string(a), dynamic_var_to_string(b)});
-	pprint(1, (char* []){copy_string(str_UUID_d5c8d9414e1c4a0bad2e6f4d9cecc881)});
-	free(str_UUID_d5c8d9414e1c4a0bad2e6f4d9cecc881);
-	free_dynamic_var(&a);
-	return 0;
-}

@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdlib.h>
 
 enum type {
     INT = 0,
@@ -34,6 +35,8 @@ char* dynamic_var_to_string(dynamic_t* var);
 
 void print_dynamics(char end, int num, ...);
 
+char* fstring(char* format, char** args);
+
 void pprint(int length, char** args);
 
 void append(dynamic_list_t* list, dynamic_t* value);
@@ -49,3 +52,5 @@ dynamic_t* sub_dynamic_vars(dynamic_t* first, dynamic_t* second);
 dynamic_t* mul_dynamic_vars(dynamic_t* first, dynamic_t* second);
 
 dynamic_t* div_dynamic_vars(dynamic_t* first, dynamic_t* second);
+
+char* copy_string(char* str);

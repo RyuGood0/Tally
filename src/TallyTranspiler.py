@@ -42,8 +42,9 @@ class TallyTranspiler(object):
 	def __call__(self, content):
 		parsed = self.parser.parse(content)
 
-		code_c = ""
+		function_codes = []
 
+		main_code = ""
 		for statement in self.clean_statements(parsed[1]):
 			"""
 			Start by defining all functions,
@@ -51,7 +52,16 @@ class TallyTranspiler(object):
 			"""
 			
 			transpiled = self.transpile(statement)
-			code_c += transpiled + "\n"
+			main_code += transpiled + "\n"
+
+		code_c = ""
+		for function_code in function_codes:
+			code_c += function_code + "\n"
+
+		main_code = "".join([f"\t{code}\n" for code in main_code.splitlines()])
+		code_c += f"int main(int argc, char *argv[]) {{\n{main_code}"
+		code_c += "\treturn 0;\n"
+		code_c += "}"
 
 		return code_c
 
@@ -289,19 +299,19 @@ class TallyTranspiler(object):
 					elif isinstance(i, float):
 						str_conversions.append(f"float_to_string({i})")
 					elif isinstance(i, str):
-						str_conversions.append(f'"{i}"')
+						str_conversions.append(f'copy_string("{i}")')
 					elif i[0] == 'func_call':
 						# check if function returns a dynamic var
 						if self.functions[i[1]].type == dynamic_type_map['any']:
 							str_conversions.append(self.string_conversion(i[1]))
 						else:
-							str_conversions.append(f"copy_string({i[1]});")
+							str_conversions.append(f"copy_string({i[1]})")
 					elif i[0] == 'id':
 						# check if variable is dynamic
 						if self.variables[i[1]].dynamic:
 							str_conversions.append(self.string_conversion(i[1]))
 						else:
-							str_conversions.append(f"copy_string({i[1]});")
+							str_conversions.append(f"copy_string({i[1]})")
 					else:
 						raise_error(f"Unknown argument type: {i}")
 
@@ -312,7 +322,7 @@ class TallyTranspiler(object):
 					if i != len(str_conversions) - 1:
 						print_call += ", "
 
-				print_call += "})"
+				print_call += "});"
 				return print_call
 
 		elif statement[0] == "del":
@@ -322,7 +332,7 @@ class TallyTranspiler(object):
 
 			if self.variables[statement[1]].dynamic:
 				self.variables.pop(statement[1])
-				return f"free_dynamic_var({statement[1]});"
+				return f"free_dynamic_var(&{statement[1]});"
 			else:
 				self.variables.pop(statement[1])
 				return f"free({statement[1]});"

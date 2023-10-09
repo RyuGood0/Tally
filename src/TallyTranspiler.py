@@ -50,6 +50,7 @@ class TallyTranspiler(object):
 			Start by defining all functions,
 			then add all to main()
 			"""
+			exit()
 			
 			transpiled = self.transpile(statement)
 			main_code += transpiled + "\n"
@@ -73,7 +74,7 @@ class TallyTranspiler(object):
 
 		return code_c
 
-	def clean_statements(self, statements):
+	def clean_statements(self, statements, assigned_vars={}):
 		"""
 		for fstring statements, add an assign statement ("str_UUID = ***") before the top call and a del statement after
 
@@ -103,6 +104,8 @@ class TallyTranspiler(object):
 					var_type, var_name, var_value = stmt_data
 					if var_type == 'str' and isinstance(var_value, tuple) and var_value[0] == 'fstring':
 						new_statements.append((stmt_type, *stmt_data))
+
+					assigned_vars[var_name] = Variable(var_name, dynamic_type_map[var_type])				
 				else:
 					# Assignment without var_type, add assign and del statements
 					var_name, var_value = stmt_data
@@ -111,11 +114,17 @@ class TallyTranspiler(object):
 						new_statements.append(('assign', 'str', str_UUID, ('fstring', var_value[1])))
 						new_statements.append(('assign', var_name, ('id', str_UUID)))
 						new_statements.append(('del', str_UUID))
+
+						assigned_vars[var_name] = Variable(var_name, dynamic_type_map['str'], True)
 					else:
 						new_statements.append((stmt_type, *stmt_data))
+
+						assigned_vars[var_name] = Variable(var_name, self.get_inferred_type(var_value), True)
+
 			elif stmt_type == 'fstring':
 				# This is an fstring, but not part of a func_call, so just add it as is
 				new_statements.append((stmt_type, stmt_data[0]))
+
 			elif stmt_type == 'func_call':
 				args = []
 				for arg in stmt_data[1]:
@@ -138,8 +147,58 @@ class TallyTranspiler(object):
 				for arg_type, *arg_data in stmt_data[1]:
 					if arg_type == 'fstring':
 						new_statements.append(('del', str_UUID))
+
+			elif stmt_type == 'if':
+				# ('if', condition_statement, [statements]), Ex: ('if', ('==', ('id', 'a'), 5), [('func_call', 'print', ['a is 5'])])
+				# if condition_statement contains just 1 dynamic var, convert other to dynamic var by adding assign and del statements
+				# [statements] should be cleaned recursively
+				condition_statement = stmt_data[0]
+
+				if isinstance(condition_statement, tuple):
+					if condition_statement[0] in ["==", "!=", ">", "<", ">=", "<="]:
+						# if one is not tuple, check other and if other is dynamic var or other type, convert to dynamic var
+						if not isinstance(condition_statement[1], tuple):
+							# TODO
+							pass								
+
+						# if both are id, check if they are dynamic. If only one is dynamic, convert the other to dynamic, else do nothing
+						if condition_statement[1][0] == 'id' and condition_statement[2][0] == 'id':
+							if self.variables[condition_statement[1][1]].dynamic and not self.variables[condition_statement[2][1]].dynamic:
+								# convert condition_statement[2] to dynamic
+								cmp_UUID = f'cmp_UUID_{uuid.uuid4().hex}'
+								new_statements.append(('assign', cmp_UUID, condition_statement[2][1]))
+								new_statements.append(('if', (condition_statement[0], condition_statement[1], ('id', cmp_UUID)), self.clean_statements(stmt_data[1], assigned_vars)))
+								new_statements.append(('del', cmp_UUID))
+							elif self.variables[condition_statement[2][1]].dynamic and not self.variables[condition_statement[1][1]].dynamic:
+								# convert condition_statement[1] to dynamic
+								cmp_UUID = f'cmp_UUID_{uuid.uuid4().hex}'
+								new_statements.append(('assign', cmp_UUID, condition_statement[1][1]))
+								new_statements.append(('if', (condition_statement[0], ('id', cmp_UUID), condition_statement[2]), self.clean_statements(stmt_data[1], assigned_vars)))
+								new_statements.append(('del', cmp_UUID))
+							else:
+								new_statements.append(('if', condition_statement, self.clean_statements(stmt_data[1], assigned_vars)))
+
+						elif condition_statement[1][0] == 'id':
+							if self.variables[condition_statement[1][1]].dynamic:
+								# convert condition_statement[2] to dynamic
+								cmp_UUID = f'cmp_UUID_{uuid.uuid4().hex}'
+								new_statements.append(('assign', cmp_UUID, condition_statement[2]))
+								new_statements.append(('if', (condition_statement[0], condition_statement[1], ('id', cmp_UUID)), self.clean_statements(stmt_data[1], assigned_vars)))
+								new_statements.append(('del', cmp_UUID))
+							else:
+								new_statements.append(('if', condition_statement, self.clean_statements(stmt_data[1], assigned_vars)))
+
+						elif condition_statement[2][0] == 'id':
+							if self.variables[condition_statement[2][1]].dynamic:
+								# convert condition_statement[1] to dynamic
+								cmp_UUID = f'cmp_UUID_{uuid.uuid4().hex}'
+								new_statements.append(('assign', cmp_UUID, condition_statement[1]))
+								new_statements.append(('if', (condition_statement[0], ('id', cmp_UUID), condition_statement[2]), self.clean_statements(stmt_data[1], assigned_vars)))
+								new_statements.append(('del', cmp_UUID))
+							else:
+								new_statements.append(('if', condition_statement, self.clean_statements(stmt_data[1], assigned_vars)))
+						
 			else:
-				# If the statement is not an fstring or func_call, add it as is
 				new_statements.append((stmt_type, *stmt_data))
 
 		print(new_statements)

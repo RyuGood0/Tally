@@ -519,6 +519,24 @@ char* hello() {
     return copy_string("Hello World!");
 }
 
+int equals_int_string(int first, char* second) {
+    int result = atoi(second);
+    if (result == 0 && second[0] != '0') {
+        return 0;
+    }
+
+    return first == result;
+}
+
+int equals_float_string(float first, char* second) {
+    float result = atof(second);
+    if (result == 0 && second[0] != '0') {
+        return 0;
+    }
+
+    return first == result;
+}
+
 int dynamic_equals(dynamic_t* first, dynamic_t* second) {
     if (first->type == second->type) {
         if (first->type == INT) {
@@ -553,38 +571,16 @@ int dynamic_equals(dynamic_t* first, dynamic_t* second) {
         } else if ((first->type == INT && second->type == BOOL) || (first->type == BOOL && second->type == INT)) {
             return *(int*)first->value == *(int*)second->value;
         } else if ((first->type == INT && second->type == STRING) || (first->type == STRING && second->type == INT)) {
-            int result;
             if (first->type == INT) {
-                result = atoi((char*)second->value);
-                if (result == 0 && ((char*)second->value)[0] != '0') {
-                    return NULL;
-                }
-
-                return result == *(int*)first->value;
+                return equals_int_string(*(int*)first->value, (char*)second->value);
             } else {
-                result = atoi((char*)first->value);
-                if (result == 0 && ((char*)first->value)[0] != '0') {
-                    return NULL;
-                }
-
-                return result == *(int*)second->value;
+                return equals_int_string(*(int*)second->value, (char*)first->value);
             }
         } else if ((first->type == FLOAT && second->type == STRING) || (first->type == STRING && second->type == FLOAT)) {
-            float result;
             if (first->type == INT) {
-                result = atof((char*)second->value);
-                if (result == 0 && ((char*)second->value)[0] != '0') {
-                    return NULL;
-                }
-
-                return result == *(float*)first->value;
+                return equals_float_string(*(float*)first->value, (char*)second->value);
             } else {
-                result = atof((char*)first->value);
-                if (result == 0 && ((char*)first->value)[0] != '0') {
-                    return NULL;
-                }
-
-                return result == *(float*)second->value;
+                return equals_float_string(*(float*)second->value, (char*)first->value);
             }
         }
         else {
@@ -593,7 +589,52 @@ int dynamic_equals(dynamic_t* first, dynamic_t* second) {
     }
 }
 
+int dynamic_not_equals(dynamic_t* first, dynamic_t* second) {
+    return !dynamic_equals(first, second);
+}
+
+int dynamic_greater_than(dynamic_t* first, dynamic_t* second) {
+    if (first->type == second->type) {
+        if (first->type == INT) {
+            return *(int*)first->value > *(int*)second->value;
+        } else if (first->type == FLOAT) {
+            return *(float*)first->value > *(float*)second->value;
+        } else if (first->type == STRING) {
+            return strcmp((char*)first->value, (char*)second->value) > 0;
+        } else if (first->type == BOOL) {
+            return *(int*)first->value > *(int*)second->value; 
+        } else {
+            return 0;
+        }
+    } else {
+        if ((first->type == INT && second->type == FLOAT) || (first->type == FLOAT && second->type == INT)) {
+            if (first->type == INT) {
+                return *(int*)first->value > *(float*)second->value;
+            } else {
+                return *(float*)first->value > *(int*)second->value;
+            }
+        } else if ((first->type == INT && second->type == BOOL) || (first->type == BOOL && second->type == INT)) {
+            return *(int*)first->value > *(int*)second->value;
+        } else if ((first->type == FLOAT && second->type == BOOL) || (first->type == BOOL && second->type == FLOAT))
+        {
+            if (first->type == FLOAT) {
+                return *(float*)first->value > *(int*)second->value;
+            } else {
+                return *(int*)first->value > *(float*)second->value;
+            }
+        }
+        else {
+            return 0;
+        }
+    }
+}
+
+int dynamic_greater_equals(dynamic_t* first, dynamic_t* second) {
+    return dynamic_greater_than(first, second) || dynamic_equals(first, second);
+}
+
 int main(int argc, char *argv[]) {
+    // dynamic vars
     dynamic_t* a = init_dynamic_var(INT, (void*)&(int){3});
     dynamic_t* b = init_dynamic_var(FLOAT, (void*)&(float){1.5});
     dynamic_t* c = init_dynamic_var(STRING, (void*)"hello");
@@ -606,6 +647,13 @@ int main(int argc, char *argv[]) {
     dynamic_t* e = init_dynamic_var(STRING, (void*) str_UUID);
     free(str_UUID);
     pprint(2, (char* []){hello(), dynamic_var_to_string(e)});
+
+    // if condition
+    if (dynamic_equals(a, c)) {
+        printf("a equals c\n");
+    } else {
+        printf("a not equals c\n");
+    }
 
     // Free the allocated memory
     free_dynamic_var(&d);

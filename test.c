@@ -519,6 +519,80 @@ char* hello() {
     return copy_string("Hello World!");
 }
 
+int dynamic_equals(dynamic_t* first, dynamic_t* second) {
+    if (first->type == second->type) {
+        if (first->type == INT) {
+            return *(int*)first->value == *(int*)second->value;
+        } else if (first->type == FLOAT) {
+            return *(float*)first->value == *(float*)second->value;
+        } else if (first->type == STRING) {
+            return strcmp((char*)first->value, (char*)second->value) == 0;
+        } else if (first->type == BOOL) {
+            return *(int*)first->value == *(int*)second->value;
+        } else if (first->type == LIST) {
+            dynamic_list_t* first_list = (dynamic_list_t*)first->value;
+            dynamic_list_t* second_list = (dynamic_list_t*)second->value;
+
+            if (first_list->length != second_list->length) {
+                return 0;
+            }
+
+            for (size_t i = 0; i < first_list->length; i++) {
+                if (!dynamic_equals(first_list->value[i], second_list->value[i])) {
+                    return 0;
+                }
+            }
+
+            return 1;
+        } else {
+            return 0;
+        }
+    } else {
+        if ((first->type == INT && second->type == FLOAT) || (first->type == FLOAT && second->type == INT)) {
+            return *(int*)first->value == *(float*)second->value;
+        } else if ((first->type == INT && second->type == BOOL) || (first->type == BOOL && second->type == INT)) {
+            return *(int*)first->value == *(int*)second->value;
+        } else if ((first->type == INT && second->type == STRING) || (first->type == STRING && second->type == INT)) {
+            int result;
+            if (first->type == INT) {
+                result = atoi((char*)second->value);
+                if (result == 0 && ((char*)second->value)[0] != '0') {
+                    return NULL;
+                }
+
+                return result == *(int*)first->value;
+            } else {
+                result = atoi((char*)first->value);
+                if (result == 0 && ((char*)first->value)[0] != '0') {
+                    return NULL;
+                }
+
+                return result == *(int*)second->value;
+            }
+        } else if ((first->type == FLOAT && second->type == STRING) || (first->type == STRING && second->type == FLOAT)) {
+            float result;
+            if (first->type == INT) {
+                result = atof((char*)second->value);
+                if (result == 0 && ((char*)second->value)[0] != '0') {
+                    return NULL;
+                }
+
+                return result == *(float*)first->value;
+            } else {
+                result = atof((char*)first->value);
+                if (result == 0 && ((char*)first->value)[0] != '0') {
+                    return NULL;
+                }
+
+                return result == *(float*)second->value;
+            }
+        }
+        else {
+            return 0;
+        }
+    }
+}
+
 int main(int argc, char *argv[]) {
     dynamic_t* a = init_dynamic_var(INT, (void*)&(int){3});
     dynamic_t* b = init_dynamic_var(FLOAT, (void*)&(float){1.5});

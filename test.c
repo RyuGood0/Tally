@@ -524,6 +524,24 @@ int equals_int_string(int first, char* second) {
     return first == result;
 }
 
+int greater_int_string(int first, char* second) {
+    int result = atoi(second);
+    if (result == 0 && second[0] != '0') {
+        return 0;
+    }
+
+    return first > result;
+}
+
+int greater_equals_int_string(int first, char* second) {
+    int result = atoi(second);
+    if (result == 0 && second[0] != '0') {
+        return 0;
+    }
+
+    return first >= result;
+}
+
 int equals_float_string(float first, char* second) {
     float result = atof(second);
     if (result == 0 && second[0] != '0') {
@@ -531,6 +549,24 @@ int equals_float_string(float first, char* second) {
     }
 
     return first == result;
+}
+
+int greater_float_string(float first, char* second) {
+    float result = atof(second);
+    if (result == 0 && second[0] != '0') {
+        return 0;
+    }
+
+    return first > result;
+}
+
+int greater_equals_float_string(float first, char* second) {
+    float result = atof(second);
+    if (result == 0 && second[0] != '0') {
+        return 0;
+    }
+
+    return first >= result;
 }
 
 int dynamic_equals(dynamic_t* first, dynamic_t* second) {

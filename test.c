@@ -515,10 +515,6 @@ char* bool_to_string(int val) {
     return result;
 }
 
-char* hello() {
-    return copy_string("Hello World!");
-}
-
 int equals_int_string(int first, char* second) {
     int result = atoi(second);
     if (result == 0 && second[0] != '0') {

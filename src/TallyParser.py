@@ -165,7 +165,12 @@ class TallyParser(object):
 		elif p[1] == '(':
 			p[0] = p[2]
 		else:
-			p[0] = (p[2], p[1], p[3])
+			if p[2] == "<":
+				p[0] = ('>', p[3], p[1])
+			elif p[2] == "<=":
+				p[0] = ('>=', p[3], p[1])
+			else:
+				p[0] = (p[2], p[1], p[3])
 			
 	def p_fstring(self, p):
 		'''

@@ -10,6 +10,6 @@ print(f"hello world {a} {b}")
 
 del a
 
-if a == 5 {
+if a < 5 {
     print("a is 5")
 }

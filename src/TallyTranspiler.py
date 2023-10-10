@@ -147,57 +147,7 @@ class TallyTranspiler(object):
 				for arg_type, *arg_data in stmt_data[1]:
 					if arg_type == 'fstring':
 						new_statements.append(('del', str_UUID))
-
-			elif stmt_type == 'if':
-				# ('if', condition_statement, [statements]), Ex: ('if', ('==', ('id', 'a'), 5), [('func_call', 'print', ['a is 5'])])
-				# if condition_statement contains just 1 dynamic var, convert other to dynamic var by adding assign and del statements
-				# [statements] should be cleaned recursively
-				condition_statement = stmt_data[0]
-
-				if isinstance(condition_statement, tuple):
-					if condition_statement[0] in ["==", "!=", ">", "<", ">=", "<="]:
-						# if one is not tuple, check other and if other is dynamic var or other type, convert to dynamic var
-						if not isinstance(condition_statement[1], tuple):
-							# TODO
-							pass								
-
-						# if both are id, check if they are dynamic. If only one is dynamic, convert the other to dynamic, else do nothing
-						if condition_statement[1][0] == 'id' and condition_statement[2][0] == 'id':
-							if self.variables[condition_statement[1][1]].dynamic and not self.variables[condition_statement[2][1]].dynamic:
-								# convert condition_statement[2] to dynamic
-								cmp_UUID = f'cmp_UUID_{uuid.uuid4().hex}'
-								new_statements.append(('assign', cmp_UUID, condition_statement[2][1]))
-								new_statements.append(('if', (condition_statement[0], condition_statement[1], ('id', cmp_UUID)), self.clean_statements(stmt_data[1], assigned_vars)))
-								new_statements.append(('del', cmp_UUID))
-							elif self.variables[condition_statement[2][1]].dynamic and not self.variables[condition_statement[1][1]].dynamic:
-								# convert condition_statement[1] to dynamic
-								cmp_UUID = f'cmp_UUID_{uuid.uuid4().hex}'
-								new_statements.append(('assign', cmp_UUID, condition_statement[1][1]))
-								new_statements.append(('if', (condition_statement[0], ('id', cmp_UUID), condition_statement[2]), self.clean_statements(stmt_data[1], assigned_vars)))
-								new_statements.append(('del', cmp_UUID))
-							else:
-								new_statements.append(('if', condition_statement, self.clean_statements(stmt_data[1], assigned_vars)))
-
-						elif condition_statement[1][0] == 'id':
-							if self.variables[condition_statement[1][1]].dynamic:
-								# convert condition_statement[2] to dynamic
-								cmp_UUID = f'cmp_UUID_{uuid.uuid4().hex}'
-								new_statements.append(('assign', cmp_UUID, condition_statement[2]))
-								new_statements.append(('if', (condition_statement[0], condition_statement[1], ('id', cmp_UUID)), self.clean_statements(stmt_data[1], assigned_vars)))
-								new_statements.append(('del', cmp_UUID))
-							else:
-								new_statements.append(('if', condition_statement, self.clean_statements(stmt_data[1], assigned_vars)))
-
-						elif condition_statement[2][0] == 'id':
-							if self.variables[condition_statement[2][1]].dynamic:
-								# convert condition_statement[1] to dynamic
-								cmp_UUID = f'cmp_UUID_{uuid.uuid4().hex}'
-								new_statements.append(('assign', cmp_UUID, condition_statement[1]))
-								new_statements.append(('if', (condition_statement[0], ('id', cmp_UUID), condition_statement[2]), self.clean_statements(stmt_data[1], assigned_vars)))
-								new_statements.append(('del', cmp_UUID))
-							else:
-								new_statements.append(('if', condition_statement, self.clean_statements(stmt_data[1], assigned_vars)))
-						
+			
 			else:
 				new_statements.append((stmt_type, *stmt_data))
 
@@ -349,13 +299,19 @@ class TallyTranspiler(object):
 				('func_call', 'print', ['hello world', a])
 				('func_call', 'print', [('func_call', 'hello', []]) => hello is a function that returns a string
 				('func_call', 'print', [('func_call', 'hello', [])]) => hello is a function that returns a dynamic var
+				('func_call', 'print', ["Hello world!"]) => hello is a string
 
 				code:
 				pprint(4, (char* []){copy_string("hello world"), dynamic_var_to_string(a)});
 				pprint(1, (char* []){hello()});
 				pprint(1, (char* []){dynamic_var_to_string(hello())});
+				printf("Hello world!\n");
 				"""
 				
+				# if only one argument and it is a string, use printf
+				if len(statement[2]) == 1 and isinstance(statement[2][0], str):
+					return f'printf("{statement[2][0]}\\n");'
+
 				# get all str conversions
 				str_conversions = []
 				for i in statement[2]:
@@ -411,23 +367,108 @@ class TallyTranspiler(object):
 			('if', ('==', ('id', 'a'), 5), [('func_call', 'print', ['a is 5'])]) => a is a dynamic var
 			('if', ('>', ('id', 'a'), ('id', 'b')), [('func_call', 'print', ['a is greater than b'])]) => a and b are a dynamic var
 			('if', ('==', ('id', 'a'), 5), [('func_call', 'print', ['a is 5'])]) => a is an int
+			('if', ('id', 'a'), [('func_call', 'print', ['a is 5'])]) => a is a dynamic var, or could be the result of a function that returns a dynamic var
 
 			code:
-			dynamic_t* cmp_UUID = init_dynamic_var(INT, (void*)&(int){5});
-			if (dynamic_equals(a, cmp_UUID)) {
-				pprint(1, (char* []){copy_string("a is 5")});
+			if (a->value == 5) {
+				printf("a is 5\n");
 			}
-			free_dynamic_var(&cmp_UUID);
 
 			if (dynamic_greater_than(a, b)) {
-				pprint(1, (char* []){copy_string("a is greater than b")});
+				printf("a is greater than b\n");
 			}
 
 			if (a == 5) {
-				pprint(1, (char* []){copy_string("a is 5")});
+				printf("a is 5\n");
 			}
+
+			if (dynamic_var_to_bool(a)) {
+				printf("a is 5\n");
+			}
+
+			possibilities:
+			- plain value : 5, 3.14, "hello", True, False, None, 5 + 6,...
+			- variable : dynamic var or not
+			- function call : dynamic or not
 			"""
-			pass
+			
+			condition = statement[1]
+
+			condition_code = ""
+			
+			if isinstance(condition, tuple):
+				if condition[0] == "id":
+					if self.variables[condition[1]].dynamic:
+						condition_code = f"dynamic_var_to_bool({condition[1]})"
+					elif self.variables[condition[1]].type == dynamic_type_map['int']:
+						condition_code = f"({condition[1]} == 0 ? 0 : 1)"
+					elif self.variables[condition[1]].type == dynamic_type_map['float']:
+						condition_code = f"({condition[1]} == 0.0 ? 0 : 1)"
+					else:
+						raise_error(f"Cannot convert type to bool: {self.variables[condition[1]].type}")
+
+				elif condition[0] == "func_call":
+					if self.functions[condition[1]].type == dynamic_type_map['any']:
+						condition_code = f"dynamic_var_to_bool({condition[1]})"
+					elif self.functions[condition[1]].type == dynamic_type_map['bool']:
+						condition_code = f"{self.transpile(condition)}"
+					elif self.functions[condition[1]].type == dynamic_type_map['int']:
+						condition_code = f"({self.transpile(condition)} == 0 ? 0 : 1)"
+					elif self.functions[condition[1]].type == dynamic_type_map['float']:
+						condition_code = f"({self.transpile(condition)} == 0.0 ? 0 : 1)"
+
+				elif condition[0] == "==":
+					"""
+					If both are dynamic, use dynamic_equal
+					If one is dynamic and other is plain value, compare to value of dynamic var (or raise error if invalid type comparison)
+					If both are plain values, compare values
+					Plain values could be straight values or typed variables
+					"""
+					if (isinstance(condition[1], tuple) and condition[1][0] == 'id') and (isinstance(condition[2], tuple) and condition[2][0] == 'id'):
+						if self.variables[condition[1][1]].dynamic and self.variables[condition[2][1]].dynamic:
+							condition_code = f"dynamic_equal({condition[1][1]}, {condition[2][1]})"
+
+						elif self.variables[condition[1][1]].dynamic and not self.variables[condition[2][1]].dynamic:
+							if self.variables[condition[1][1]].type in [dynamic_type_map['int'], dynamic_type_map['float'], dynamic_type_map['bool']] and self.variables[condition[2][1]].type in [dynamic_type_map['int'], dynamic_type_map['float'], dynamic_type_map['bool']]:
+								condition_code = f"({condition[1][1]}->value == {condition[2][1]})"
+							elif self.variables[condition[1][1]].type == dynamic_type_map['str'] and self.variables[condition[2][1]].type == dynamic_type_map['str']:
+								condition_code = f"(strcmp({condition[1][1]}->value, {condition[2][1]}) == 0)"
+							elif self.variables[condition[1][1]].type == dynamic_type_map['str'] and self.variables[condition[2][1]].type in [dynamic_type_map['int'], dynamic_type_map['float']]:
+								if self.variables[condition[2][1]].type == dynamic_type_map['int']:
+									condition_code = f"(equals_int_string({condition[1][1]}->value, {condition[2][1]}))"
+								else:
+									condition_code = f"(equals_float_string({condition[1][1]}->value, {condition[2][1]}))"
+							elif self.variables[condition[1][1]].type in [dynamic_type_map['int'], dynamic_type_map['float']] and self.variables[condition[2][1]].type == dynamic_type_map['str']:
+								if self.variables[condition[1][1]].type == dynamic_type_map['int']:
+									condition_code = f"(equals_int_string({condition[2][1]}, {condition[1][1]}->value))"
+								else:
+									condition_code = f"(equals_float_string({condition[2][1]}, {condition[1][1]}->value))"
+							else:
+								raise_error(f"Cannot compare types: {self.variables[condition[1][1]].type} and {self.variables[condition[2][1]].type}")
+
+						else:
+							if self.variables[condition[2][1]].type in [dynamic_type_map['int'], dynamic_type_map['float'], dynamic_type_map['bool']] and self.variables[condition[1][1]].type in [dynamic_type_map['int'], dynamic_type_map['float'], dynamic_type_map['bool']]:
+								condition_code = f"({condition[2][1]}->value == {condition[1][1]})"
+							elif self.variables[condition[2][1]].type == dynamic_type_map['str'] and self.variables[condition[1][1]].type == dynamic_type_map['str']:
+								condition_code = f"(strcmp({condition[2][1]}->value, {condition[1][1]}) == 0)"
+							elif self.variables[condition[2][1]].type == dynamic_type_map['str'] and self.variables[condition[1][1]].type in [dynamic_type_map['int'], dynamic_type_map['float']]:
+								if self.variables[condition[1][1]].type == dynamic_type_map['int']:
+									condition_code = f"(equals_int_string({condition[2][1]}->value, {condition[1][1]}))"
+								else:
+									condition_code = f"(equals_float_string({condition[2][1]}->value, {condition[1][1]}))"
+							elif self.variables[condition[2][1]].type in [dynamic_type_map['int'], dynamic_type_map['float']] and self.variables[condition[1][1]].type == dynamic_type_map['str']:
+								if self.variables[condition[2][1]].type == dynamic_type_map['int']:
+									condition_code = f"(equals_int_string({condition[1][1]}, {condition[2][1]}->value))"
+								else:
+									condition_code = f"(equals_float_string({condition[1][1]}, {condition[2][1]}->value))"
+							else:
+								raise_error(f"Cannot compare types: {self.variables[condition[2][1]].type} and {self.variables[condition[1][1]].type}")
+
+					elif (isinstance(condition[1], tuple) and condition[1][0] == 'id') or (isinstance(condition[2], tuple) and condition[2][0] == 'id'):
+						id_cond = condition[1] if isinstance(condition[1], tuple) and condition[1][0] == 'id' else condition[2]
+						other_cond = condition[1] if isinstance(condition[1], tuple) and condition[1][0] != 'id' else condition[2]
+
+						# TODO
 
 		raise_error(f"Unknown statement type: {statement}")
 		

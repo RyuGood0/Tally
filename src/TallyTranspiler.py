@@ -50,7 +50,6 @@ class TallyTranspiler(object):
 			Start by defining all functions,
 			then add all to main()
 			"""
-			exit()
 			
 			transpiled = self.transpile(statement)
 			main_code += transpiled + "\n"
@@ -90,7 +89,6 @@ class TallyTranspiler(object):
 		=> for a func_call it should happen before the statement, but for a statement that create a new "block" (if, while, for, func_decl, ...) it should happen inside the block
 		BUT for a typed assign statement, nothing should be added
 		"""
-		print(statements)
 		new_statements = []
 
 		for stmt in statements:
@@ -150,8 +148,6 @@ class TallyTranspiler(object):
 			
 			else:
 				new_statements.append((stmt_type, *stmt_data))
-
-		print(new_statements)
 
 		return new_statements
 

@@ -609,7 +609,7 @@ int dynamic_equals(dynamic_t* first, dynamic_t* second) {
                 return equals_int_string(*(int*)second->value, (char*)first->value);
             }
         } else if ((first->type == FLOAT && second->type == STRING) || (first->type == STRING && second->type == FLOAT)) {
-            if (first->type == INT) {
+            if (first->type == FLOAT) {
                 return equals_float_string(*(float*)first->value, (char*)second->value);
             } else {
                 return equals_float_string(*(float*)second->value, (char*)first->value);
@@ -678,7 +678,9 @@ int main(int argc, char *argv[]) {
     char* str_UUID = fstring("Hello %s! %s", (char* []){dynamic_var_to_string(a), copy_string("Hi")});
     dynamic_t* e = init_dynamic_var(STRING, (void*) str_UUID);
     free(str_UUID);
-    pprint(2, (char* []){hello(), dynamic_var_to_string(e)});
+    pprint(2, (char* []){dynamic_var_to_string(c), dynamic_var_to_string(e)});
+
+    dynamic_t* f = init_dynamic_list(3, a, b, c);
 
     // if condition
     if (dynamic_equals(a, c)) {
@@ -687,9 +689,17 @@ int main(int argc, char *argv[]) {
         printf("a not equals c\n");
     }
 
+    // condition on list
+    if (dynamic_equals(d, f)) {
+        printf("d equals f\n");
+    } else {
+        printf("d not equals f\n");
+    }
+
     // Free the allocated memory
     free_dynamic_var(&d);
     free_dynamic_var(&e);
+    free_dynamic_var(&f);
 
     return 0;
 }

@@ -16,6 +16,8 @@ with open(input_file, 'r') as f:
 transpiler = TallyTranspiler()
 output_code = transpiler(input_code)
 
+print("Code was transpiled successfully.")
+
 # get backend
 backend_file = 'src/backend.c'
 with open(backend_file, 'r') as f:
